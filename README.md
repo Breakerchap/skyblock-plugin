@@ -8,7 +8,7 @@ A self-contained Paper 26.3 Skyblock plugin for a small vanilla-client server.
 
 - A generated **true void overworld** named `skyblock` by default.
 - A starter island with a tree, dirt/grass, and a deliberately small starter chest containing the essentials for a cobblestone generator.
-- **100+ custom advancements** split across custom tabs:
+- **249 custom advancements** split across custom tabs:
   - Skybound core progression
   - Farming
   - Engineering
@@ -54,7 +54,7 @@ The custom tree includes deliberately stupid side goals alongside real progressi
 
 ## World generation
 
-On first start the plugin creates the configured `world:` as a void world and builds the starter island at its spawn. First-time players are teleported there automatically.
+On first start the plugin creates the configured `world:` as a void world and builds the starter island at its spawn. First-time players are teleported there automatically. Nether return portals and End return/respawn paths are redirected back into the Skyblock world so players do not leak into Bukkit's unused default overworld.
 
 The server's ordinary default `world` folder may still exist because Bukkit loads its configured default worlds before normal plugins enable, but it is not used for Skyblock gameplay. The plugin also exposes its void `ChunkGenerator`, so it can be selected as a Bukkit world generator if you want the server's configured default world itself to use it.
 

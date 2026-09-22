@@ -3,7 +3,7 @@ version: 1.0.0
 main: io.github.breakerchap.skyblock.SkyblockPlugin
 api-version: '26.3'
 author: Breakerchap
-description: Vanilla-client Skyblock progression, communal goals, exploration islands and trader rework.
+description: Self-contained vanilla-client Skyblock world, progression, structures, communal goals and traders.
 website: https://github.com/Breakerchap/skyblock-plugin
 
 commands:

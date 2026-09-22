@@ -5,6 +5,7 @@ import io.github.breakerchap.skyblock.progress.ProgressStore;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
@@ -12,17 +13,27 @@ import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public final class SkyblockWorldManager implements Listener {
     private final SkyblockPlugin plugin;
     private final ProgressStore store;
+    private final NamespacedKey netherReturnX;
+    private final NamespacedKey netherReturnY;
+    private final NamespacedKey netherReturnZ;
     private World world;
 
     public SkyblockWorldManager(SkyblockPlugin plugin, ProgressStore store) {
         this.plugin = plugin;
         this.store = store;
+        this.netherReturnX = new NamespacedKey(plugin, "nether_return_x");
+        this.netherReturnY = new NamespacedKey(plugin, "nether_return_y");
+        this.netherReturnZ = new NamespacedKey(plugin, "nether_return_z");
     }
 
     public World ensureWorld() {
@@ -76,11 +87,49 @@ public final class SkyblockWorldManager implements Listener {
         }
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onPortal(PlayerPortalEvent event) {
+        if (event.getCause() == TeleportCause.NETHER_PORTAL) {
+            if (event.getFrom().getWorld().equals(world())) {
+                rememberNetherReturn(event.getPlayer(), event.getFrom());
+            } else if (event.getFrom().getWorld().getEnvironment() == World.Environment.NETHER
+                && event.getTo() != null
+                && event.getTo().getWorld().getEnvironment() == World.Environment.NORMAL) {
+                event.setTo(readNetherReturn(event.getPlayer()));
+            }
+        }
+
+        if (event.getCause() == TeleportCause.END_PORTAL
+            && event.getFrom().getWorld().getEnvironment() == World.Environment.THE_END) {
+            event.setTo(spawnLocation());
+        }
+    }
+
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
-        if (event.getPlayer().getWorld().equals(world()) && event.getPlayer().getRespawnLocation() == null) {
+        World respawnWorld = event.getRespawnLocation().getWorld();
+        if (event.getPlayer().getWorld().equals(world())
+            || (respawnWorld.getEnvironment() == World.Environment.NORMAL && !respawnWorld.equals(world()))) {
             event.setRespawnLocation(spawnLocation());
         }
+    }
+
+    private void rememberNetherReturn(org.bukkit.entity.Player player, Location location) {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        data.set(netherReturnX, PersistentDataType.DOUBLE, location.getX());
+        data.set(netherReturnY, PersistentDataType.DOUBLE, location.getY());
+        data.set(netherReturnZ, PersistentDataType.DOUBLE, location.getZ());
+    }
+
+    private Location readNetherReturn(org.bukkit.entity.Player player) {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        Double x = data.get(netherReturnX, PersistentDataType.DOUBLE);
+        Double y = data.get(netherReturnY, PersistentDataType.DOUBLE);
+        Double z = data.get(netherReturnZ, PersistentDataType.DOUBLE);
+        if (x == null || y == null || z == null) {
+            return spawnLocation();
+        }
+        return new Location(world(), x, y, z);
     }
 
     private void buildStarterIsland(Location center) {

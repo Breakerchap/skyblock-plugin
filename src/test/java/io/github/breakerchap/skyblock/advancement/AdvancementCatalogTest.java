@@ -10,7 +10,7 @@ class AdvancementCatalogTest {
     @Test
     void catalogIsLargeAndInternallyLinked() {
         var definitions = AdvancementCatalog.definitions();
-        assertTrue(definitions.size() >= 100, "expected at least 100 custom advancements");
+        assertTrue(definitions.size() >= 200, "expected at least 200 custom advancements");
 
         var ids = new HashSet<String>();
         definitions.forEach(definition ->
