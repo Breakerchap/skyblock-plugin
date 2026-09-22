@@ -86,6 +86,7 @@ public final class AdvancementCatalog {
         a(d, "farming/dripstone", "farming/root", "Pointy Agriculture", "Obtain pointed dripstone.", Material.POINTED_DRIPSTONE);
         a(d, "farming/honey", "farming/root", "Bee Product", "Obtain a honey bottle.", Material.HONEY_BOTTLE);
         a(d, "farming/egg", "farming/root", "Which Came First?", "Obtain an egg.", Material.EGG);
+        a(d, "farming/wool", "farming/root", "Cloud Farming", "Obtain wool in a world made mostly of sky.", Material.WHITE_WOOL);
         goal(d, "farming/breed", "farming/root", "Population Growth", "Breed a creature.", Material.WHEAT);
         goal(d, "farming/breed_10", "farming/breed", "Small Farm", "Breed 10 creatures.", Material.HAY_BLOCK);
         challenge(d, "farming/breed_100", "farming/breed_10", "Industrial Romance", "Breed 100 creatures.", Material.GOLDEN_CARROT);

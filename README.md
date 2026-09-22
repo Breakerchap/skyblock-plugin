@@ -8,7 +8,7 @@ A self-contained Paper 26.3 Skyblock plugin for a small vanilla-client server.
 
 - A generated **true void overworld** named `skyblock` by default.
 - A starter island with a tree, dirt/grass, and the essentials for a cobblestone generator.
-- **250 custom advancements** across Skyblock progression, farming, engineering, combat, exploration, community, collection and deliberately silly side goals.
+- **251 custom advancements** across Skyblock progression, farming, engineering, combat, exploration, community, collection and deliberately silly side goals.
 - Vanilla Minecraft advancement progress is suppressed, so players use the custom advancement system instead.
 - Persistent personal counters and eight communal goals.
 - Progression-gated renewable-resource recipes.
