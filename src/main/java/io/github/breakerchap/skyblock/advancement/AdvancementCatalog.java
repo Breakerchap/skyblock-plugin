@@ -20,7 +20,7 @@ public final class AdvancementCatalog {
         Material.ENDER_PEARL, Material.BLAZE_POWDER, Material.GHAST_TEAR,
         Material.MAGMA_CREAM, Material.PHANTOM_MEMBRANE, Material.LEATHER,
         Material.FEATHER, Material.RABBIT_HIDE, Material.INK_SAC, Material.GLOW_INK_SAC,
-        Material.NAUTILUS_SHELL, Material.SCUTE, Material.TURTLE_EGG,
+        Material.NAUTILUS_SHELL, Material.TURTLE_SCUTE, Material.TURTLE_EGG,
         Material.HONEYCOMB, Material.HONEY_BOTTLE, Material.APPLE, Material.GOLDEN_APPLE,
         Material.COCOA_BEANS, Material.CHORUS_FRUIT, Material.POPPED_CHORUS_FRUIT,
         Material.SHULKER_SHELL, Material.ELYTRA, Material.DRAGON_BREATH,
