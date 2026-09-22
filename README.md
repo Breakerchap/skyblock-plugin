@@ -27,7 +27,7 @@ A Paper 26.3 plugin for a small, vanilla-client Skyblock server. It deliberately
   - **Ruined Portal**
   - **Monument Shard**
 
-Each island has a discovery advancement and a small, deliberately limited resource cache.
+Each island has a discovery advancement and a small, deliberately limited resource cache. The Ruined Portal is deliberately incomplete: its chest contains exactly the two obsidian blocks needed to finish and light the frame.
 
 ## Requirements
 

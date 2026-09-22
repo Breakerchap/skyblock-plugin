@@ -15,6 +15,8 @@ import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.StructureGrowEvent;
@@ -31,7 +33,22 @@ public final class ProgressListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        plugin.getServer().getScheduler().runTask(plugin, () -> progression.syncPlayer(event.getPlayer()));
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            progression.syncPlayer(event.getPlayer());
+            checkInventory(event.getPlayer());
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player) {
+            plugin.getServer().getScheduler().runTask(plugin, () -> checkInventory(player));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBucketFill(PlayerBucketFillEvent event) {
+        plugin.getServer().getScheduler().runTask(plugin, () -> checkInventory(event.getPlayer()));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -106,6 +123,19 @@ public final class ProgressListener implements Listener {
 
         if (event.getEntity() instanceof EnderDragon) {
             progression.grant(killer, "end/dragon");
+        }
+    }
+
+    private void checkInventory(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && !item.getType().isAir()) {
+                checkItem(player, item.getType());
+            }
+        }
+
+        ItemStack cursor = player.getItemOnCursor();
+        if (!cursor.getType().isAir()) {
+            checkItem(player, cursor.getType());
         }
     }
 

@@ -201,11 +201,14 @@ public final class IslandManager implements Listener {
 
         int baseY = 2;
         for (int y = 1; y <= 3; y++) {
-            set(center, -1, baseY + y, 0, y == 2 ? Material.CRYING_OBSIDIAN : Material.OBSIDIAN);
+            set(center, -1, baseY + y, 0, Material.OBSIDIAN);
             set(center, 2, baseY + y, 0, Material.OBSIDIAN);
         }
         set(center, 0, baseY, 0, Material.OBSIDIAN);
         set(center, 1, baseY, 0, Material.OBSIDIAN);
+        // The two top blocks are intentionally missing; the chest contains exactly enough
+        // obsidian to finish the frame. Crying obsidian is decorative, not structural.
+        set(center, -4, 2, -2, Material.CRYING_OBSIDIAN);
 
         chest(center.clone().add(4, 2, 1),
             new ItemStack(Material.OBSIDIAN, 2),
