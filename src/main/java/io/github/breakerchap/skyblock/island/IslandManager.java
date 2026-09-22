@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -25,17 +26,18 @@ public final class IslandManager implements Listener {
     private final ProgressionService progression;
 
     private final List<IslandDefinition> islands = List.of(
-        new IslandDefinition("lush", "Lush Outcrop", 650, 150, 8, 18),
-        new IslandDefinition("dripstone", "Dripstone Spire", -850, 300, 18, 18),
-        new IslandDefinition("moor", "Witch's Moor", 150, -1100, -4, 20),
-        new IslandDefinition("portal", "Ruined Portal", 1400, 700, 10, 24),
-        new IslandDefinition("monument", "Monument Shard", -1500, -850, -8, 22),
-        new IslandDefinition("desert", "Desert Shrine", 900, -650, 4, 20),
-        new IslandDefinition("frozen", "Frozen Observatory", -700, -1300, 14, 20),
-        new IslandDefinition("mushroom", "Mushroom Colony", 1750, -450, 2, 22),
-        new IslandDefinition("geode", "Amethyst Geode", -1950, 350, -2, 20),
-        new IslandDefinition("apiary", "Void Apiary", 450, 1750, 6, 20),
-        new IslandDefinition("end_shrine", "End Shrine", 2200, 1350, 12, 24)
+        new IslandDefinition("lush", "Lush Outcrop", 260, 90, 8, 18),
+        new IslandDefinition("dripstone", "Dripstone Spire", -330, 160, 18, 18),
+        new IslandDefinition("moor", "Witch's Moor", 110, -420, -4, 20),
+        new IslandDefinition("portal", "Ruined Portal", 460, 260, 10, 24),
+        new IslandDefinition("monument", "Monument Shard", -500, -280, -8, 22),
+        new IslandDefinition("desert", "Desert Shrine", 330, -310, 4, 20),
+        new IslandDefinition("frozen", "Frozen Observatory", -270, -520, 14, 20),
+        new IslandDefinition("mushroom", "Mushroom Colony", 600, -120, 2, 22),
+        new IslandDefinition("geode", "Amethyst Geode", -650, 170, -2, 20),
+        new IslandDefinition("apiary", "Void Apiary", 180, 620, 6, 20),
+        new IslandDefinition("end_shrine", "End Shrine", 760, 470, 12, 24),
+        new IslandDefinition("village", "Little Village", -100, 390, 4, 26)
     );
 
     public IslandManager(SkyblockPlugin plugin, ProgressStore store, ProgressionService progression) {
@@ -105,6 +107,7 @@ public final class IslandManager implements Listener {
                 case "geode" -> buildGeode(center);
                 case "apiary" -> buildApiary(center);
                 case "end_shrine" -> buildEndShrine(center);
+                case "village" -> buildVillage(center);
                 default -> throw new IllegalStateException("Unknown island " + definition.id());
             }
         }
@@ -338,6 +341,107 @@ public final class IslandManager implements Listener {
             new ItemStack(Material.ENDER_PEARL, 2),
             new ItemStack(Material.END_STONE, 4),
             new ItemStack(Material.CHORUS_FRUIT, 2)
+        );
+    }
+
+    private void buildVillage(Location center) {
+        ellipsoid(center, 12, 3, 10, Material.DIRT);
+        cap(center, 11, 9, Material.GRASS_BLOCK);
+
+        // Tiny two-house village with beds, farms and a bell.
+        for (int x = -7; x <= -2; x++) {
+            for (int z = -4; z <= 1; z++) {
+                set(center, x, 2, z, Material.OAK_PLANKS);
+            }
+        }
+        for (int x = 2; x <= 7; x++) {
+            for (int z = -4; z <= 1; z++) {
+                set(center, x, 2, z, Material.COBBLESTONE);
+            }
+        }
+
+        for (int y = 3; y <= 5; y++) {
+            for (int x = -7; x <= -2; x++) {
+                set(center, x, y, -4, Material.OAK_LOG);
+                set(center, x, y, 1, Material.OAK_LOG);
+            }
+            for (int z = -3; z <= 0; z++) {
+                set(center, -7, y, z, Material.OAK_LOG);
+                set(center, -2, y, z, Material.OAK_LOG);
+            }
+
+            for (int x = 2; x <= 7; x++) {
+                set(center, x, y, -4, Material.STONE_BRICKS);
+                set(center, x, y, 1, Material.STONE_BRICKS);
+            }
+            for (int z = -3; z <= 0; z++) {
+                set(center, 2, y, z, Material.STONE_BRICKS);
+                set(center, 7, y, z, Material.STONE_BRICKS);
+            }
+        }
+
+        for (int x = -8; x <= -1; x++) {
+            for (int z = -5; z <= 2; z++) {
+                set(center, x, 6, z, Material.OAK_SLAB);
+            }
+        }
+        for (int x = 1; x <= 8; x++) {
+            for (int z = -5; z <= 2; z++) {
+                set(center, x, 6, z, Material.STONE_BRICK_SLAB);
+            }
+        }
+
+        set(center, -4, 3, 1, Material.OAK_FENCE_GATE);
+        set(center, 4, 3, 1, Material.OAK_FENCE_GATE);
+        set(center, -5, 3, -2, Material.RED_BED);
+        set(center, 5, 3, -2, Material.BLUE_BED);
+        set(center, 0, 2, 0, Material.BELL);
+
+        for (int x = -4; x <= 4; x++) {
+            set(center, x, 2, 5, Material.FARMLAND);
+            set(center, x, 2, 6, Material.FARMLAND);
+            set(center, x, 3, 5, Material.WHEAT);
+            set(center, x, 3, 6, Material.CARROTS);
+        }
+        set(center, 0, 2, 7, Material.WATER);
+
+        // Keep the original villagers from casually walking off the edge.
+        for (int x = -9; x <= 9; x++) {
+            for (int z = -7; z <= 7; z++) {
+                double here = (x * x) / 121.0 + (z * z) / 81.0;
+                if (here > 0.82 || here < 0.62) {
+                    continue;
+                }
+                boolean edge = ((x + 1) * (x + 1)) / 121.0 + (z * z) / 81.0 > 0.82
+                    || ((x - 1) * (x - 1)) / 121.0 + (z * z) / 81.0 > 0.82
+                    || (x * x) / 121.0 + ((z + 1) * (z + 1)) / 81.0 > 0.82
+                    || (x * x) / 121.0 + ((z - 1) * (z - 1)) / 81.0 > 0.82;
+                if (edge) {
+                    set(center, x, 2, z, Material.OAK_FENCE);
+                }
+            }
+        }
+
+        long villagers = center.getWorld().getNearbyEntities(
+            center, 18, 12, 18, entity -> entity instanceof Villager
+        ).size();
+        if (villagers < 2) {
+            Villager farmer = center.getWorld().spawn(center.clone().add(-3.5, 3, -1.5), Villager.class);
+            farmer.setProfession(Villager.Profession.FARMER);
+            farmer.setPersistent(true);
+            villagers++;
+        }
+        if (villagers < 2) {
+            Villager librarian = center.getWorld().spawn(center.clone().add(3.5, 3, -1.5), Villager.class);
+            librarian.setProfession(Villager.Profession.LIBRARIAN);
+            librarian.setPersistent(true);
+        }
+
+        chest(center.clone().add(0, 2, -7),
+            new ItemStack(Material.BREAD, 6),
+            new ItemStack(Material.EMERALD, 4),
+            new ItemStack(Material.POTATO, 4),
+            new ItemStack(Material.CARROT, 4)
         );
     }
 

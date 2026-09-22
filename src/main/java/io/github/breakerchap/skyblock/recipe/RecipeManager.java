@@ -29,12 +29,14 @@ public final class RecipeManager implements Listener {
     private final SkyblockPlugin plugin;
     private final ProgressionService progression;
     private final NamespacedKey wayfarerBellTag;
+    private final NamespacedKey voidTrowelTag;
     private final Map<NamespacedKey, Unlock> unlocks = new LinkedHashMap<>();
 
     public RecipeManager(SkyblockPlugin plugin, ProgressionService progression) {
         this.plugin = plugin;
         this.progression = progression;
         this.wayfarerBellTag = new NamespacedKey(plugin, "wayfarer_bell");
+        this.voidTrowelTag = new NamespacedKey(plugin, "void_trowel");
     }
 
     public void registerAll() {
@@ -43,6 +45,7 @@ public final class RecipeManager implements Listener {
         registerDirt();
         registerCalcite();
         registerWayfarerBell();
+        registerVoidTrowel();
         Bukkit.updateRecipes();
     }
 
@@ -84,7 +87,16 @@ public final class RecipeManager implements Listener {
         recipe.setIngredient('E', Material.EMERALD);
         recipe.setIngredient('G', Material.GOLD_INGOT);
         recipe.setIngredient('B', Material.BELL);
-        register(key, recipe, Unlock.community(CommunityGoal.HUNTER, "Wayfarer's Bell"));
+        register(key, recipe, Unlock.always("Wayfarer's Bell"));
+    }
+
+    private void registerVoidTrowel() {
+        NamespacedKey key = new NamespacedKey(plugin, "void_trowel");
+        ShapedRecipe recipe = new ShapedRecipe(key, createVoidTrowel());
+        recipe.shape(" C ", " C ", " S ");
+        recipe.setIngredient('C', Material.COBBLESTONE);
+        recipe.setIngredient('S', Material.STICK);
+        register(key, recipe, Unlock.always("Void Trowel"));
     }
 
     private void register(NamespacedKey key, Recipe recipe, Unlock unlock) {
@@ -101,19 +113,40 @@ public final class RecipeManager implements Listener {
         meta.displayName(Component.text("Wayfarer's Bell", NamedTextColor.GOLD));
         meta.lore(List.of(
             Component.text("Ring under the open sky to call a wandering trader.", NamedTextColor.GRAY),
-            Component.text("Reusable, but has a cooldown.", NamedTextColor.DARK_GRAY)
+            Component.text("Reusable. No cooldown.", NamedTextColor.DARK_GRAY)
         ));
         meta.getPersistentDataContainer().set(wayfarerBellTag, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
     }
 
+    public ItemStack createVoidTrowel() {
+        ItemStack item = new ItemStack(Material.BRUSH);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(Component.text("Void Trowel", NamedTextColor.AQUA));
+        meta.lore(List.of(
+            Component.text("Hold this in your offhand and blocks in your main hand.", NamedTextColor.GRAY),
+            Component.text("Right-click to place the next bridge block in front of your feet.", NamedTextColor.GRAY),
+            Component.text("No edge-aiming required.", NamedTextColor.DARK_GRAY)
+        ));
+        meta.getPersistentDataContainer().set(voidTrowelTag, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     public boolean isWayfarerBell(ItemStack item) {
-        if (item == null || item.getType() != Material.BELL || !item.hasItemMeta()) {
+        return hasMarker(item, Material.BELL, wayfarerBellTag);
+    }
+
+    public boolean isVoidTrowel(ItemStack item) {
+        return hasMarker(item, Material.BRUSH, voidTrowelTag);
+    }
+
+    private boolean hasMarker(ItemStack item, Material material, NamespacedKey key) {
+        if (item == null || item.getType() != material || !item.hasItemMeta()) {
             return false;
         }
-        Byte marker = item.getItemMeta().getPersistentDataContainer()
-            .get(wayfarerBellTag, PersistentDataType.BYTE);
+        Byte marker = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.BYTE);
         return marker != null && marker == (byte) 1;
     }
 
@@ -173,16 +206,23 @@ public final class RecipeManager implements Listener {
         return unlock == null || unlock.isUnlocked(player, progression);
     }
 
-    private record Unlock(String personalAdvancement, CommunityGoal communityGoal, String label) {
+    private record Unlock(boolean always, String personalAdvancement, CommunityGoal communityGoal, String label) {
+        static Unlock always(String label) {
+            return new Unlock(true, null, null, label);
+        }
+
         static Unlock personal(String advancement, String label) {
-            return new Unlock(advancement, null, label);
+            return new Unlock(false, advancement, null, label);
         }
 
         static Unlock community(CommunityGoal goal, String label) {
-            return new Unlock(null, goal, label);
+            return new Unlock(false, null, goal, label);
         }
 
         boolean isUnlocked(Player player, ProgressionService progression) {
+            if (always) {
+                return true;
+            }
             if (personalAdvancement != null) {
                 return progression.has(player, personalAdvancement);
             }

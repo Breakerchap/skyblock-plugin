@@ -7,6 +7,7 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class AdvancementManager {
@@ -21,14 +22,18 @@ public final class AdvancementManager {
 
     @SuppressWarnings("deprecation")
     public void registerAll() {
-        for (int i = definitions.size() - 1; i >= 0; i--) {
-            NamespacedKey key = key(definitions.get(i).id());
-            if (Bukkit.getAdvancement(key) != null) {
-                try {
-                    Bukkit.getUnsafe().removeAdvancement(key);
-                } catch (RuntimeException ex) {
-                    plugin.getLogger().warning("Could not remove stale custom advancement " + key + ": " + ex.getMessage());
-                }
+        List<NamespacedKey> stale = new ArrayList<>();
+        Bukkit.advancementIterator().forEachRemaining(advancement -> {
+            if (NAMESPACE.equals(advancement.getKey().getNamespace())) {
+                stale.add(advancement.getKey());
+            }
+        });
+
+        for (NamespacedKey key : stale) {
+            try {
+                Bukkit.getUnsafe().removeAdvancement(key);
+            } catch (RuntimeException ex) {
+                plugin.getLogger().warning("Could not remove stale custom advancement " + key + ": " + ex.getMessage());
             }
         }
 

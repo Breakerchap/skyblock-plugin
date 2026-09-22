@@ -11,6 +11,11 @@ class AdvancementCatalogTest {
     void catalogIsLargeAndInternallyLinked() {
         var definitions = AdvancementCatalog.definitions();
         assertTrue(definitions.size() >= 200, "expected at least 200 custom advancements");
+        assertTrue(definitions.stream().anyMatch(d -> d.id().equals("farming/goat_boat")));
+        assertTrue(definitions.stream().anyMatch(d -> d.id().equals("engineering/bridge_64")));
+        assertTrue(definitions.stream().anyMatch(d -> d.id().equals("exploration/village")));
+        assertTrue(definitions.stream().noneMatch(d -> d.id().equals("engineering/dropper")));
+        assertTrue(definitions.stream().noneMatch(d -> d.id().equals("engineering/comparator")));
 
         var ids = new HashSet<String>();
         definitions.forEach(definition ->

@@ -2,6 +2,7 @@ package io.github.breakerchap.skyblock;
 
 import io.github.breakerchap.skyblock.advancement.AdvancementManager;
 import io.github.breakerchap.skyblock.advancement.VanillaAdvancementSuppressor;
+import io.github.breakerchap.skyblock.bridge.VoidTrowelManager;
 import io.github.breakerchap.skyblock.command.SkyblockCommand;
 import io.github.breakerchap.skyblock.island.IslandManager;
 import io.github.breakerchap.skyblock.progress.MilestoneListener;
@@ -45,13 +46,14 @@ public final class SkyblockPlugin extends JavaPlugin {
         recipes.registerAll();
 
         this.islands = new IslandManager(this, store, progression);
-        this.traders = new TraderManager(this, store, recipes);
+        this.traders = new TraderManager(this, store, recipes, islands, progression);
 
         Bukkit.getPluginManager().registerEvents(new VanillaAdvancementSuppressor(this), this);
         Bukkit.getPluginManager().registerEvents(worldManager, this);
         Bukkit.getPluginManager().registerEvents(new ProgressListener(this, progression), this);
         Bukkit.getPluginManager().registerEvents(new MilestoneListener(this, store, progression, recipes), this);
         Bukkit.getPluginManager().registerEvents(recipes, this);
+        Bukkit.getPluginManager().registerEvents(new VoidTrowelManager(this, recipes, store, progression), this);
         Bukkit.getPluginManager().registerEvents(islands, this);
         Bukkit.getPluginManager().registerEvents(traders, this);
 

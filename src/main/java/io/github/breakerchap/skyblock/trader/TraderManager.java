@@ -1,10 +1,14 @@
 package io.github.breakerchap.skyblock.trader;
 
 import io.github.breakerchap.skyblock.SkyblockPlugin;
+import io.github.breakerchap.skyblock.island.IslandDefinition;
+import io.github.breakerchap.skyblock.island.IslandManager;
 import io.github.breakerchap.skyblock.progress.ProgressStore;
+import io.github.breakerchap.skyblock.progress.ProgressionService;
 import io.github.breakerchap.skyblock.recipe.RecipeManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,6 +22,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +34,8 @@ public final class TraderManager implements Listener {
     private final SkyblockPlugin plugin;
     private final ProgressStore store;
     private final RecipeManager recipes;
+    private final IslandManager islands;
+    private final ProgressionService progression;
 
     private final List<Trade> tradePool = List.of(
         new Trade(Material.OAK_SAPLING, 1, 2, 8),
@@ -56,10 +64,29 @@ public final class TraderManager implements Listener {
         new Trade(Material.SEA_PICKLE, 2, 3, 6)
     );
 
-    public TraderManager(SkyblockPlugin plugin, ProgressStore store, RecipeManager recipes) {
+    private final List<RareEgg> eggPool = List.of(
+        new RareEgg(Material.GOAT_SPAWN_EGG, 12),
+        new RareEgg(Material.AXOLOTL_SPAWN_EGG, 16),
+        new RareEgg(Material.FROG_SPAWN_EGG, 16),
+        new RareEgg(Material.TURTLE_SPAWN_EGG, 18),
+        new RareEgg(Material.ARMADILLO_SPAWN_EGG, 18),
+        new RareEgg(Material.CAMEL_SPAWN_EGG, 20),
+        new RareEgg(Material.ALLAY_SPAWN_EGG, 28),
+        new RareEgg(Material.SNIFFER_SPAWN_EGG, 32)
+    );
+
+    public TraderManager(
+        SkyblockPlugin plugin,
+        ProgressStore store,
+        RecipeManager recipes,
+        IslandManager islands,
+        ProgressionService progression
+    ) {
         this.plugin = plugin;
         this.store = store;
         this.recipes = recipes;
+        this.islands = islands;
+        this.progression = progression;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -86,35 +113,34 @@ public final class TraderManager implements Listener {
         summonFor(event.getPlayer(), false);
     }
 
-    public boolean summonFor(Player player, boolean ignoreCooldown) {
-        long now = System.currentTimeMillis();
-        long cooldownUntil = store.getTraderCooldownUntil(player.getUniqueId());
+    public boolean summonFor(Player player, boolean adminOverride) {
+        if (!adminOverride) {
+            boolean nearbyTrader = player.getWorld().getNearbyEntities(
+                player.getLocation(), 64, 32, 64,
+                entity -> entity instanceof WanderingTrader
+            ).stream().findAny().isPresent();
 
-        if (!ignoreCooldown && cooldownUntil > now) {
-            long minutes = Math.max(1L, (cooldownUntil - now + 59_999L) / 60_000L);
-            player.sendMessage(Component.text(
-                "The bell stays quiet. Try again in about " + minutes + " minute" + (minutes == 1 ? "" : "s") + ".",
-                NamedTextColor.GRAY
-            ));
-            return false;
-        }
-
-        boolean nearbyTrader = player.getWorld().getNearbyEntities(
-            player.getLocation(), 64, 32, 64,
-            entity -> entity instanceof WanderingTrader
-        ).stream().findAny().isPresent();
-
-        if (nearbyTrader) {
-            player.sendMessage(Component.text("A wandering trader is already nearby.", NamedTextColor.YELLOW));
-            return false;
+            if (nearbyTrader) {
+                player.sendMessage(Component.text(
+                    "A wandering trader is already nearby. No need to ring again yet.",
+                    NamedTextColor.YELLOW
+                ));
+                return false;
+            }
         }
 
         Location spawn = findSpawn(player);
         WanderingTrader trader = player.getWorld().spawn(spawn, WanderingTrader.class);
         configureTrader(trader);
 
-        long cooldownSeconds = plugin.getConfig().getLong("trader.summon-cooldown-seconds", 3600L);
-        store.setTraderCooldownUntil(player.getUniqueId(), now + cooldownSeconds * 1000L);
+        long summons = store.incrementPlayer(player.getUniqueId(), "traders-summoned", 1);
+        progression.grant(player, "engineering/wayfarer_call");
+        if (summons >= 5) {
+            progression.grant(player, "engineering/trader_5");
+        }
+        if (summons >= 25) {
+            progression.grant(player, "engineering/trader_25");
+        }
         store.saveIfDirty();
 
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 1.0f, 0.8f);
@@ -147,30 +173,77 @@ public final class TraderManager implements Listener {
     }
 
     private void configureTrader(WanderingTrader trader) {
-        List<Trade> shuffled = new ArrayList<>(tradePool);
-        Collections.shuffle(shuffled);
-
-        int count = Math.max(4, Math.min(
-            plugin.getConfig().getInt("trader.trade-count", 8),
-            shuffled.size()
-        ));
-
         List<MerchantRecipe> offers = new ArrayList<>();
-        for (Trade trade : shuffled.subList(0, count)) {
-            MerchantRecipe recipe = new MerchantRecipe(
-                new ItemStack(trade.result(), trade.resultAmount()),
-                trade.maxUses()
-            );
-            recipe.addIngredient(new ItemStack(Material.EMERALD, trade.emeraldCost()));
-            recipe.setExperienceReward(false);
-            recipe.setPriceMultiplier(0.0f);
-            recipe.setIgnoreDiscounts(true);
-            offers.add(recipe);
+
+        List<Trade> resources = new ArrayList<>(tradePool);
+        Collections.shuffle(resources);
+        int resourceCount = Math.max(2, Math.min(
+            plugin.getConfig().getInt("trader.resource-trade-count", 6),
+            resources.size()
+        ));
+        for (Trade trade : resources.subList(0, resourceCount)) {
+            addOffer(offers, new ItemStack(trade.result(), trade.resultAmount()), trade.emeraldCost(), trade.maxUses());
+        }
+
+        List<IslandDefinition> structureChoices = new ArrayList<>(islands.definitions());
+        Collections.shuffle(structureChoices);
+        int mapCount = Math.max(1, Math.min(
+            plugin.getConfig().getInt("trader.map-trade-count", 3),
+            structureChoices.size()
+        ));
+        for (IslandDefinition definition : structureChoices.subList(0, mapCount)) {
+            Location location = islands.location(definition);
+            int distance = (int) Math.round(Math.hypot(definition.offsetX(), definition.offsetZ()));
+            int cost = Math.max(4, Math.min(12, 3 + distance / 100));
+            addOffer(offers, createStructureMap(definition, location), cost, 4);
+        }
+
+        List<RareEgg> eggs = new ArrayList<>(eggPool);
+        Collections.shuffle(eggs);
+        int eggCount = Math.max(1, Math.min(
+            plugin.getConfig().getInt("trader.spawn-egg-trade-count", 2),
+            eggs.size()
+        ));
+        for (RareEgg egg : eggs.subList(0, eggCount)) {
+            addOffer(offers, new ItemStack(egg.material()), egg.emeraldCost(), 2);
         }
 
         trader.setRecipes(offers);
     }
 
+    private ItemStack createStructureMap(IslandDefinition definition, Location target) {
+        MapView view = Bukkit.createMap(target.getWorld());
+        view.setCenterX(target.getBlockX());
+        view.setCenterZ(target.getBlockZ());
+        view.setScale(MapView.Scale.FAR);
+        view.setTrackingPosition(true);
+        view.setUnlimitedTracking(true);
+
+        ItemStack map = new ItemStack(Material.FILLED_MAP);
+        if (map.getItemMeta() instanceof MapMeta meta) {
+            meta.setMapView(view);
+            meta.displayName(Component.text("Map to " + definition.displayName(), NamedTextColor.AQUA));
+            meta.lore(List.of(
+                Component.text("The marked land should be near the centre.", NamedTextColor.GRAY),
+                Component.text("No coordinates. That would be too easy.", NamedTextColor.DARK_GRAY)
+            ));
+            map.setItemMeta(meta);
+        }
+        return map;
+    }
+
+    private void addOffer(List<MerchantRecipe> offers, ItemStack result, int emeraldCost, int maxUses) {
+        MerchantRecipe recipe = new MerchantRecipe(result, maxUses);
+        recipe.addIngredient(new ItemStack(Material.EMERALD, emeraldCost));
+        recipe.setExperienceReward(false);
+        recipe.setPriceMultiplier(0.0f);
+        recipe.setIgnoreDiscounts(true);
+        offers.add(recipe);
+    }
+
     private record Trade(Material result, int resultAmount, int emeraldCost, int maxUses) {
+    }
+
+    private record RareEgg(Material material, int emeraldCost) {
     }
 }

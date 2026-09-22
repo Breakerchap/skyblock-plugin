@@ -13,7 +13,7 @@ import java.util.List;
 public final class ProgressionService {
     private static final List<String> EXPLORATION_IDS = List.of(
         "lush", "dripstone", "moor", "portal", "monument",
-        "desert", "frozen", "mushroom", "geode", "apiary", "end_shrine"
+        "desert", "frozen", "mushroom", "geode", "apiary", "end_shrine", "village"
     );
 
     private final SkyblockPlugin plugin;

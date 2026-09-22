@@ -14,10 +14,10 @@ islands:
   # base-y: 64
 
 trader:
-  # Wayfarer's Bell cooldown per player.
-  summon-cooldown-seconds: 3600
-  # Number of Skyblock-focused trades placed on each wandering trader.
-  trade-count: 8
+  # Every trader gets a mixture of renewable resources, structure maps and rare spawn eggs.
+  resource-trade-count: 6
+  map-trade-count: 3
+  spawn-egg-trade-count: 2
 
 community:
   cobble:

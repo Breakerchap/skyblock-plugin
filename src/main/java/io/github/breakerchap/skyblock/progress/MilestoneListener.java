@@ -4,6 +4,7 @@ import io.github.breakerchap.skyblock.SkyblockPlugin;
 import io.github.breakerchap.skyblock.advancement.AdvancementCatalog;
 import io.github.breakerchap.skyblock.recipe.RecipeManager;
 import org.bukkit.Material;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Enemy;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
@@ -89,11 +91,12 @@ public final class MilestoneListener implements Listener {
         if (recipes.isWayfarerBell(result)) {
             progression.grant(player, "engineering/wayfarer_bell");
         }
+        if (recipes.isVoidTrowel(result)) {
+            progression.grant(player, "engineering/void_trowel");
+        }
 
-        long crafted = store.incrementPlayer(player.getUniqueId(), "craft-actions", 1);
+        store.incrementPlayer(player.getUniqueId(), "craft-actions", 1);
         progression.incrementCommunity("craft-actions", 1);
-        grantAt(player, crafted, 100, "engineering/craft_100");
-        grantAt(player, crafted, 1000, "engineering/craft_1000");
 
         plugin.getServer().getScheduler().runTask(plugin, () -> checkInventory(player));
     }
@@ -157,6 +160,34 @@ public final class MilestoneListener implements Listener {
         if (event.getEntity() instanceof Villager) {
             progression.grant(player, "civilisation/villager");
         }
+        if (event.getEntityType() == EntityType.GOAT) {
+            progression.grant(player, "farming/goat_breeder");
+        }
+
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            long villagers = player.getNearbyEntities(16, 8, 16).stream()
+                .filter(entity -> entity instanceof Villager)
+                .count();
+            if (villagers >= 5) {
+                progression.grant(player, "farming/village_people");
+            }
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onVehicleEnter(VehicleEnterEvent event) {
+        if (!(event.getVehicle() instanceof Boat)) {
+            return;
+        }
+
+        String id = switch (event.getEntered().getType()) {
+            case GOAT -> "farming/goat_boat";
+            case BEE -> "farming/bee_boat";
+            default -> null;
+        };
+        if (id != null) {
+            grantNearby(event.getVehicle().getLocation(), id);
+        }
     }
 
     @EventHandler
@@ -171,6 +202,14 @@ public final class MilestoneListener implements Listener {
             grantAt(killer, kills, 10, "combat/kills_10");
             grantAt(killer, kills, 100, "combat/kills_100");
             grantAt(killer, kills, 1000, "combat/kills_1000");
+
+            if (killer.getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN).isEmpty()) {
+                progression.grant(killer, "combat/air_superiority");
+            }
+        }
+
+        if (event.getEntityType() == EntityType.SKELETON && event.getEntity().getVehicle() instanceof Boat) {
+            progression.grant(killer, "combat/skeleton_crew");
         }
 
         String advancement = switch (event.getEntityType()) {
@@ -230,8 +269,13 @@ public final class MilestoneListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onBed(PlayerBedEnterEvent event) {
+        if (event.getPlayer().getWorld().getEnvironment() == org.bukkit.World.Environment.NETHER) {
+            progression.grant(event.getPlayer(), "nether/bed_attempt");
+            return;
+        }
+
         String skyWorld = plugin.getConfig().getString("world", "skyblock");
         if (event.getPlayer().getWorld().getName().equals(skyWorld)) {
             progression.grant(event.getPlayer(), "oddities/sleep");
@@ -250,6 +294,9 @@ public final class MilestoneListener implements Listener {
             long voidDeaths = store.incrementPlayer(player.getUniqueId(), "void-deaths", 1);
             progression.grant(player, "oddities/void_death");
             grantAt(player, voidDeaths, 10, "oddities/void_deaths_10");
+            if (player.getWorld().getEnvironment() == org.bukkit.World.Environment.THE_END) {
+                progression.grant(player, "end/void_death");
+            }
         }
     }
 
@@ -342,20 +389,6 @@ public final class MilestoneListener implements Listener {
             case CAKE -> "farming/cake";
 
             case REDSTONE -> "engineering/redstone";
-            case PISTON -> "engineering/piston";
-            case STICKY_PISTON -> "engineering/sticky_piston";
-            case HOPPER -> "engineering/hopper";
-            case OBSERVER -> "engineering/observer";
-            case COMPARATOR -> "engineering/comparator";
-            case REPEATER -> "engineering/repeater";
-            case DISPENSER -> "engineering/dispenser";
-            case DROPPER -> "engineering/dropper";
-            case RAIL -> "engineering/rail";
-            case POWERED_RAIL -> "engineering/powered_rail";
-            case MINECART -> "engineering/minecart";
-            case CAULDRON -> "engineering/cauldron";
-            case BREWING_STAND -> "engineering/brewing";
-            case ANVIL -> "engineering/anvil";
 
             case QUARTZ -> "nether/quartz";
             case GLOWSTONE_DUST -> "nether/glowstone";
@@ -407,6 +440,14 @@ public final class MilestoneListener implements Listener {
         }
         if (material.name().endsWith("SHULKER_BOX")) {
             progression.grant(player, "end/shulker_box");
+        }
+    }
+
+    private void grantNearby(org.bukkit.Location location, String id) {
+        for (Player player : location.getWorld().getPlayers()) {
+            if (player.getLocation().distanceSquared(location) <= 16 * 16) {
+                progression.grant(player, id);
+            }
         }
     }
 

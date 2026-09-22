@@ -93,30 +93,25 @@ public final class AdvancementCatalog {
         challenge(d, "farming/trees_100", "farming/trees_10", "Deforestation Somehow", "Grow 100 trees in the void.", Material.OAK_LEAVES);
         a(d, "farming/bread", "farming/wheat", "Actual Food", "Bake bread.", Material.BREAD);
         goal(d, "farming/cake", "farming/root", "Let Them Eat Cake", "Make cake.", Material.CAKE);
+        goal(d, "farming/goat_boat", "farming/root", "Whatever Floats Your Goat", "Put a goat in a boat.", Material.OAK_BOAT);
+        goal(d, "farming/bee_boat", "farming/root", "Buzz Cruise", "Put a bee in a boat.", Material.BEE_NEST);
+        goal(d, "farming/goat_breeder", "farming/root", "The Kids Are Alright", "Breed two goats in the sky.", Material.GOAT_HORN);
+        challenge(d, "farming/village_people", "farming/root", "Village People", "Have at least five villagers together.", Material.BELL);
 
         a(d, "engineering/redstone", "engineering/root", "Power", "Obtain redstone dust.", Material.REDSTONE);
-        a(d, "engineering/piston", "engineering/redstone", "Push It", "Make a piston.", Material.PISTON);
-        a(d, "engineering/sticky_piston", "engineering/piston", "Now Pull It", "Make a sticky piston.", Material.STICKY_PISTON);
-        a(d, "engineering/hopper", "engineering/redstone", "Item Plumbing", "Make a hopper.", Material.HOPPER);
-        a(d, "engineering/observer", "engineering/redstone", "Someone Is Watching", "Make an observer.", Material.OBSERVER);
-        a(d, "engineering/comparator", "engineering/redstone", "Compare and Contrast", "Make a comparator.", Material.COMPARATOR);
-        a(d, "engineering/repeater", "engineering/redstone", "Again, But Later", "Make a repeater.", Material.REPEATER);
-        a(d, "engineering/dispenser", "engineering/redstone", "Automated Bad Decisions", "Make a dispenser.", Material.DISPENSER);
-        a(d, "engineering/dropper", "engineering/redstone", "Less Violent Dispenser", "Make a dropper.", Material.DROPPER);
-        a(d, "engineering/rail", "engineering/root", "Public Transport", "Make rails.", Material.RAIL);
-        a(d, "engineering/powered_rail", "engineering/rail", "Electrified Public Transport", "Make powered rails.", Material.POWERED_RAIL);
-        a(d, "engineering/minecart", "engineering/rail", "A Train to Nowhere", "Make a minecart.", Material.MINECART);
-        a(d, "engineering/cauldron", "engineering/root", "One Cubic Metre-ish", "Make a cauldron.", Material.CAULDRON);
-        a(d, "engineering/brewing", "engineering/root", "Chemistry Department", "Make a brewing stand.", Material.BREWING_STAND);
-        a(d, "engineering/anvil", "engineering/root", "Very Heavy Table", "Make an anvil.", Material.ANVIL);
+        goal(d, "engineering/void_trowel", "engineering/root", "Bedrock at Home", "Craft and use a Void Trowel.", Material.BRUSH);
+        goal(d, "engineering/bridge_64", "engineering/void_trowel", "Don't Look Down", "Place 64 bridge blocks with a Void Trowel.", Material.COBBLESTONE);
+        challenge(d, "engineering/bridge_500", "engineering/bridge_64", "Civil Engineering", "Place 500 bridge blocks with a Void Trowel.", Material.STONE_BRICKS);
+        goal(d, "engineering/speed_bridge", "engineering/void_trowel", "Bedrock Bridger", "Place a Void Trowel block while sprinting.", Material.SCAFFOLDING);
+        goal(d, "engineering/wayfarer_call", "engineering/root", "Someone Actually Came", "Summon a wandering trader with the Wayfarer's Bell.", Material.LEAD);
+        goal(d, "engineering/trader_5", "engineering/wayfarer_call", "Frequent Caller", "Summon five wandering traders.", Material.EMERALD);
+        challenge(d, "engineering/trader_25", "engineering/trader_5", "He Knows Your Number", "Summon 25 wandering traders.", Material.BELL);
         challenge(d, "engineering/beacon", "engineering/root", "Visible From Everywhere", "Place a beacon.", Material.BEACON);
         a(d, "engineering/cobble_64", "engineering/root", "A Stack of Progress", "Mine 64 cobblestone.", Material.COBBLESTONE);
         goal(d, "engineering/cobble_1000", "engineering/cobble_64", "Rock Collection", "Mine 1,000 cobblestone.", Material.COBBLESTONE);
         challenge(d, "engineering/cobble_10000", "engineering/cobble_1000", "Geology Degree", "Mine 10,000 cobblestone.", Material.COBBLESTONE);
         a(d, "engineering/place_100", "engineering/root", "Expansion Pack", "Place 100 blocks.", Material.BRICKS);
         goal(d, "engineering/place_1000", "engineering/place_100", "Urban Planning", "Place 1,000 blocks.", Material.STONE_BRICKS);
-        a(d, "engineering/craft_100", "engineering/root", "Busy Hands", "Craft 100 times.", Material.CRAFTING_TABLE);
-        challenge(d, "engineering/craft_1000", "engineering/craft_100", "Mass Production", "Craft 1,000 times.", Material.SMITHING_TABLE);
         goal(d, "engineering/wayfarer_bell", "engineering/root", "Call Me Maybe", "Craft the Wayfarer's Bell.", Material.BELL);
 
         a(d, "combat/zombie", "combat/root", "Unwelcome Guest", "Kill a zombie.", Material.ZOMBIE_HEAD);
@@ -140,6 +135,8 @@ public final class AdvancementCatalog {
         a(d, "combat/kills_10", "combat/root", "Self Defence", "Kill 10 hostile mobs.", Material.STONE_SWORD);
         goal(d, "combat/kills_100", "combat/kills_10", "Pest Control", "Kill 100 hostile mobs.", Material.IRON_SWORD);
         challenge(d, "combat/kills_1000", "combat/kills_100", "Population Control", "Kill 1,000 hostile mobs.", Material.DIAMOND_SWORD);
+        goal(d, "combat/skeleton_crew", "combat/root", "Skeleton Crew", "Kill a skeleton while it is riding in a boat.", Material.OAK_BOAT);
+        goal(d, "combat/air_superiority", "combat/root", "Air Superiority", "Kill a hostile mob while there is no block beneath you.", Material.ELYTRA);
 
         goal(d, "nether/root", "root", "Beyond the Void", "Enter the Nether.", Material.OBSIDIAN);
         a(d, "nether/quartz", "nether/root", "White Rock", "Obtain Nether quartz.", Material.QUARTZ);
@@ -156,6 +153,8 @@ public final class AdvancementCatalog {
         goal(d, "nether/wither_skull", "nether/root", "Bad Decoration", "Obtain a wither skeleton skull.", Material.WITHER_SKELETON_SKULL);
         challenge(d, "nether/nether_star", "nether/wither_skull", "Star From Hell", "Obtain a Nether star.", Material.NETHER_STAR);
 
+        goal(d, "nether/bed_attempt", "nether/root", "What Did You Expect?", "Try to sleep in the Nether.", Material.RED_BED);
+
         goal(d, "end/root", "nether/blaze", "The Last Horizon", "Enter the End.", Material.END_STONE);
         a(d, "end/end_stone", "end/root", "Moon Rock", "Obtain end stone.", Material.END_STONE);
         a(d, "end/chorus", "end/root", "Alien Fruit", "Obtain chorus fruit.", Material.CHORUS_FRUIT);
@@ -169,6 +168,7 @@ public final class AdvancementCatalog {
         challenge(d, "end/dragon", "end/root", "The End, Again", "Defeat the Ender Dragon.", Material.DRAGON_EGG);
         goal(d, "end/end_crystal", "end/root", "Bad Idea in Glass", "Make an end crystal.", Material.END_CRYSTAL);
         challenge(d, "end/beacon", "end/dragon", "A Light in the Void", "Place a beacon.", Material.BEACON);
+        goal(d, "end/void_death", "end/root", "The Void Has Layers", "Fall into the void in the End.", Material.ENDER_PEARL);
 
         hiddenGoal(d, "exploration/lush", "exploration/root", "A Speck of Green", "Find the Lush Outcrop.", Material.MOSS_BLOCK);
         hiddenGoal(d, "exploration/dripstone", "exploration/root", "Stone Teeth", "Find the Dripstone Spire.", Material.POINTED_DRIPSTONE);
@@ -181,6 +181,7 @@ public final class AdvancementCatalog {
         hiddenGoal(d, "exploration/geode", "exploration/root", "Purple Pocket", "Find the Amethyst Geode.", Material.AMETHYST_BLOCK);
         hiddenGoal(d, "exploration/apiary", "exploration/root", "Buzzing in the Void", "Find the Apiary.", Material.BEEHIVE);
         hiddenChallenge(d, "exploration/end_shrine", "exploration/root", "A Door to Somewhere Else", "Find the End Shrine.", Material.END_PORTAL_FRAME);
+        hiddenGoal(d, "exploration/village", "exploration/root", "People?!", "Find the Little Village.", Material.BELL);
         challenge(d, "exploration/all", "exploration/root", "Void Cartographer", "Discover every exploration island.", Material.FILLED_MAP);
 
         challenge(d, "community/cobble", "community/root", "Stone by Stone", "As a server, mine 5,000 cobblestone.", Material.COBBLESTONE);
@@ -222,6 +223,7 @@ public final class AdvancementCatalog {
         a(d, "oddities/clock", "oddities/root", "Time Passes Up Here Too", "Make a clock.", Material.CLOCK);
         a(d, "oddities/compass", "oddities/root", "This Seems Less Useful", "Make a compass.", Material.COMPASS);
         a(d, "oddities/scaffolding", "oddities/root", "OSHA Has Left the Server", "Obtain scaffolding.", Material.SCAFFOLDING);
+        goal(d, "oddities/safety_third", "oddities/root", "Safety Third", "Use the Void Trowel while wearing no armour.", Material.LEATHER_BOOTS);
 
         for (Material material : COLLECTION_MATERIALS) {
             d.add(new AdvancementDefinition(
