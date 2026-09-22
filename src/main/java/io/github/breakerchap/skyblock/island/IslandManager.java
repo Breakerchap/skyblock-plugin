@@ -298,104 +298,287 @@ public final class IslandManager implements Listener {
     }
 
     private void buildDripstone(Location center) {
-        ellipsoid(center, 10, 8, 9, Material.DEEPSLATE);
-        ellipsoid(center.clone().add(0, 1, 0), 7, 6, 6, Material.AIR);
-        carveCrossEntrance(center, 9, 4);
+        Map<Character, Material> p = Map.of(
+            'd', Material.DEEPSLATE,
+            't', Material.TUFF,
+            'r', Material.DRIPSTONE_BLOCK,
+            'c', Material.COPPER_ORE,
+            'w', Material.WATER,
+            'l', Material.LAVA
+        );
 
-        for (int x = -6; x <= 6; x++) {
-            for (int z = -5; z <= 5; z++) {
-                if (x * x / 36.0 + z * z / 25.0 <= 1.0) {
-                    set(center, x, -6, z, ((x - z) & 2) == 0 ? Material.TUFF : Material.DRIPSTONE_BLOCK);
-                }
+        paintLayer(center, -8, p,
+            "       ddddd       ",
+            "    ddddddddddd    ",
+            "  ddddddddddddddd  ",
+            " ddddddddddddddddd ",
+            "ddddddddddddddddddd",
+            " ddddddddddddddddd ",
+            "  ddddddddddddddd  ",
+            "    ddddddddddd    ",
+            "       ddddd       ");
+        paintLayer(center, -7, p,
+            "     ddddddddd     ",
+            "   ddddttttddddd   ",
+            " ddddttttttttddddd ",
+            "ddddttttttttttddddd",
+            "ddddttttttttttddddd",
+            " ddddttttttttdddd  ",
+            "  dddddttttdddddd  ",
+            "    ddddddddddd    ");
+        paintLayer(center, -6, p,
+            "    ddddttttdddd    ",
+            "  dddtttttttttdddd  ",
+            " dddtttttttttttdddd ",
+            "dddtttrrrrrrttttdddd",
+            "dddtttrrrrrrttttdddd",
+            " dddtttttttttttdddd ",
+            "  ddddttttttttdddd  ",
+            "    dddddddddddd    ");
+        paintLayer(center, -5, p,
+            "     ttttttttt      ",
+            "   ttttttttttttt    ",
+            " tttttrrrrrrrttttt  ",
+            "ttttrrrrrrrrrrrtttt ",
+            "ttttrrrrwwrrrrrtttt ",
+            " ttttrrrwwrrrrtttt  ",
+            "  ttttttrrrrrtttt   ",
+            "    ttttttttttt     ");
+
+        // Broken cave sidewalls form a nave-like space rather than a closed blob.
+        int[][] leftWall = {
+            {-9,-4,-5},{-9,-3,-5},{-9,-2,-5},{-9,-1,-5},{-9,0,-5},
+            {-8,1,-5},{-8,2,-5},{-7,3,-5},{-7,4,-5},
+            {-9,-4,-2},{-9,-3,-2},{-9,-2,-2},{-8,-1,-2},{-8,0,-2},{-7,1,-2},{-7,2,-2}
+        };
+        for (int[] q:leftWall) set(center,q[0],q[1],q[2],(q[1]&1)==0?Material.DEEPSLATE:Material.TUFF);
+        for (int[] q:leftWall) set(center,-q[0],q[1],q[2],(q[1]&1)==0?Material.TUFF:Material.DEEPSLATE);
+
+        // Ceiling ribs.
+        for (int z=-7;z<=2;z++) {
+            set(center,-5,5,z,Material.DEEPSLATE);
+            set(center,5,5,z,Material.DEEPSLATE);
+            if ((z&1)==0) {
+                set(center,-4,6,z,Material.TUFF);
+                set(center,4,6,z,Material.TUFF);
             }
         }
-
-        int[][] spikes = {{0,0},{-4,2},{4,-2},{-2,-4},{3,4}};
-        for (int[] p : spikes) {
-            for (int y = -5; y <= -2; y++) set(center, p[0], y, p[1], Material.DRIPSTONE_BLOCK);
-            set(center, p[0], -1, p[1], Material.POINTED_DRIPSTONE);
-            for (int y = 6; y >= 3; y--) set(center, p[0] + 1, y, p[1] - 1, Material.DRIPSTONE_BLOCK);
-            set(center, p[0] + 1, 2, p[1] - 1, Material.POINTED_DRIPSTONE);
+        for (int z=-6;z<=0;z+=2) {
+            set(center,0,7,z,Material.DRIPSTONE_BLOCK);
+            setPointedDripstone(center,0,6,z,false);
         }
 
-        set(center, -5, -5, -3, Material.WATER);
-        set(center, -4, -5, -3, Material.WATER);
-        set(center, 5, -5, 3, Material.LAVA);
-        set(center, 4, -5, 3, Material.LAVA);
-        set(center, -6, -3, 0, Material.RAW_COPPER_BLOCK);
-        set(center, 6, -3, 0, Material.COPPER_ORE);
+        // Stalagmite clusters.
+        int[][] bases={{-5,-4,-1},{-2,-4,-5},{3,-4,-4},{6,-4,0},{1,-4,2}};
+        int[] heights={4,3,5,3,2};
+        for(int i=0;i<bases.length;i++){
+            int[] q=bases[i];
+            for(int y=0;y<heights[i];y++) set(center,q[0],q[1]+y,q[2],Material.DRIPSTONE_BLOCK);
+            setPointedDripstone(center,q[0],q[1]+heights[i],q[2],true);
+        }
+
+        // A water drip pool and dangerous lava pocket.
+        set(center,-6,-4,3,Material.WATER);
+        set(center,-5,-4,3,Material.WATER);
+        set(center,-6,-4,4,Material.WATER);
+        set(center,6,-4,3,Material.LAVA);
+        set(center,5,-4,3,Material.LAVA);
+        set(center,-7,-2,-5,Material.COPPER_ORE);
+        set(center,7,-2,-4,Material.RAW_COPPER_BLOCK);
+        set(center,6,-1,-5,Material.COPPER_ORE);
     }
 
     private void buildMoor(Location center) {
-        ellipsoid(center, 11, 4, 10, Material.MUD);
-        cap(center, 10, 9, Material.MUDDY_MANGROVE_ROOTS);
+        Map<Character, Material> p=Map.of(
+            'm',Material.MUD,
+            'r',Material.MUDDY_MANGROVE_ROOTS,
+            'd',Material.DIRT,
+            'w',Material.WATER,
+            'c',Material.CLAY
+        );
 
-        for (int x = -5; x <= 5; x++) {
-            for (int z = -4; z <= 4; z++) {
-                if (x * x + z * z <= 22) {
-                    set(center, x, 2, z, Material.WATER);
-                }
-            }
+        paintLayer(center,-5,p,
+            "      rrrrrrr      ",
+            "   rrrrrrrrrrrrr   ",
+            " rrrrrrrrrrrrrrrrr ",
+            "rrrrrrrrrrrrrrrrrrr",
+            "rrrrrrrrrrrrrrrrrrr",
+            " rrrrrrrrrrrrrrrrr ",
+            "   rrrrrrrrrrrrr   ",
+            "      rrrrrrr      ");
+        paintLayer(center,-4,p,
+            "    mmmmmmmmmmm    ",
+            "  mmmmmmmmmmmmmmm  ",
+            " mmmmmmmmmmmmmmmmm ",
+            "mmmmmmmmmmmmmmmmmmm",
+            "mmmmmmmmmmmmmmmmmmm",
+            " mmmmmmmmmmmmmmmmm ",
+            "   mmmmmmmmmmmmm   ");
+        paintLayer(center,-3,p,
+            "   mmmmmmmmmmmmm   ",
+            " mmmmmmmrrmmmmmmmm ",
+            "mmmmmmrrrrrrmmmmmmm",
+            "mmmmmrrrwwrrrmmmmmm",
+            "mmmmrrwwwwwwrrmmmmm",
+            "mmmmmrrwwwwrrmmmmmm",
+            " mmmmmmrrrrmmmmmmm ",
+            "   mmmmmmmmmmmmm   ");
+
+        // Marsh pools, roots and mushrooms.
+        for(int[] q:new int[][]{{-4,-2,0},{-3,-2,0},{-4,-2,1},{3,-2,-2},{4,-2,-2},{3,-2,-1}}) {
+            set(center,q[0],q[1],q[2],Material.WATER);
         }
-        set(center, -3, 3, 1, Material.LILY_PAD);
-        set(center, 2, 3, -2, Material.LILY_PAD);
-        set(center, 4, 3, 1, Material.LILY_PAD);
-        set(center, -7, 2, 2, Material.RED_MUSHROOM);
-        set(center, 7, 2, -1, Material.BROWN_MUSHROOM);
-        buildMangrove(center.clone().add(-6, 2, -4));
-        buildWitchHut(center.clone().add(5, 2, 4));
+        for(int[] q:new int[][]{{-7,-2,3},{-6,-2,4},{6,-2,3},{7,-2,-3},{0,-2,6}}) {
+            set(center,q[0],q[1],q[2],Material.MANGROVE_ROOTS);
+        }
+        set(center,-3,-1,0,Material.LILY_PAD);
+        set(center,4,-1,-2,Material.LILY_PAD);
+        set(center,-7,-1,-2,Material.RED_MUSHROOM);
+        set(center,7,-1,2,Material.BROWN_MUSHROOM);
 
-        spawnIfFewer(center, Frog.class, 2, 14, 8, 12, center.clone().add(1.5, 3, 0.5));
-        spawnIfFewer(center, Witch.class, 1, 14, 8, 12, center.clone().add(5.5, 4, 4.5));
+        buildTwistedMangrove(center.clone().add(-7,-2,-5));
+        buildBetterWitchHut(center.clone().add(5,-2,4));
+
+        spawnIfFewer(center,Frog.class,2,15,10,14,center.clone().add(-2.5,-1,1.5));
+        spawnIfFewer(center,Witch.class,1,15,10,14,center.clone().add(5.5,2,4.5));
     }
 
     private void buildPortal(Location center) {
-        ellipsoid(center, 11, 4, 9, Material.BLACKSTONE);
-        cap(center, 10, 8, Material.NETHERRACK);
-        for (int x = -7; x <= 7; x += 2) {
-            set(center, x, 2, -5, Material.MAGMA_BLOCK);
-        }
-        set(center, -7, 2, 4, Material.CRYING_OBSIDIAN);
-        set(center, 7, 2, 4, Material.CRYING_OBSIDIAN);
-        set(center, -6, 2, -1, Material.GILDED_BLACKSTONE);
-        set(center, 6, 2, 1, Material.GILDED_BLACKSTONE);
+        Map<Character,Material> p=Map.of(
+            'n',Material.NETHERRACK,
+            'b',Material.BLACKSTONE,
+            'm',Material.MAGMA_BLOCK,
+            's',Material.SOUL_SOIL,
+            'o',Material.OBSIDIAN
+        );
 
-        // Complete, working 4x5 portal so Nether access does not depend on hidden chest loot.
-        for (int x = -2; x <= 1; x++) {
-            set(center, x, 2, 0, Material.OBSIDIAN);
-            set(center, x, 6, 0, Material.OBSIDIAN);
+        paintLayer(center,-5,p,
+            "      bbbbbbb      ",
+            "   bbbbbbbbbbbbb   ",
+            " bbbbbbbbbbbbbbbbb ",
+            "bbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbb",
+            " bbbbbbbbbbbbbbbbb ",
+            "   bbbbbbbbbbbbb   ",
+            "      bbbbbbb      ");
+        paintLayer(center,-4,p,
+            "    bbbbnnnbbbb    ",
+            "  bbbnnnnnnnnnbbb  ",
+            " bbnnnnnnnnnnnnnbb ",
+            "bbnnnnnnnnnnnnnnnbb",
+            "bbnnnnnnnnnnnnnnnbb",
+            " bbnnnnnnnnnnnnnbb ",
+            "   bbbnnnnnnnbbb   ");
+        paintLayer(center,-3,p,
+            "    nnnnnnnnnnn    ",
+            "  nnnnnnnnnnnnnnn  ",
+            " nnnnnnmmnnnnnnnnn ",
+            "nnnnnnnnnnnnnnnnnnn",
+            "nnnnnnnnnnnnnnnnnnn",
+            " nnnnnnnnnmmnnnnnn ",
+            "   nnnnnnnnnnnnn   ");
+
+        // Borrow a real vanilla ruined-portal template for the broken masonry.
+        boolean placed = placeVanillaStructure(
+            center,-6,-2,-5,"ruined_portal/portal_7",StructureRotation.CLOCKWISE_90
+        );
+        if (!placed) {
+            buildFallbackRuinedPortal(center.clone().add(-3,-2,-2));
         }
-        for (int y = 3; y <= 5; y++) {
-            set(center, -2, y, 0, Material.OBSIDIAN);
-            set(center, 1, y, 0, Material.OBSIDIAN);
-            set(center, -1, y, 0, Material.NETHER_PORTAL);
-            set(center, 0, y, 0, Material.NETHER_PORTAL);
+
+        // A smaller repaired portal gives the island a reliable progression function.
+        for(int x=4;x<=7;x++){
+            set(center,x,-2,3,Material.OBSIDIAN);
+            set(center,x,3,3,Material.OBSIDIAN);
         }
+        for(int y=-1;y<=2;y++){
+            set(center,4,y,3,Material.OBSIDIAN);
+            set(center,7,y,3,Material.OBSIDIAN);
+            set(center,5,y,3,Material.NETHER_PORTAL);
+            set(center,6,y,3,Material.NETHER_PORTAL);
+        }
+
+        // Scattered corruption.
+        for(int[] q:new int[][]{{-9,-2,4},{-8,-2,5},{8,-2,-4},{9,-2,-3},{0,-2,7}}) {
+            set(center,q[0],q[1],q[2],Material.MAGMA_BLOCK);
+        }
+        set(center,-8,-1,-4,Material.CRYING_OBSIDIAN);
+        set(center,8,-1,-5,Material.GILDED_BLACKSTONE);
+        set(center,0,-2,-7,Material.SOUL_SAND);
+
+        cleanTemplateMarkers(center,20,14,18);
+        removeNonVillageContainers(center,20,14,18);
     }
 
     private void buildMonument(Location center) {
-        ellipsoid(center, 12, 4, 11, Material.PRISMARINE);
-        cap(center, 11, 10, Material.PRISMARINE_BRICKS);
+        Map<Character,Material> p=Map.of(
+            'p',Material.PRISMARINE,
+            'b',Material.PRISMARINE_BRICKS,
+            'd',Material.DARK_PRISMARINE,
+            'w',Material.WATER
+        );
 
-        for (int x = -6; x <= 6; x++) {
-            for (int z = -6; z <= 6; z++) {
-                if (x * x + z * z <= 34) set(center, x, 2, z, Material.WATER);
+        paintLayer(center,-6,p,
+            "      ppppppp      ",
+            "   ppppppppppppp   ",
+            " ppppppppppppppppp ",
+            "ppppppppppppppppppp",
+            "ppppppppppppppppppp",
+            " ppppppppppppppppp ",
+            "   ppppppppppppp   ",
+            "      ppppppp      ");
+        paintLayer(center,-5,p,
+            "    pppbbbbbbppp    ",
+            "  ppbbbbbbbbbbbbpp  ",
+            " pbbbbbbbbbbbbbbbbp ",
+            "pbbbbbbbbbbbbbbbbbbp",
+            "pbbbbbbbbbbbbbbbbbbp",
+            " pbbbbbbbbbbbbbbbbp ",
+            "   ppbbbbbbbbbbpp   ");
+        paintLayer(center,-4,p,
+            "    bbbbbbbbbbbb    ",
+            "  bbbbwwwwwwbbbbb  ",
+            " bbbwwwwwwwwwwbbbb ",
+            "bbbwwwwwwwwwwwwbbbb",
+            "bbbwwwwwwwwwwwwbbbb",
+            " bbbbwwwwwwwwbbbb  ",
+            "   bbbbbbbbbbbbbb  ");
+
+        // Broken gate: two unequal towers with a snapped lintel.
+        for(int y=-3;y<=5;y++){
+            set(center,-7,y,-2,(y%3==0)?Material.DARK_PRISMARINE:Material.PRISMARINE_BRICKS);
+            set(center,-6,y,-2,Material.PRISMARINE);
+        }
+        for(int y=-3;y<=3;y++){
+            set(center,7,y,-2,(y%2==0)?Material.DARK_PRISMARINE:Material.PRISMARINE_BRICKS);
+            set(center,6,y,-2,Material.PRISMARINE);
+        }
+        for(int x=-5;x<=2;x++) set(center,x,5,-2,Material.PRISMARINE_BRICKS);
+        set(center,-4,4,-2,Material.SEA_LANTERN);
+        set(center,4,2,-2,Material.SEA_LANTERN);
+
+        // Water court and ruined stepping stones.
+        for(int x=-4;x<=4;x++){
+            for(int z=0;z<=5;z++){
+                if(Math.abs(x)+Math.abs(z-2)<=6) set(center,x,-3,z,Material.WATER);
             }
         }
-        for (int y = 2; y <= 8; y++) {
-            set(center, -7, y, 0, Material.DARK_PRISMARINE);
-            set(center, 7, y, 0, Material.DARK_PRISMARINE);
+        for(int[] q:new int[][]{{-3,-2,1},{0,-2,1},{3,-2,2},{-2,-2,4},{2,-2,5}}) {
+            set(center,q[0],q[1],q[2],Material.DARK_PRISMARINE);
         }
-        for (int x = -7; x <= 7; x++) set(center, x, 8, 0, Material.PRISMARINE_BRICKS);
-        set(center, -7, 6, 0, Material.SEA_LANTERN);
-        set(center, 7, 6, 0, Material.SEA_LANTERN);
-        set(center, 0, 8, 0, Material.SEA_LANTERN);
-        set(center, 0, 1, 0, Material.WET_SPONGE);
-        set(center, 3, 1, 2, Material.SPONGE);
-        set(center, -3, 1, -2, Material.SPONGE);
+        set(center,-5,-2,5,Material.WET_SPONGE);
+        set(center,5,-2,4,Material.SPONGE);
+        set(center,0,-2,6,Material.SEA_LANTERN);
 
-        spawnIfFewer(center, Guardian.class, 2, 15, 10, 14, center.clone().add(2.5, 3, 0.5));
-        spawnIfFewer(center, Guardian.class, 2, 15, 10, 14, center.clone().add(-2.5, 3, 0.5));
+        // Side buttresses / broken columns.
+        int[][] cols={{-10,-3,2,4},{10,-3,1,3},{-9,-3,-5,3},{9,-3,-5,5}};
+        for(int[] q:cols){
+            for(int y=q[1];y<=q[3];y++) set(center,q[0],y,q[2],Material.PRISMARINE);
+            set(center,q[0],q[3]+1,q[2],Material.PRISMARINE_BRICK_STAIRS);
+        }
+
+        spawnIfFewer(center,Guardian.class,2,17,12,16,center.clone().add(-2.5,-2,2.5));
+        spawnIfFewer(center,Guardian.class,2,17,12,16,center.clone().add(2.5,-2,3.5));
     }
 
     private void buildDesert(Location center) {
@@ -482,22 +665,88 @@ public final class IslandManager implements Listener {
     }
 
     private void buildFrozen(Location center) {
-        ellipsoid(center, 11, 5, 10, Material.PACKED_ICE);
-        cap(center, 10, 9, Material.SNOW_BLOCK);
-        for (int y = 2; y <= 7; y++) set(center, 0, y, 0, Material.CALCITE);
-        for (int x = -5; x <= 5; x++) {
-            set(center, x, 2, -3, Material.CALCITE);
-            if (Math.abs(x) >= 3) set(center, x, 3, -3, Material.CALCITE);
-        }
-        set(center, 0, 8, 0, Material.COPPER_BLOCK);
-        set(center, 0, 9, 0, Material.LIGHTNING_ROD);
-        set(center, 1, 8, 0, Material.LIGHTNING_ROD);
-        set(center, 5, 2, 4, Material.BLUE_ICE);
-        set(center, -5, 2, -4, Material.POWDER_SNOW);
-        buildSpruce(center.clone().add(-6, 2, 3));
+        Map<Character,Material> p=Map.of(
+            's',Material.STONE,
+            'i',Material.PACKED_ICE,
+            'n',Material.SNOW_BLOCK,
+            'b',Material.BLUE_ICE,
+            'c',Material.CALCITE
+        );
 
-        spawnIfFewer(center, Goat.class, 2, 14, 10, 13, center.clone().add(5.5, 3, -2.5));
-        spawnIfFewer(center, Goat.class, 2, 14, 10, 13, center.clone().add(-4.5, 3, 2.5));
+        paintLayer(center,-7,p,
+            "       sssss       ",
+            "    sssssssssss    ",
+            "  sssssssssssssss  ",
+            " sssssssssssssssss ",
+            "sssssssssssssssssss",
+            " sssssssssssssssss ",
+            "   sssssssssssss   ",
+            "      sssssss      ");
+        paintLayer(center,-6,p,
+            "     sssiiisss     ",
+            "   ssiiiiiiiiiss   ",
+            " ssiiiiiiiiiiiiiss ",
+            "ssiiiiiiiiiiiiiiiss",
+            "ssiiiiiiiiiiiiiiiss",
+            " ssiiiiiiiiiiiiiss ",
+            "   ssiiiiiiiiiss   ");
+        paintLayer(center,-5,p,
+            "    iiiiiiiiiii    ",
+            "  iiiiiiiiiiiiiii  ",
+            " iiiiiiiiiiiiiiiii ",
+            "iiiiiiiiiiiiiiiiiii",
+            "iiiiiiiiiiiiiiiiiii",
+            " iiiiiiiiiiiiiiiii ",
+            "   iiiiiiiiiiiii   ");
+        paintLayer(center,-4,p,
+            "    nnnnnnnnnnn    ",
+            "  nnnnnnnnnnnnnnn  ",
+            " nnnnnnnnnnnnnnnnn ",
+            "nnnnnnnnnnnnnnnnnnn",
+            "nnnnnnnnnnnnnnnnnnn",
+            " nnnnnnnnnnnnnnnnn ",
+            "   nnnnnnnnnnnnn   ");
+
+        // Cliff shards and blue-ice seams.
+        for(int[] q:new int[][]{{-10,-3,2},{-10,-2,2},{10,-3,-1},{10,-2,-1},{-7,-3,-6},{7,-3,6}}) {
+            set(center,q[0],q[1],q[2],Material.BLUE_ICE);
+        }
+
+        // Hand-built observatory: an asymmetrical stone/calacite tower with a copper telescope.
+        int[][] base={
+            {-3,-3,-3},{-2,-3,-3},{-1,-3,-3},{0,-3,-3},{1,-3,-3},{2,-3,-3},{3,-3,-3},
+            {-4,-3,-2},{4,-3,-2},{-4,-3,-1},{4,-3,-1},{-4,-3,0},{4,-3,0},{-4,-3,1},{4,-3,1},
+            {-3,-3,2},{-2,-3,2},{-1,-3,2},{0,-3,2},{1,-3,2},{2,-3,2},{3,-3,2}
+        };
+        for(int[] q:base) set(center,q[0],q[1],q[2],Material.STONE_BRICKS);
+        for(int y=-2;y<=2;y++){
+            for(int[] q:new int[][]{{-4,y,-2},{-4,y,1},{4,y,-2},{4,y,1},{-3,y,-3},{3,y,-3},{-3,y,2},{3,y,2}}) {
+                set(center,q[0],q[1],q[2],Material.CALCITE);
+            }
+        }
+        // Curved-ish roof rim with slabs.
+        for(int[] q:new int[][]{
+            {-4,3,-2},{-4,3,-1},{-4,3,0},{-4,3,1},
+            {4,3,-2},{4,3,-1},{4,3,0},{4,3,1},
+            {-3,3,-3},{-2,3,-3},{-1,3,-3},{0,3,-3},{1,3,-3},{2,3,-3},{3,3,-3},
+            {-3,3,2},{-2,3,2},{-1,3,2},{0,3,2},{1,3,2},{2,3,2},{3,3,2}
+        }) set(center,q[0],q[1],q[2],Material.STONE_BRICK_SLAB);
+
+        // Telescope points out over the void.
+        set(center,0,1,-1,Material.COPPER_BLOCK);
+        set(center,0,2,-1,Material.COPPER_BLOCK);
+        set(center,0,3,-2,Material.EXPOSED_COPPER);
+        set(center,0,4,-3,Material.WEATHERED_COPPER);
+        set(center,0,5,-4,Material.LIGHTNING_ROD);
+        set(center,1,0,-1,Material.LECTERN);
+        set(center,-1,0,0,Material.CANDLE);
+
+        buildBetterSpruce(center.clone().add(-8,-3,4));
+        set(center,7,-3,5,Material.POWDER_SNOW);
+        set(center,8,-3,4,Material.BLUE_ICE);
+
+        spawnIfFewer(center,Goat.class,2,16,12,15,center.clone().add(6.5,-2,-1.5));
+        spawnIfFewer(center,Goat.class,2,16,12,15,center.clone().add(-6.5,-2,1.5));
     }
 
     private void buildMushroom(Location center) {
@@ -718,6 +967,107 @@ public final class IslandManager implements Listener {
             librarian.setProfession(Villager.Profession.LIBRARIAN);
             librarian.setPersistent(true);
         }
+    }
+
+    private void setPointedDripstone(Location center, int dx, int dy, int dz, boolean up) {
+        String direction = up ? "up" : "down";
+        block(center,dx,dy,dz).setBlockData(
+            Bukkit.createBlockData("minecraft:pointed_dripstone[vertical_direction=" + direction + ",thickness=tip]"),
+            false
+        );
+    }
+
+    private void buildTwistedMangrove(Location base) {
+        int[][] trunk={{0,0,0},{0,1,0},{1,2,0},{1,3,0},{1,4,-1},{2,5,-1}};
+        for(int[] q:trunk) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.MANGROVE_LOG,false);
+        for(int[] q:new int[][]{{-1,0,0},{1,0,1},{0,0,-1},{2,1,0},{2,0,-2}}) {
+            base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.MANGROVE_ROOTS,false);
+        }
+        int[][] leaves={
+            {0,5,-1},{1,5,-2},{2,5,-2},{3,5,-1},{2,5,0},
+            {0,6,-2},{1,6,-2},{2,6,-2},{3,6,-2},{1,6,-1},{2,6,-1},
+            {-1,5,-2},{4,5,-2},{1,5,-3},{2,5,1}
+        };
+        for(int[] q:leaves) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.MANGROVE_LEAVES,false);
+        base.clone().add(1,4,-2).getBlock().setType(Material.MANGROVE_PROPAGULE,false);
+    }
+
+    private void buildBetterWitchHut(Location base) {
+        // Four crooked stilts.
+        for(int[] p:new int[][]{{-3,0,-2},{3,0,-2},{-3,0,2},{3,0,2}}) {
+            for(int y=0;y<=3;y++) base.clone().add(p[0],y,p[2]).getBlock().setType(Material.SPRUCE_LOG,false);
+        }
+        // Irregular floor.
+        for(int[] q:new int[][]{
+            {-3,3,-2},{-2,3,-2},{-1,3,-2},{0,3,-2},{1,3,-2},{2,3,-2},{3,3,-2},
+            {-3,3,-1},{-2,3,-1},{-1,3,-1},{0,3,-1},{1,3,-1},{2,3,-1},{3,3,-1},
+            {-3,3,0},{-2,3,0},{-1,3,0},{0,3,0},{1,3,0},{2,3,0},{3,3,0},
+            {-3,3,1},{-2,3,1},{-1,3,1},{0,3,1},{1,3,1},{2,3,1},{3,3,1},
+            {-2,3,2},{-1,3,2},{0,3,2},{1,3,2},{2,3,2}
+        }) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.SPRUCE_PLANKS,false);
+
+        // Walls with deliberate gaps/windows.
+        for(int[] q:new int[][]{
+            {-3,4,-2},{-2,4,-2},{-1,4,-2},{1,4,-2},{2,4,-2},{3,4,-2},
+            {-3,5,-2},{-2,5,-2},{2,5,-2},{3,5,-2},
+            {-3,4,-1},{-3,4,0},{-3,4,1},{-3,5,-1},{-3,5,1},
+            {3,4,-1},{3,4,0},{3,4,1},{3,5,-1},{3,5,1},
+            {-2,4,2},{-1,4,2},{0,4,2},{1,4,2},{2,4,2}
+        }) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.SPRUCE_PLANKS,false);
+
+        // Sloped, overhanging roof using stairs and slabs.
+        for(int x=-4;x<=4;x++){
+            base.clone().add(x,6,-3).getBlock().setType(Material.DARK_OAK_STAIRS,false);
+            base.clone().add(x,6,3).getBlock().setType(Material.DARK_OAK_STAIRS,false);
+        }
+        for(int x=-3;x<=3;x++){
+            base.clone().add(x,7,-2).getBlock().setType(Material.DARK_OAK_STAIRS,false);
+            base.clone().add(x,7,2).getBlock().setType(Material.DARK_OAK_STAIRS,false);
+        }
+        for(int x=-2;x<=2;x++) base.clone().add(x,8,0).getBlock().setType(Material.DARK_OAK_SLAB,false);
+
+        base.clone().add(0,4,0).getBlock().setType(Material.CAULDRON,false);
+        base.clone().add(2,4,0).getBlock().setType(Material.BROWN_MUSHROOM,false);
+        base.clone().add(-1,4,1).getBlock().setType(Material.CRAFTING_TABLE,false);
+        base.clone().add(0,4,2).getBlock().setType(Material.AIR,false);
+    }
+
+    private void buildFallbackRuinedPortal(Location base) {
+        for(int[] q:new int[][]{
+            {0,0,0},{1,0,0},{2,0,0},{3,0,0},
+            {0,1,0},{0,2,0},{0,3,0},{0,4,0},
+            {3,1,0},{3,2,0},
+            {1,4,0},{2,4,0}
+        }) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.OBSIDIAN,false);
+        base.clone().add(3,3,0).getBlock().setType(Material.CRYING_OBSIDIAN,false);
+        base.clone().add(-1,0,1).getBlock().setType(Material.MAGMA_BLOCK,false);
+        base.clone().add(4,0,-1).getBlock().setType(Material.GILDED_BLACKSTONE,false);
+    }
+
+    private void removeNonVillageContainers(Location center, int rx, int ry, int rz) {
+        for(int x=-rx;x<=rx;x++) {
+            for(int y=-6;y<=ry;y++) {
+                for(int z=-rz;z<=rz;z++) {
+                    Block b=block(center,x,y,z);
+                    if (b.getType()==Material.CHEST || b.getType()==Material.TRAPPED_CHEST
+                        || b.getType()==Material.BARREL) {
+                        b.setType(Material.AIR,false);
+                    }
+                }
+            }
+        }
+    }
+
+    private void buildBetterSpruce(Location base) {
+        int[][] trunk={{0,0,0},{0,1,0},{0,2,0},{0,3,0},{0,4,0},{0,5,0},{0,6,0}};
+        for(int[] q:trunk) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.SPRUCE_LOG,false);
+        int[][] leaves={
+            {-1,3,0},{1,3,0},{0,3,-1},{0,3,1},
+            {-2,4,0},{-1,4,-1},{-1,4,0},{-1,4,1},{0,4,-2},{0,4,-1},{0,4,1},{0,4,2},{1,4,-1},{1,4,0},{1,4,1},{2,4,0},
+            {-1,5,0},{0,5,-1},{0,5,0},{0,5,1},{1,5,0},
+            {0,6,0},{0,7,0}
+        };
+        for(int[] q:leaves) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.SPRUCE_LEAVES,false);
     }
 
     private void paintLayer(Location center, int dy, Map<Character, Material> palette, String... rows) {
