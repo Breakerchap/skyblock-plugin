@@ -127,6 +127,14 @@ public final class SkyblockCommand implements CommandExecutor, TabCompleter {
     }
 
     private void listIslands(CommandSender sender) {
+        if (!sender.hasPermission("skyblock.admin")) {
+            sender.sendMessage(Component.text(
+                "There are " + islands.definitions().size() + " exploration islands somewhere in the void. Go find them.",
+                NamedTextColor.AQUA
+            ));
+            return;
+        }
+
         sender.sendMessage(Component.text("Exploration islands", NamedTextColor.AQUA));
         for (IslandDefinition definition : islands.definitions()) {
             Location location = islands.location(definition);

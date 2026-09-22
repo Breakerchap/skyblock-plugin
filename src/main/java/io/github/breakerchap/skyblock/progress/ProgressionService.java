@@ -8,7 +8,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public final class ProgressionService {
+    private static final List<String> EXPLORATION_IDS = List.of(
+        "lush", "dripstone", "moor", "portal", "monument",
+        "desert", "frozen", "mushroom", "geode", "apiary", "end_shrine"
+    );
+
     private final SkyblockPlugin plugin;
     private final ProgressStore store;
     private final AdvancementManager advancements;
@@ -29,6 +36,12 @@ public final class ProgressionService {
         if (newlyGranted && recipes != null) {
             recipes.syncPlayer(player, true);
         }
+        if (newlyGranted && id.startsWith("exploration/") && !id.equals("exploration/all") && !id.equals("exploration/root")) {
+            boolean all = EXPLORATION_IDS.stream().allMatch(name -> advancements.has(player, "exploration/" + name));
+            if (all) {
+                advancements.grant(player, "exploration/all");
+            }
+        }
         return newlyGranted;
     }
 
@@ -37,7 +50,9 @@ public final class ProgressionService {
     }
 
     public void syncPlayer(Player player) {
-        grant(player, "root");
+        for (String root : advancements.rootIds()) {
+            advancements.grant(player, root);
+        }
         for (CommunityGoal goal : CommunityGoal.values()) {
             if (store.isCommunityComplete(goal)) {
                 advancements.grant(player, goal.advancementId());

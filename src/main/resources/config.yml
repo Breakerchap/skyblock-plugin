@@ -1,11 +1,16 @@
-# Leave blank to use the first loaded overworld.
-world: ""
+# The plugin creates this world as a true void world and sends first-time players there.
+world: "skyblock"
+
+world-generation:
+  spawn-y: 64
+  teleport-new-players: true
+  # Useful while developing the starter island; normally leave false.
+  rebuild-starter-on-start: false
 
 islands:
-  # Safe generation checks remote target areas before placing anything.
-  # If the configured world contains normal terrain, automatic generation aborts.
+  # Generate all progression/exploration islands around the starter island.
   auto-generate: true
-  # Set base-y to an integer to override world spawn Y.
+  # Set base-y to an integer to override world spawn Y for exploration islands.
   # base-y: 64
 
 trader:
@@ -23,3 +28,11 @@ community:
     threshold: 250
   life:
     threshold: 50
+  forest:
+    threshold: 250
+  fish:
+    threshold: 100
+  crafting:
+    threshold: 5000
+  harvest:
+    threshold: 2000

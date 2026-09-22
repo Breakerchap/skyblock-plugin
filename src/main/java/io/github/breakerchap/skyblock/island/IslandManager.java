@@ -29,7 +29,13 @@ public final class IslandManager implements Listener {
         new IslandDefinition("dripstone", "Dripstone Spire", -850, 300, 18, 18),
         new IslandDefinition("moor", "Witch's Moor", 150, -1100, -4, 20),
         new IslandDefinition("portal", "Ruined Portal", 1400, 700, 10, 24),
-        new IslandDefinition("monument", "Monument Shard", -1500, -850, -8, 22)
+        new IslandDefinition("monument", "Monument Shard", -1500, -850, -8, 22),
+        new IslandDefinition("desert", "Desert Shrine", 900, -650, 4, 20),
+        new IslandDefinition("frozen", "Frozen Observatory", -700, -1300, 14, 20),
+        new IslandDefinition("mushroom", "Mushroom Colony", 1750, -450, 2, 22),
+        new IslandDefinition("geode", "Amethyst Geode", -1950, 350, -2, 20),
+        new IslandDefinition("apiary", "Void Apiary", 450, 1750, 6, 20),
+        new IslandDefinition("end_shrine", "End Shrine", 2200, 1350, 12, 24)
     );
 
     public IslandManager(SkyblockPlugin plugin, ProgressStore store, ProgressionService progression) {
@@ -93,6 +99,12 @@ public final class IslandManager implements Listener {
                 case "moor" -> buildMoor(center);
                 case "portal" -> buildPortal(center);
                 case "monument" -> buildMonument(center);
+                case "desert" -> buildDesert(center);
+                case "frozen" -> buildFrozen(center);
+                case "mushroom" -> buildMushroom(center);
+                case "geode" -> buildGeode(center);
+                case "apiary" -> buildApiary(center);
+                case "end_shrine" -> buildEndShrine(center);
                 default -> throw new IllegalStateException("Unknown island " + definition.id());
             }
         }
@@ -228,6 +240,104 @@ public final class IslandManager implements Listener {
             new ItemStack(Material.SPONGE, 1),
             new ItemStack(Material.PRISMARINE_CRYSTALS, 4),
             new ItemStack(Material.SEA_PICKLE, 2)
+        );
+    }
+
+    private void buildDesert(Location center) {
+        ellipsoid(center, 9, 3, 8, Material.SANDSTONE);
+        cap(center, 8, 7, Material.SAND);
+        set(center, -3, 2, 1, Material.CACTUS);
+        set(center, -3, 3, 1, Material.CACTUS);
+        set(center, 3, 2, -2, Material.DEAD_BUSH);
+        set(center, 0, 2, -3, Material.CUT_SANDSTONE);
+        chest(center.clone().add(2, 2, 2),
+            new ItemStack(Material.CACTUS, 2),
+            new ItemStack(Material.SAND, 8),
+            new ItemStack(Material.RED_SAND, 4),
+            new ItemStack(Material.SUGAR_CANE, 2)
+        );
+    }
+
+    private void buildFrozen(Location center) {
+        ellipsoid(center, 8, 3, 8, Material.PACKED_ICE);
+        cap(center, 7, 7, Material.SNOW_BLOCK);
+        set(center, 0, 2, 0, Material.BLUE_ICE);
+        set(center, 3, 2, 2, Material.SPRUCE_SAPLING);
+        set(center, -3, 2, -2, Material.POWDER_SNOW);
+        chest(center.clone().add(0, 2, 3),
+            new ItemStack(Material.ICE, 8),
+            new ItemStack(Material.PACKED_ICE, 4),
+            new ItemStack(Material.SPRUCE_SAPLING, 2),
+            new ItemStack(Material.SNOWBALL, 8)
+        );
+    }
+
+    private void buildMushroom(Location center) {
+        ellipsoid(center, 10, 3, 9, Material.DIRT);
+        cap(center, 9, 8, Material.MYCELIUM);
+        set(center, -3, 2, 0, Material.RED_MUSHROOM);
+        set(center, 3, 2, 0, Material.BROWN_MUSHROOM);
+        set(center, 0, 2, 3, Material.RED_MUSHROOM_BLOCK);
+        chest(center.clone().add(0, 2, -3),
+            new ItemStack(Material.RED_MUSHROOM, 4),
+            new ItemStack(Material.BROWN_MUSHROOM, 4),
+            new ItemStack(Material.MYCELIUM, 2),
+            new ItemStack(Material.MUSHROOM_STEW, 2)
+        );
+    }
+
+    private void buildGeode(Location center) {
+        ellipsoid(center, 8, 6, 8, Material.SMOOTH_BASALT);
+        ellipsoid(center, 6, 5, 6, Material.CALCITE);
+        ellipsoid(center, 4, 4, 4, Material.AMETHYST_BLOCK);
+        ellipsoid(center, 3, 3, 3, Material.AIR);
+        set(center, 0, 0, -4, Material.BUDDING_AMETHYST);
+        set(center, 2, 1, -3, Material.AMETHYST_CLUSTER);
+        chest(center.clone().add(0, 0, 0),
+            new ItemStack(Material.AMETHYST_SHARD, 8),
+            new ItemStack(Material.CALCITE, 6),
+            new ItemStack(Material.SPYGLASS, 1)
+        );
+    }
+
+    private void buildApiary(Location center) {
+        ellipsoid(center, 9, 3, 8, Material.DIRT);
+        cap(center, 8, 7, Material.GRASS_BLOCK);
+        set(center, -2, 2, 0, Material.BEEHIVE);
+        set(center, 2, 2, 1, Material.DANDELION);
+        set(center, 3, 2, -1, Material.POPPY);
+        set(center, 0, 2, 3, Material.OXEYE_DAISY);
+        chest(center.clone().add(0, 2, -2),
+            new ItemStack(Material.HONEYCOMB, 6),
+            new ItemStack(Material.HONEY_BOTTLE, 2),
+            new ItemStack(Material.BEEHIVE, 1),
+            new ItemStack(Material.FLOWERING_AZALEA, 1)
+        );
+    }
+
+    private void buildEndShrine(Location center) {
+        ellipsoid(center, 10, 3, 9, Material.END_STONE);
+        cap(center, 8, 7, Material.END_STONE_BRICKS);
+
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                set(center, x, 2, z, Material.END_PORTAL);
+            }
+        }
+
+        for (int x = -2; x <= 2; x++) {
+            set(center, x, 2, -2, Material.OBSIDIAN);
+            set(center, x, 2, 2, Material.OBSIDIAN);
+        }
+        for (int z = -1; z <= 1; z++) {
+            set(center, -2, 2, z, Material.OBSIDIAN);
+            set(center, 2, 2, z, Material.OBSIDIAN);
+        }
+
+        chest(center.clone().add(0, 2, 5),
+            new ItemStack(Material.ENDER_PEARL, 2),
+            new ItemStack(Material.END_STONE, 4),
+            new ItemStack(Material.CHORUS_FRUIT, 2)
         );
     }
 

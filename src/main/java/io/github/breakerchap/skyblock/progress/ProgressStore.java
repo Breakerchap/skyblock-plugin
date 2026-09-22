@@ -30,6 +30,17 @@ public final class ProgressStore {
         return value;
     }
 
+    public long getPlayerCounter(UUID uuid, String metric) {
+        return data.getLong("players." + uuid + ".counters." + metric, 0L);
+    }
+
+    public long incrementPlayer(UUID uuid, String metric, long amount) {
+        long value = getPlayerCounter(uuid, metric) + amount;
+        data.set("players." + uuid + ".counters." + metric, value);
+        dirty = true;
+        return value;
+    }
+
     public boolean isCommunityComplete(CommunityGoal goal) {
         return data.getBoolean("community.completed." + goal.id(), false);
     }
@@ -45,6 +56,15 @@ public final class ProgressStore {
 
     public void markIslandsGenerated() {
         data.set("islands.generated", true);
+        dirty = true;
+    }
+
+    public boolean isStarterIslandGenerated() {
+        return data.getBoolean("world.starter-island-generated", false);
+    }
+
+    public void markStarterIslandGenerated() {
+        data.set("world.starter-island-generated", true);
         dirty = true;
     }
 
