@@ -1440,19 +1440,6 @@ public final class IslandManager implements Listener {
         base.clone().add(1,1,0).getBlock().setType(Material.BARREL,false);
     }
 
-    private void carveCrossEntrance(Location center, int radius, int halfWidth) {
-        for (int i = radius - 4; i <= radius + 1; i++) {
-            for (int w = -halfWidth / 2; w <= halfWidth / 2; w++) {
-                for (int y = -1; y <= 4; y++) {
-                    set(center, w, y, i, Material.AIR);
-                    set(center, w, y, -i, Material.AIR);
-                    set(center, i, y, w, Material.AIR);
-                    set(center, -i, y, w, Material.AIR);
-                }
-            }
-        }
-    }
-
     private void placeGlowVine(Location center, int x, int y, int z, int length) {
         for (int i = 0; i < length - 1; i++) set(center, x, y - i, z, Material.CAVE_VINES_PLANT);
         Block tip = block(center, x, y - length + 1, z);
@@ -1470,102 +1457,6 @@ public final class IslandManager implements Listener {
         }
     }
 
-    private void buildPalm(Location base) {
-        for (int y = 0; y < 6; y++) base.clone().add(0, y, 0).getBlock().setType(Material.JUNGLE_LOG, false);
-        for (int x = -3; x <= 3; x++) base.clone().add(x, 5, 0).getBlock().setType(Material.JUNGLE_LEAVES, false);
-        for (int z = -3; z <= 3; z++) base.clone().add(0, 5, z).getBlock().setType(Material.JUNGLE_LEAVES, false);
-        base.clone().add(0, 6, 0).getBlock().setType(Material.JUNGLE_LEAVES, false);
-    }
-
-    private void buildMangrove(Location base) {
-        for (int y = 0; y < 5; y++) base.clone().add(0, y, 0).getBlock().setType(Material.MANGROVE_LOG, false);
-        for (int x = -2; x <= 2; x++) {
-            for (int z = -2; z <= 2; z++) {
-                if (x * x + z * z <= 6) base.clone().add(x, 5, z).getBlock().setType(Material.MANGROVE_LEAVES, false);
-            }
-        }
-        base.clone().add(-1, 0, 0).getBlock().setType(Material.MANGROVE_ROOTS, false);
-        base.clone().add(1, 0, 0).getBlock().setType(Material.MANGROVE_ROOTS, false);
-    }
-
-    private void buildWitchHut(Location base) {
-        for (int x = -2; x <= 2; x++) {
-            for (int z = -2; z <= 2; z++) base.clone().add(x, 2, z).getBlock().setType(Material.SPRUCE_PLANKS, false);
-        }
-        for (int[] p : new int[][]{{-2,-2},{-2,2},{2,-2},{2,2}}) {
-            for (int y = 0; y <= 4; y++) base.clone().add(p[0], y, p[1]).getBlock().setType(Material.SPRUCE_LOG, false);
-        }
-        for (int x = -3; x <= 3; x++) {
-            for (int z = -3; z <= 3; z++) base.clone().add(x, 5, z).getBlock().setType(Material.DARK_OAK_SLAB, false);
-        }
-        base.clone().add(0, 3, 0).getBlock().setType(Material.CAULDRON, false);
-    }
-
-    private void buildSandstoneArch(Location base) {
-        for (int y = 0; y <= 5; y++) {
-            base.clone().add(-3, y, 0).getBlock().setType(Material.CUT_SANDSTONE, false);
-            base.clone().add(3, y, 0).getBlock().setType(Material.CUT_SANDSTONE, false);
-        }
-        for (int x = -3; x <= 3; x++) base.clone().add(x, 5, 0).getBlock().setType(Material.CHISELED_SANDSTONE, false);
-    }
-
-    private void giantMushroom(Location base, boolean red, int height) {
-        for (int y = 0; y < height; y++) base.clone().add(0, y, 0).getBlock().setType(Material.MUSHROOM_STEM, false);
-        Material cap = red ? Material.RED_MUSHROOM_BLOCK : Material.BROWN_MUSHROOM_BLOCK;
-        int radius = red ? 3 : 2;
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                if (x * x + z * z <= radius * radius + 2) base.clone().add(x, height, z).getBlock().setType(cap, false);
-            }
-        }
-    }
-
-    private void buildSpruce(Location base) {
-        for (int y = 0; y < 6; y++) base.clone().add(0, y, 0).getBlock().setType(Material.SPRUCE_LOG, false);
-        for (int y = 3; y <= 6; y++) {
-            int r = Math.max(1, 4 - (y - 3));
-            for (int x = -r; x <= r; x++) {
-                for (int z = -r; z <= r; z++) {
-                    if (Math.abs(x) + Math.abs(z) <= r + 1) base.clone().add(x, y, z).getBlock().setType(Material.SPRUCE_LEAVES, false);
-                }
-            }
-        }
-    }
-
-    private void buildOak(Location base, int height) {
-        for (int y = 0; y < height; y++) base.clone().add(0, y, 0).getBlock().setType(Material.OAK_LOG, false);
-        for (int y = height - 2; y <= height; y++) {
-            for (int x = -2; x <= 2; x++) {
-                for (int z = -2; z <= 2; z++) {
-                    if (x * x + z * z <= 6) base.clone().add(x, y, z).getBlock().setType(Material.OAK_LEAVES, false);
-                }
-            }
-        }
-    }
-
-    private void buildVillageHouse(Location base, Material floor, Material wall, Material roof) {
-        for (int x = -3; x <= 3; x++) {
-            for (int z = -3; z <= 3; z++) base.clone().add(x, 0, z).getBlock().setType(floor, false);
-        }
-        for (int y = 1; y <= 4; y++) {
-            for (int x = -3; x <= 3; x++) {
-                base.clone().add(x, y, -3).getBlock().setType(wall, false);
-                base.clone().add(x, y, 3).getBlock().setType(wall, false);
-            }
-            for (int z = -2; z <= 2; z++) {
-                base.clone().add(-3, y, z).getBlock().setType(wall, false);
-                base.clone().add(3, y, z).getBlock().setType(wall, false);
-            }
-        }
-        for (int x = -4; x <= 4; x++) {
-            for (int z = -4; z <= 4; z++) base.clone().add(x, 5, z).getBlock().setType(roof, false);
-        }
-        base.clone().add(0, 1, 3).getBlock().setType(Material.AIR, false);
-        base.clone().add(0, 2, 3).getBlock().setType(Material.AIR, false);
-        base.clone().add(-1, 1, 0).getBlock().setType(Material.RED_BED, false);
-        base.clone().add(1, 1, 0).getBlock().setType(Material.YELLOW_BED, false);
-    }
-
     private <T extends org.bukkit.entity.LivingEntity> void spawnIfFewer(
         Location center, Class<T> type, int target, double rx, double ry, double rz, Location spawn
     ) {
@@ -1573,29 +1464,6 @@ public final class IslandManager implements Listener {
         if (count < target) {
             T entity = center.getWorld().spawn(spawn, type);
             entity.setPersistent(true);
-        }
-    }
-
-    private void ellipsoid(Location center, int radiusX, int radiusY, int radiusZ, Material material) {
-        for (int x = -radiusX; x <= radiusX; x++) {
-            for (int y = -radiusY; y <= radiusY; y++) {
-                for (int z = -radiusZ; z <= radiusZ; z++) {
-                    double value =
-                        (x * x) / (double) (radiusX * radiusX)
-                            + (y * y) / (double) (radiusY * radiusY)
-                            + (z * z) / (double) (radiusZ * radiusZ);
-                    if (value <= 1.0) set(center, x, y, z, material);
-                }
-            }
-        }
-    }
-
-    private void cap(Location center, int radiusX, int radiusZ, Material material) {
-        for (int x = -radiusX; x <= radiusX; x++) {
-            for (int z = -radiusZ; z <= radiusZ; z++) {
-                double value = (x * x) / (double) (radiusX * radiusX) + (z * z) / (double) (radiusZ * radiusZ);
-                if (value <= 1.0) set(center, x, 1, z, material);
-            }
         }
     }
 

@@ -19,6 +19,16 @@ A self-contained Paper 26.3 Skyblock plugin for a small vanilla-client server.
 
 ## Structures
 
+The exploration landmarks use **hand-authored block layouts**, not generic sphere/ellipsoid generators. Their silhouettes, terrain layers, paths, caves and architectural details are placed deliberately. Where Minecraft already has a strong vanilla building, the plugin loads the server's built-in structure template at runtime instead of copying third-party builds.
+
+Currently reused vanilla templates:
+- `minecraft:village/plains/houses/plains_small_house_4`
+- `minecraft:village/plains/houses/plains_library_1`
+- `minecraft:ruined_portal/portal_7`
+
+The plugin does not redistribute third-party builder schematics. If a built-in template cannot be loaded, a plugin-authored fallback is used.
+
+
 The structures are small destinations/biomes rather than floating loot boxes.
 
 - **Lush Hollow** — a hollow cave with moss, rooted dirt, clay, a water pond, glow-berry vines, dripleaf, spore blossoms and axolotls. The area uses the Lush Caves biome.
