@@ -171,17 +171,17 @@ public final class AdvancementCatalog {
         challenge(d, "end/beacon", "end/dragon", "Beacon of Hope-ish", "Place a beacon.", Material.BEACON);
         goal(d, "end/void_death", "end/root", "The Void Has Layers", "Fall into the void in the End.", Material.ENDER_PEARL);
 
-        hiddenGoal(d, "exploration/lush", "exploration/root", "A Speck of Green", "Find the Lush Outcrop.", Material.MOSS_BLOCK);
-        hiddenGoal(d, "exploration/dripstone", "exploration/root", "Stone Teeth", "Find the Dripstone Spire.", Material.POINTED_DRIPSTONE);
-        hiddenGoal(d, "exploration/moor", "exploration/root", "Mud in the Sky", "Find the Witch's Moor.", Material.MUD);
-        hiddenGoal(d, "exploration/portal", "exploration/root", "Who Built This?", "Find the Ruined Portal.", Material.CRYING_OBSIDIAN);
-        hiddenGoal(d, "exploration/monument", "exploration/root", "Sea Without an Ocean", "Find the Monument Shard.", Material.PRISMARINE);
-        hiddenGoal(d, "exploration/desert", "exploration/root", "Sand in the Sky", "Find the Desert Shrine.", Material.SANDSTONE);
+        hiddenGoal(d, "exploration/lush", "exploration/root", "Moss Definitely", "Find the Lush Hollow.", Material.MOSS_BLOCK);
+        hiddenGoal(d, "exploration/dripstone", "exploration/root", "Point Taken", "Find the Dripstone Cathedral.", Material.POINTED_DRIPSTONE);
+        hiddenGoal(d, "exploration/moor", "exploration/root", "Moor or Less", "Find the Witch's Moor.", Material.MUD);
+        hiddenGoal(d, "exploration/portal", "exploration/root", "Portal Kombat", "Find the Ruined Portal.", Material.CRYING_OBSIDIAN);
+        hiddenGoal(d, "exploration/monument", "exploration/root", "Seaing Is Believing", "Find the Drowned Monument.", Material.PRISMARINE);
+        hiddenGoal(d, "exploration/desert", "exploration/root", "Water You Doing Here?", "Find the Desert Oasis.", Material.SANDSTONE);
         hiddenGoal(d, "exploration/frozen", "exploration/root", "Ice to Meet You", "Find the Frozen Observatory.", Material.PACKED_ICE);
-        hiddenGoal(d, "exploration/mushroom", "exploration/root", "Fungal Real Estate", "Find the Mushroom Colony.", Material.MYCELIUM);
-        hiddenGoal(d, "exploration/geode", "exploration/root", "Purple Pocket", "Find the Amethyst Geode.", Material.AMETHYST_BLOCK);
-        hiddenGoal(d, "exploration/apiary", "exploration/root", "Buzzing in the Void", "Find the Apiary.", Material.BEEHIVE);
-        hiddenChallenge(d, "exploration/end_shrine", "exploration/root", "A Door to Somewhere Else", "Find the End Shrine.", Material.END_PORTAL_FRAME);
+        hiddenGoal(d, "exploration/mushroom", "exploration/root", "Fun Guy in the Sky", "Find the Mushroom Colony.", Material.MYCELIUM);
+        hiddenGoal(d, "exploration/geode", "exploration/root", "Amethyst a Chance", "Find the Broken Geode.", Material.AMETHYST_BLOCK);
+        hiddenGoal(d, "exploration/apiary", "exploration/root", "Hive Above", "Find the Void Apiary.", Material.BEEHIVE);
+        hiddenChallenge(d, "exploration/end_shrine", "exploration/root", "End of the Road", "Find the End Shrine.", Material.END_PORTAL_FRAME);
         hiddenGoal(d, "exploration/village", "exploration/root", "Population: Two", "Find the Little Village.", Material.BELL);
         challenge(d, "exploration/all", "exploration/root", "Void Cartographer", "Discover every exploration island.", Material.FILLED_MAP);
 
