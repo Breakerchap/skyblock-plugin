@@ -114,21 +114,7 @@ public final class TraderManager implements Listener {
     }
 
     public boolean summonFor(Player player, boolean adminOverride) {
-        if (!adminOverride) {
-            boolean nearbyTrader = player.getWorld().getNearbyEntities(
-                player.getLocation(), 64, 32, 64,
-                entity -> entity instanceof WanderingTrader
-            ).stream().findAny().isPresent();
-
-            if (nearbyTrader) {
-                player.sendMessage(Component.text(
-                    "A wandering trader is already nearby. No need to ring again yet.",
-                    NamedTextColor.YELLOW
-                ));
-                return false;
-            }
-        }
-
+        // Deliberately unlimited: every ring may summon another trader.
         Location spawn = findSpawn(player);
         WanderingTrader trader = player.getWorld().spawn(spawn, WanderingTrader.class);
         configureTrader(trader);

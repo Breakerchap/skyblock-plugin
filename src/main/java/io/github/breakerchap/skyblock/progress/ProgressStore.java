@@ -68,6 +68,15 @@ public final class ProgressStore {
         dirty = true;
     }
 
+    public boolean isStarterChestInitialized() {
+        return data.getBoolean("world.starter-chest-initialized", false);
+    }
+
+    public void markStarterChestInitialized() {
+        data.set("world.starter-chest-initialized", true);
+        dirty = true;
+    }
+
     public long getTraderCooldownUntil(UUID uuid) {
         return data.getLong("trader.cooldowns." + uuid, 0L);
     }

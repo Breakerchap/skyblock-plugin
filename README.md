@@ -2,89 +2,96 @@
 
 A self-contained Paper 26.3 Skyblock plugin for a small vanilla-client server.
 
-**Clients need no mods or resource pack.**
+**Vanilla clients need no mods or resource pack.**
 
 ## Included
 
-- A generated **true void overworld** named `skyblock` by default.
-- A starter island with a tree, dirt/grass, and the essentials for a cobblestone generator.
-- **251 custom advancements** across Skyblock progression, farming, engineering, combat, exploration, community, collection and deliberately silly side goals.
-- Vanilla Minecraft advancement progress is suppressed, so players use the custom advancement system instead.
-- Persistent personal counters and eight communal goals.
-- Progression-gated renewable-resource recipes.
-- A craftable **Wayfarer's Bell** whose recipe is visible to every player from the start.
-- A cheap **Void Trowel** whose recipe is also visible from the start.
-- Reworked wandering traders that sell renewable resources, maps to progression structures and expensive spawn eggs for awkward/impossible Skyblock mobs.
-- Twelve hand-built exploration islands/structures, now placed a few hundred blocks away instead of well over a thousand:
-  - Lush Outcrop
-  - Dripstone Spire
-  - Witch's Moor
-  - Ruined Portal
-  - Monument Shard
-  - Desert Shrine
-  - Frozen Observatory
-  - Mushroom Colony
-  - Amethyst Geode
-  - Void Apiary
-  - End Shrine
-  - Little Village
+- A generated true-void overworld named `skyblock`.
+- A starter island with a tree and a one-time starter chest containing the lava/ice/sapling/seeds needed to get moving.
+- **251 custom advancements**, with most titles written as puns, references or jokes rather than plain item names.
+- Vanilla advancement progress suppressed in favour of the Skyblock advancement trees.
+- Persistent personal counters and communal milestones.
+- Seven registered custom crafting recipes, all checked at plugin startup.
+- An unlimited-use **Wayfarer's Bell** for summoning wandering traders.
+- A cheap **Void Trowel** for Bedrock-style forward bridging in Java.
+- Wandering traders with renewable resources, structure maps, and rare Skyblock mob spawn eggs.
+- Twelve hand-built progression structures with environmental resources instead of loot chests.
 
-The Little Village contains two persistent villagers, beds, farms and a bell. The End Shrine contains a working portal.
+## Structures
 
-## Void Trowel / Bedrock-style bridging
+The structures are small destinations/biomes rather than floating loot boxes.
 
-Craft the **Void Trowel** from two cobblestone and a stick. Put it in your **offhand** and put normal placeable blocks in your main hand.
+- **Lush Hollow** — a hollow cave with moss, rooted dirt, clay, a water pond, glow-berry vines, dripleaf, spore blossoms and axolotls. The area uses the Lush Caves biome.
+- **Dripstone Cathedral** — a deepslate/tuff cavern with stalactites, stalagmites, water, lava and exposed copper.
+- **Witch's Moor** — muddy mangrove wetland, lily pads, a stilt hut, frogs and a resident witch.
+- **Ruined Portal** — blackstone/netherrack ruin with a working portal, magma, crying obsidian and gilded blackstone.
+- **Drowned Monument** — broken prismarine arch surrounding a water court, sea lanterns, sponge and guardians.
+- **Desert Oasis** — sandstone island with an oasis, palms, sugar cane, cactus, a ruined arch and a camel.
+- **Frozen Observatory** — snowy/icy island with a little calcite/copper observatory, blue ice, powder snow, spruce and goats.
+- **Mushroom Colony** — giant mushrooms, mycelium and mooshrooms.
+- **Broken Geode** — walk-in basalt/calcite/amethyst geode with budding amethyst and clusters.
+- **Void Apiary** — flower meadow, oak tree, bee nests/hives, honey blocks and bees.
+- **End Shrine** — purpur/end-stone temple with a working End portal.
+- **Little Village** — two houses, farms, bell, two persistent villagers and the only exploration-structure loot chest.
 
-While standing on the end of a bridge, right-click while facing where you want to go. The plugin places the next block directly in front of the block under your feet, so you do not need to look down at the edge like normal Java bridging.
+Outside the starter island and village, progression resources come from the structure itself rather than chests.
 
-Container blocks such as shulker boxes are intentionally excluded from this shortcut so their stored data cannot be lost.
+## Bells and wandering traders
 
-## Wandering traders
+Vanilla bells are normally obtained from villages or villager trading rather than through a normal crafting recipe. This plugin adds one:
 
-The Wayfarer's Bell has **no cooldown**. Ringing it summons a trader as long as another wandering trader is not already nearby.
+```text
+G I G
+  S
+```
 
-Each trader gets a random mix of:
+where `G` is a gold ingot, `I` an iron ingot and `S` a stick.
 
-- renewable Skyblock resources,
-- several filled maps centred on random exploration structures,
-- several rare spawn eggs.
+The Wayfarer's Bell recipe is visible from the start. It has **no cooldown and no nearby-trader limit**: every valid ring may summon another trader.
 
-The rare egg pool currently includes goats, axolotls, frogs, turtles, armadillos, camels, allays and sniffers. These are intentionally expensive and have limited uses.
+## Void Trowel
 
-## Advancement direction
+Recipe:
 
-The advancement tree is not intended to be a crafting checklist. Basic resource milestones remain where obtaining that resource is actually meaningful in Skyblock, but low-value entries such as “make a dropper”, “make a comparator”, “make a repeater”, and similar component-by-component achievements were removed.
+```text
+I
+S
+```
 
-Situation-based goals include:
+where `I` is an iron ingot and `S` a stick.
 
-- **Whatever Floats Your Goat** — put a goat in a boat.
-- **Buzz Cruise** — put a bee in a boat.
-- **Village People** — get five villagers together.
-- **Skeleton Crew** — kill a skeleton while it is riding in a boat.
-- **Air Superiority** — kill a hostile mob with no block beneath you.
-- **What Did You Expect?** — try to sleep in the Nether.
-- **Bedrock at Home** — use the Void Trowel.
-- **Don't Look Down** — place 64 bridge blocks with it.
-- **Bedrock Bridger** — use it while sprinting.
-- **Frequent Caller** — summon five wandering traders.
-- **He Knows Your Number** — summon 25.
-- **Safety Third** — use the trowel while wearing no armour.
-- **The Void Has Layers** — fall into the void in the End.
+Put the Void Trowel in your **offhand** and ordinary placeable blocks in your main hand. While standing on the end of a bridge, right-click while facing where you want to go. The plugin places the next block in front of the block under your feet, so you do not need to aim at its edge.
 
-The existing Questionable Decisions tab still contains things such as eating rotten flesh, carrying 16 beds, making a netherite hoe and repeatedly verifying that gravity still works.
+Container blocks are excluded from this shortcut so their data cannot be accidentally destroyed.
 
-## World generation
+## Recipes
 
-On first start the plugin creates the configured `world:` as a void world and builds the starter island at its spawn. First-time players are teleported there automatically. Nether return portals and End return/respawn paths are redirected back into the Skyblock world.
+All custom recipes are ordinary Paper/Bukkit shaped or shapeless recipes in the `skyblock` recipe group. The plugin verifies after registration that every recipe can be retrieved from Paper's recipe registry; startup fails loudly instead of silently dropping a broken recipe.
 
-### Updating an existing test world
+Exact ingredients and unlock conditions are documented in `docs/recipes.md`.
 
-Structure coordinates are stored only in code, while the generated blocks remain in the world. After changing to this version, the cleanest test is to stop the server and delete:
+### JEI / recipe-viewer compatibility
+
+The recipes themselves are standard server recipes, rather than recipes implemented in a custom GUI, so they are suitable for recipe-viewer synchronisation.
+
+There is an important modern-Minecraft limitation: since 1.21.2 the vanilla server no longer sends the complete recipe data set to clients, so a client-only JEI installation cannot discover server-added recipes by itself. For JEI, use a compatible server-side recipe-sync plugin such as **JEIRecipeFix**; this plugin declares it as a soft dependency so the sync plugin can load first. The vanilla recipe book works without JEI, and always-available recipes such as Bell, Wayfarer's Bell and Void Trowel are discovered for every player.
+
+At the time this was written, JEIRecipeFix publicly listed support through Paper 26.2, so **do not assume its current build is safe on 26.3 until it explicitly supports 26.3**. The Skyblock recipe definitions themselves need no JEI-specific changes once a compatible recipe-sync layer is present.
+
+## Advancements
+
+The advancement tree is deliberately not named like an item checklist. Even collection entries use titles such as **Granite Expectations**, **Another Brick in the Void**, **Coal Me Maybe**, **Prismarine Without the Marine**, **Shell Company**, **Forklift Certified** and **Key Performance Indicator**.
+
+Situation-based goals include **Whatever Floats Your Goat**, **Buzz Cruise**, **Skeleton Crew**, **What Did You Expect?**, **Don't Look Down**, **Bedrock Bridger**, **He Knows Your Number**, **Safety Third** and **The Void Has Layers**.
+
+## Updating an existing test world
+
+The structures are written into world blocks. To see the rebuilt structures cleanly after updating the jar, stop the server and delete:
 
 - `skyblock/`
 - `plugins/SkyblockProgression/data.yml`
 
-Then restart. That regenerates the world with the new, closer structure layout and Little Village instead of leaving the old distant structures behind.
+Then restart. Keep the plugin jar.
 
 ## Requirements
 
@@ -93,14 +100,16 @@ Then restart. That regenerates the world with the new, closer structure layout a
 
 ## Build
 
-    mvn verify
+```text
+mvn verify
+```
 
 The jar is produced under `target/`.
 
 ## Commands
 
 - `/skyblock progress` — communal counters and your custom advancement count.
-- `/skyblock islands` — normal players see the number of hidden structures; operators see exact coordinates.
-- `/skyblock islands generate [force]` — generate/regenerate structures; op only.
-- `/skyblock trader` — summon a test trader immediately; op only.
+- `/skyblock islands` — normal players see how many hidden structures exist; operators see coordinates.
+- `/skyblock islands generate [force]` — regenerate structures; op only.
+- `/skyblock trader` — summon a trader immediately; op only.
 - `/skyblock grant <player> <advancement-id>` — admin/debug grant.

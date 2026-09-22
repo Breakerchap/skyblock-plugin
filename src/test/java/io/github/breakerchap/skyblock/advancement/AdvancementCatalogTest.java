@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AdvancementCatalogTest {
@@ -28,5 +29,16 @@ class AdvancementCatalogTest {
                 assertTrue(ids.contains(definition.parentId()),
                     "missing parent " + definition.parentId() + " for " + definition.id())
             );
+    }
+
+    @Test
+    void collectionNamesAreNotJustRawItemNames() {
+        AdvancementCatalog.collectionMaterials().forEach(material ->
+            assertNotEquals(
+                AdvancementCatalog.pretty(material),
+                AdvancementCatalog.collectionTitle(material),
+                "collection advancement should have a joke/pun title: " + material
+            )
+        );
     }
 }

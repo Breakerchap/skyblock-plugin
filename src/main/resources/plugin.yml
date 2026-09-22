@@ -5,6 +5,7 @@ api-version: '26.3'
 author: Breakerchap
 description: Self-contained vanilla-client Skyblock world, progression, structures, communal goals and traders.
 website: https://github.com/Breakerchap/skyblock-plugin
+softdepend: [JEIRecipeFix]
 
 commands:
   skyblock:

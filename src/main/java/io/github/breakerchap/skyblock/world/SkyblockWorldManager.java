@@ -59,9 +59,18 @@ public final class SkyblockWorldManager implements Listener {
         world.setSpawnLocation(0, y + 2, 0);
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
 
-        if (!store.isStarterIslandGenerated() || plugin.getConfig().getBoolean("world-generation.rebuild-starter-on-start", false)) {
-            buildStarterIsland(new Location(world, 0, y, 0));
+        Location starterCenter = new Location(world, 0, y, 0);
+        boolean rebuild = !store.isStarterIslandGenerated()
+            || plugin.getConfig().getBoolean("world-generation.rebuild-starter-on-start", false)
+            || starterCenter.getBlock().isEmpty();
+
+        if (rebuild) {
+            buildStarterIsland(starterCenter);
             store.markStarterIslandGenerated();
+            populateStarterChest(starterCenter, true);
+            store.save();
+        } else if (!store.isStarterChestInitialized()) {
+            populateStarterChest(starterCenter, false);
             store.save();
         }
 
@@ -152,19 +161,34 @@ public final class SkyblockWorldManager implements Listener {
         set(center, 0, -3, 0, Material.STONE);
         buildOak(center.clone().add(-2, 1, -1));
 
+        center.clone().add(2, 1, 1).getBlock().setType(Material.CHEST, false);
+    }
+
+    private void populateStarterChest(Location center, boolean force) {
         Block chestBlock = center.clone().add(2, 1, 1).getBlock();
-        chestBlock.setType(Material.CHEST, false);
-        if (chestBlock.getState() instanceof Chest chest) {
-            chest.getBlockInventory().clear();
-            chest.getBlockInventory().addItem(
-                new ItemStack(Material.LAVA_BUCKET, 1),
-                new ItemStack(Material.ICE, 2),
-                new ItemStack(Material.OAK_SAPLING, 1),
-                new ItemStack(Material.PUMPKIN_SEEDS, 1),
-                new ItemStack(Material.SUGAR_CANE, 1)
-            );
-            chest.update(true, false);
+        if (chestBlock.getType() != Material.CHEST) {
+            chestBlock.setType(Material.CHEST, false);
         }
+        if (!(chestBlock.getState() instanceof Chest chest)) {
+            plugin.getLogger().warning("Starter chest could not be initialised.");
+            return;
+        }
+
+        if (!force && !chest.getBlockInventory().isEmpty()) {
+            store.markStarterChestInitialized();
+            return;
+        }
+
+        chest.getBlockInventory().clear();
+        chest.getBlockInventory().setItem(0, new ItemStack(Material.LAVA_BUCKET));
+        chest.getBlockInventory().setItem(2, new ItemStack(Material.ICE, 2));
+        chest.getBlockInventory().setItem(4, new ItemStack(Material.OAK_SAPLING));
+        chest.getBlockInventory().setItem(6, new ItemStack(Material.PUMPKIN_SEEDS));
+        chest.getBlockInventory().setItem(8, new ItemStack(Material.SUGAR_CANE));
+        chest.getBlockInventory().setItem(10, new ItemStack(Material.MELON_SEEDS));
+        chest.update(true, false);
+        store.markStarterChestInitialized();
+        plugin.getLogger().info("Starter chest initialised with Skyblock starter items.");
     }
 
     private void buildOak(Location base) {

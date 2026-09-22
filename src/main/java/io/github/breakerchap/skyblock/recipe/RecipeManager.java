@@ -26,6 +26,16 @@ import java.util.List;
 import java.util.Map;
 
 public final class RecipeManager implements Listener {
+    public static final List<String> REGISTERED_RECIPE_IDS = List.of(
+        "gravel_from_cobblestone",
+        "sand_from_gravel",
+        "dirt_cultivation",
+        "calcite_from_quartz",
+        "bell",
+        "wayfarer_bell",
+        "void_trowel"
+    );
+
     private final SkyblockPlugin plugin;
     private final ProgressionService progression;
     private final NamespacedKey wayfarerBellTag;
@@ -44,28 +54,33 @@ public final class RecipeManager implements Listener {
         registerSand();
         registerDirt();
         registerCalcite();
+        registerBell();
         registerWayfarerBell();
         registerVoidTrowel();
         Bukkit.updateRecipes();
+        verifyRegisteredRecipes();
     }
 
     private void registerGravel() {
-        NamespacedKey key = new NamespacedKey(plugin, "gravel_from_cobblestone");
+        NamespacedKey key = key("gravel_from_cobblestone");
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(Material.GRAVEL));
+        recipe.setGroup("skyblock");
         recipe.addIngredient(4, Material.COBBLESTONE);
         register(key, recipe, Unlock.personal("getting_started/cobblestone", "Gravel from Cobblestone"));
     }
 
     private void registerSand() {
-        NamespacedKey key = new NamespacedKey(plugin, "sand_from_gravel");
+        NamespacedKey key = key("sand_from_gravel");
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(Material.SAND));
+        recipe.setGroup("skyblock");
         recipe.addIngredient(2, Material.GRAVEL);
         register(key, recipe, Unlock.community(CommunityGoal.COBBLE, "Sand from Gravel"));
     }
 
     private void registerDirt() {
-        NamespacedKey key = new NamespacedKey(plugin, "dirt_cultivation");
+        NamespacedKey key = key("dirt_cultivation");
         ShapedRecipe recipe = new ShapedRecipe(key, new ItemStack(Material.DIRT, 2));
+        recipe.setGroup("skyblock");
         recipe.shape("FFF", "FDF", "FFF");
         recipe.setIngredient('F', Material.ROTTEN_FLESH);
         recipe.setIngredient('D', Material.DIRT);
@@ -73,16 +88,29 @@ public final class RecipeManager implements Listener {
     }
 
     private void registerCalcite() {
-        NamespacedKey key = new NamespacedKey(plugin, "calcite_from_quartz");
+        NamespacedKey key = key("calcite_from_quartz");
         ShapelessRecipe recipe = new ShapelessRecipe(key, new ItemStack(Material.CALCITE, 2));
+        recipe.setGroup("skyblock");
         recipe.addIngredient(2, Material.QUARTZ);
         recipe.addIngredient(2, Material.BONE_MEAL);
         register(key, recipe, Unlock.personal("nether/root", "Calcite"));
     }
 
+    private void registerBell() {
+        NamespacedKey key = key("bell");
+        ShapedRecipe recipe = new ShapedRecipe(key, new ItemStack(Material.BELL));
+        recipe.setGroup("skyblock");
+        recipe.shape("GIG", " S ");
+        recipe.setIngredient('G', Material.GOLD_INGOT);
+        recipe.setIngredient('I', Material.IRON_INGOT);
+        recipe.setIngredient('S', Material.STICK);
+        register(key, recipe, Unlock.always("Bell"));
+    }
+
     private void registerWayfarerBell() {
-        NamespacedKey key = new NamespacedKey(plugin, "wayfarer_bell");
+        NamespacedKey key = key("wayfarer_bell");
         ShapedRecipe recipe = new ShapedRecipe(key, createWayfarerBell());
+        recipe.setGroup("skyblock");
         recipe.shape("EGE", "GBG", "EGE");
         recipe.setIngredient('E', Material.EMERALD);
         recipe.setIngredient('G', Material.GOLD_INGOT);
@@ -91,20 +119,35 @@ public final class RecipeManager implements Listener {
     }
 
     private void registerVoidTrowel() {
-        NamespacedKey key = new NamespacedKey(plugin, "void_trowel");
+        NamespacedKey key = key("void_trowel");
         ShapedRecipe recipe = new ShapedRecipe(key, createVoidTrowel());
-        recipe.shape(" C ", " C ", " S ");
-        recipe.setIngredient('C', Material.COBBLESTONE);
+        recipe.setGroup("skyblock");
+        recipe.shape("I", "S");
+        recipe.setIngredient('I', Material.IRON_INGOT);
         recipe.setIngredient('S', Material.STICK);
         register(key, recipe, Unlock.always("Void Trowel"));
+    }
+
+    private NamespacedKey key(String id) {
+        return new NamespacedKey(plugin, id);
     }
 
     private void register(NamespacedKey key, Recipe recipe, Unlock unlock) {
         Bukkit.removeRecipe(key);
         if (!Bukkit.addRecipe(recipe)) {
-            plugin.getLogger().warning("Could not register recipe " + key);
+            throw new IllegalStateException("Paper rejected custom recipe " + key);
         }
         unlocks.put(key, unlock);
+    }
+
+    private void verifyRegisteredRecipes() {
+        for (String id : REGISTERED_RECIPE_IDS) {
+            NamespacedKey key = key(id);
+            if (Bukkit.getRecipe(key) == null) {
+                throw new IllegalStateException("Custom recipe was not present after registration: " + key);
+            }
+        }
+        plugin.getLogger().info("Verified " + REGISTERED_RECIPE_IDS.size() + " custom crafting recipes.");
     }
 
     public ItemStack createWayfarerBell() {
@@ -113,7 +156,7 @@ public final class RecipeManager implements Listener {
         meta.displayName(Component.text("Wayfarer's Bell", NamedTextColor.GOLD));
         meta.lore(List.of(
             Component.text("Ring under the open sky to call a wandering trader.", NamedTextColor.GRAY),
-            Component.text("Reusable. No cooldown.", NamedTextColor.DARK_GRAY)
+            Component.text("Reusable. Ring it as often as you like.", NamedTextColor.DARK_GRAY)
         ));
         meta.getPersistentDataContainer().set(wayfarerBellTag, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
@@ -125,9 +168,9 @@ public final class RecipeManager implements Listener {
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("Void Trowel", NamedTextColor.AQUA));
         meta.lore(List.of(
-            Component.text("Hold this in your offhand and blocks in your main hand.", NamedTextColor.GRAY),
-            Component.text("Right-click to place the next bridge block in front of your feet.", NamedTextColor.GRAY),
-            Component.text("No edge-aiming required.", NamedTextColor.DARK_GRAY)
+            Component.text("Offhand this; hold blocks in your main hand.", NamedTextColor.GRAY),
+            Component.text("Right-click to extend the bridge in front of your feet.", NamedTextColor.GRAY),
+            Component.text("Java bridging, minus the neck pain.", NamedTextColor.DARK_GRAY)
         ));
         meta.getPersistentDataContainer().set(voidTrowelTag, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
