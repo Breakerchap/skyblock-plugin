@@ -1,0 +1,25 @@
+# Leave blank to use the first loaded overworld.
+world: ""
+
+islands:
+  # Safe generation checks remote target areas before placing anything.
+  # If the configured world contains normal terrain, automatic generation aborts.
+  auto-generate: true
+  # Set base-y to an integer to override world spawn Y.
+  # base-y: 64
+
+trader:
+  # Wayfarer's Bell cooldown per player.
+  summon-cooldown-seconds: 3600
+  # Number of Skyblock-focused trades placed on each wandering trader.
+  trade-count: 8
+
+community:
+  cobble:
+    threshold: 5000
+  builder:
+    threshold: 3000
+  hunter:
+    threshold: 250
+  life:
+    threshold: 50
