@@ -8,11 +8,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.structure.Mirror;
+import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Bee;
 import org.bukkit.entity.Camel;
@@ -27,8 +30,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.structure.Structure;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public final class IslandManager implements Listener {
     private final SkyblockPlugin plugin;
@@ -179,45 +185,116 @@ public final class IslandManager implements Listener {
     }
 
     private void buildLush(Location center) {
-        ellipsoid(center, 12, 7, 10, Material.STONE);
-        ellipsoid(center.clone().add(0, 1, 0), 9, 5, 7, Material.AIR);
-        carveCrossEntrance(center, 10, 4);
+        Map<Character, Material> rock = Map.of(
+            '#', Material.STONE,
+            'd', Material.DEEPSLATE,
+            'm', Material.MOSS_BLOCK,
+            'r', Material.ROOTED_DIRT,
+            'c', Material.CLAY,
+            'w', Material.WATER
+        );
 
-        for (int x = -8; x <= 8; x++) {
-            for (int z = -6; z <= 6; z++) {
-                double d = x * x / 64.0 + z * z / 36.0;
-                if (d <= 1.0) {
-                    set(center, x, -4, z, ((x + z) & 3) == 0 ? Material.CLAY : Material.MOSS_BLOCK);
-                }
-            }
+        // Hand-authored cliff/cave slices. The south face is deliberately torn open so
+        // the cave reads clearly from the bridge instead of looking like a floating ball.
+        paintLayer(center, -7, rock,
+            "       d####d       ",
+            "    dd########d    ",
+            "  dd############d  ",
+            " d###############d ",
+            "d#################d",
+            "d#################d",
+            " d###############d ",
+            "  d#############d  ",
+            "    d#########d    ",
+            "       d###d        ");
+        paintLayer(center, -6, rock,
+            "     d########d     ",
+            "   d############d   ",
+            " d################d ",
+            "d##################d",
+            "d##################d",
+            "d##################d",
+            " d################d ",
+            "  d##############d  ",
+            "    d##########d    ",
+            "       d####d       ");
+        paintLayer(center, -5, rock,
+            "    ############    ",
+            "  ################  ",
+            " ################## ",
+            "####mmmmmmmmmmmm####",
+            "###mmmmmmmmmmmmmm###",
+            "###mmmmccccmmmmmm###",
+            "####mmmmmmmmmmmm####",
+            " ####mmmmmmmmmm#### ",
+            "   ##############   ",
+            "      ########       ");
+        paintLayer(center, -4, rock,
+            "    ############    ",
+            "  ###mmmmmmmmmm###  ",
+            " ##mmmmmmmmmmmmmm## ",
+            "##mmmmccccccmmmmmm##",
+            "##mmmccwwwwccmmmm###",
+            "##mmmccwwwwccmmmm###",
+            "##mmmmccccccmmmmmm##",
+            " ##mmmmmmmmmmmmmm## ",
+            "   ####mmmmmm#####  ",
+            "      ########       ");
+        paintLayer(center, -3, rock,
+            "       #####         ",
+            "   mmmmmmmmmmmmm     ",
+            "  mmmmmmmmmmmmmmmm   ",
+            " mmmmmccwwwwccmmmmm  ",
+            " mmmmccwwwwwwccmmmm  ",
+            " mmmmccwwwwwwccmmmm  ",
+            " mmmmmccwwwwccmmmmm  ",
+            "  mmmmmmmmmmmmmmmm   ",
+            "    mmmmmmmmmmmm     ",
+            "       mmmmm         ");
+
+        // Cave walls/roof, built as authored ribs rather than a generated shell.
+        int[][] ribs = {
+            {-9,-2,-3},{-9,-1,-3},{-9,0,-2},{-8,1,-2},{-8,2,-1},{-7,3,-1},
+            {9,-2,-3},{9,-1,-3},{9,0,-2},{8,1,-2},{8,2,-1},{7,3,-1},
+            {-7,4,0},{-6,5,0},{-4,6,0},{-2,6,0},{0,7,0},{2,6,0},{4,6,0},{6,5,0},{7,4,0}
+        };
+        for (int[] p : ribs) {
+            set(center, p[0], p[1], p[2], p[1] >= 4 ? Material.MOSS_BLOCK : Material.STONE);
+        }
+        // Broken roof shelves extend backwards into the cave.
+        for (int z = -7; z <= 0; z++) {
+            set(center, -7, 3, z, Material.STONE);
+            set(center, -6, 4, z, Material.MOSS_BLOCK);
+            set(center, 7, 3, z, Material.STONE);
+            set(center, 6, 4, z, Material.MOSS_BLOCK);
+        }
+        for (int z = -6; z <= -1; z++) {
+            set(center, -3, 6, z, Material.STONE);
+            set(center, 0, 7, z, Material.MOSS_BLOCK);
+            set(center, 3, 6, z, Material.STONE);
         }
 
-        for (int x = -4; x <= 4; x++) {
-            for (int z = -3; z <= 3; z++) {
-                if (x * x + z * z <= 14) {
-                    set(center, x, -3, z, Material.WATER);
-                    set(center, x, -4, z, Material.CLAY);
-                }
-            }
+        // Pond detail.
+        set(center, -3, -2, 0, Material.SMALL_DRIPLEAF);
+        set(center, 3, -2, 1, Material.BIG_DRIPLEAF);
+        set(center, 5, -2, -4, Material.AZALEA);
+        set(center, -5, -2, -5, Material.FLOWERING_AZALEA);
+        set(center, -6, -2, 2, Material.MOSS_CARPET);
+        set(center, 6, -2, 2, Material.MOSS_CARPET);
+        set(center, -2, 5, -3, Material.SPORE_BLOSSOM);
+        set(center, 3, 5, -5, Material.SPORE_BLOSSOM);
+        placeGlowVine(center, -5, 5, -5, 4);
+        placeGlowVine(center, 1, 6, -6, 5);
+        placeGlowVine(center, 5, 4, -3, 3);
+
+        // Hanging roots and little stone teeth make the silhouette less clean/geometric.
+        for (int[] p : new int[][]{{-8,-4,5},{-6,-5,6},{6,-5,5},{8,-4,4},{-3,-6,7},{4,-6,7}}) {
+            set(center, p[0], p[1], p[2], Material.POINTED_DRIPSTONE);
         }
+        setBiomeCube(center, 14, 10, 12, Biome.LUSH_CAVES);
 
-        set(center, -6, -3, 2, Material.ROOTED_DIRT);
-        set(center, 6, -3, -1, Material.ROOTED_DIRT);
-        set(center, -5, -2, -2, Material.FLOWERING_AZALEA);
-        set(center, 5, -2, 2, Material.AZALEA);
-        set(center, -3, -2, 5, Material.SMALL_DRIPLEAF);
-        set(center, 3, -2, 5, Material.BIG_DRIPLEAF);
-        set(center, 0, 5, 0, Material.SPORE_BLOSSOM);
-        placeGlowVine(center, -5, 5, -2, 4);
-        placeGlowVine(center, 4, 5, 1, 3);
-        placeGlowVine(center, 1, 5, 5, 4);
-
-        setBiomeCube(center, 13, 8, 11, Biome.LUSH_CAVES);
-
-        spawnIfFewer(center, Axolotl.class, 2, 12, 8, 10,
-            center.clone().add(-1.5, -2.7, 0.5));
-        spawnIfFewer(center, Axolotl.class, 2, 12, 8, 10,
-            center.clone().add(1.5, -2.7, -0.5));
+        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(-1.5, -2.6, 0.5));
+        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(1.5, -2.6, -0.5));
     }
 
     private void buildDripstone(Location center) {
@@ -322,30 +399,86 @@ public final class IslandManager implements Listener {
     }
 
     private void buildDesert(Location center) {
-        ellipsoid(center, 13, 4, 11, Material.SANDSTONE);
-        cap(center, 12, 10, Material.SAND);
-        for (int x = -5; x <= 5; x++) {
-            for (int z = -4; z <= 4; z++) {
-                if (x * x + z * z <= 20) {
-                    set(center, x, 2, z, Material.WATER);
-                    set(center, x, 1, z, Material.CLAY);
-                }
-            }
+        Map<Character, Material> p = Map.of(
+            's', Material.SAND,
+            'S', Material.SANDSTONE,
+            'r', Material.RED_SAND,
+            'c', Material.CLAY,
+            'w', Material.WATER
+        );
+
+        // Explicit stepped underside and dune plan; no ellipsoid/cap generation.
+        paintLayer(center, -5, p,
+            "       SSSSS       ",
+            "    SSSSSSSSSS     ",
+            "  SSSSSSSSSSSSSS   ",
+            " SSSSSSSSSSSSSSSS  ",
+            "SSSSSSSSSSSSSSSSSS ",
+            " SSSSSSSSSSSSSSSS  ",
+            "  SSSSSSSSSSSSSS   ",
+            "    SSSSSSSSSS     ",
+            "       SSSSS       ");
+        paintLayer(center, -4, p,
+            "    SSSSSSSSSSS    ",
+            "  SSSSSSSSSSSSSSS  ",
+            " SSSSSSSSSSSSSSSSS ",
+            "SSSSSSSSSSSSSSSSSSS",
+            "SSSSSSSSSSSSSSSSSSS",
+            " SSSSSSSSSSSSSSSSS ",
+            "  SSSSSSSSSSSSSSS  ",
+            "    SSSSSSSSSSS    ");
+        paintLayer(center, -3, p,
+            "   SSSSSSSSSSSSS   ",
+            " SSSSSSSSSSSSSSSSS ",
+            "SSSSSSSSSSSSSSSSSSS",
+            "SSSSSSSSSSSSSSSSSSS",
+            "SSSSSSSSSSSSSSSSSSS",
+            "SSSSSSSSSSSSSSSSSSS",
+            " SSSSSSSSSSSSSSSSS ",
+            "   SSSSSSSSSSSSS   ");
+        paintLayer(center, -2, p,
+            "   sssssssssssssss  ",
+            " sssssssssssssssssss",
+            "sssssssssssssssssssss",
+            "sssssssssssssssssssss",
+            "sssssssssssssssssssss",
+            "sssssssssssssssssssss",
+            " sssssssssssssssssss ",
+            "   sssssssssssssss   ");
+        paintLayer(center, -1, p,
+            "    sssssssssssss    ",
+            "  sssssssssssssssss  ",
+            " ssssssscccccsssssss ",
+            "ssssssccwwwwwccssssss",
+            "sssssscwwwwwwwcssssss",
+            "ssssssccwwwwwccssssss",
+            " ssssssscccccsssssss ",
+            "   sssssssssssssss   ");
+
+        // Uneven dunes/ledges.
+        for (int[] q : new int[][]{
+            {-11,0,-3},{-10,0,-3},{-9,0,-3},{-10,1,-3},
+            {9,0,4},{10,0,4},{11,0,4},{10,1,4},
+            {-7,0,7},{-6,0,7},{-5,0,7},{-6,1,7},
+            {5,0,-7},{6,0,-7},{7,0,-7}
+        }) set(center,q[0],q[1],q[2],Material.SAND);
+
+        buildBetterPalm(center.clone().add(-7, 0, -4));
+        buildBetterPalm(center.clone().add(7, 0, 4));
+
+        // Reeds around the oasis and small desert details.
+        for (int[] q : new int[][]{{-4,0,0},{-4,1,0},{-3,0,1},{4,0,-1},{4,1,-1},{3,0,-2}}) {
+            set(center,q[0],q[1],q[2],Material.SUGAR_CANE);
         }
+        for (int y = 0; y <= 2; y++) set(center, -11, y, 3, Material.CACTUS);
+        for (int y = 0; y <= 1; y++) set(center, 11, y, -3, Material.CACTUS);
+        set(center, -8, 0, 6, Material.DEAD_BUSH);
+        set(center, 8, 0, -6, Material.DEAD_BUSH);
+        set(center, 3, 0, 7, Material.RED_SAND);
+        set(center, 4, 0, 7, Material.RED_SAND);
 
-        buildPalm(center.clone().add(-6, 2, -3));
-        buildPalm(center.clone().add(6, 2, 4));
-        for (int y = 2; y <= 4; y++) set(center, -10, y, 2, Material.CACTUS);
-        for (int y = 2; y <= 3; y++) set(center, 10, y, -3, Material.CACTUS);
-        set(center, -5, 2, 5, Material.DEAD_BUSH);
-        set(center, 7, 2, -6, Material.DEAD_BUSH);
-        set(center, -4, 3, 1, Material.SUGAR_CANE);
-        set(center, -3, 3, 1, Material.SUGAR_CANE);
-        set(center, 4, 3, -1, Material.SUGAR_CANE);
-        set(center, 5, 3, -1, Material.SUGAR_CANE);
-        buildSandstoneArch(center.clone().add(0, 2, 7));
-
-        spawnIfFewer(center, Camel.class, 1, 16, 8, 14, center.clone().add(8.5, 3, 0.5));
+        buildBrokenDesertArch(center.clone().add(0, 0, 8));
+        spawnIfFewer(center, Camel.class, 1, 18, 10, 16, center.clone().add(8.5, 1, 0.5));
     }
 
     private void buildFrozen(Location center) {
@@ -452,52 +585,260 @@ public final class IslandManager implements Listener {
     }
 
     private void buildVillage(Location center) {
-        ellipsoid(center, 14, 4, 12, Material.DIRT);
-        cap(center, 13, 11, Material.GRASS_BLOCK);
-        buildVillageHouse(center.clone().add(-7, 2, -3), Material.OAK_PLANKS, Material.OAK_LOG, Material.OAK_SLAB);
-        buildVillageHouse(center.clone().add(7, 2, -3), Material.COBBLESTONE, Material.STONE_BRICKS, Material.STONE_BRICK_SLAB);
-        set(center, 0, 2, 0, Material.BELL);
+        Map<Character, Material> p = Map.of(
+            'g', Material.GRASS_BLOCK,
+            'd', Material.DIRT,
+            's', Material.STONE,
+            'c', Material.COBBLESTONE,
+            'p', Material.DIRT_PATH,
+            'w', Material.WATER,
+            'f', Material.FARMLAND
+        );
 
-        for (int x = -5; x <= 5; x++) {
-            set(center, x, 2, 6, Material.FARMLAND);
-            set(center, x, 2, 7, Material.FARMLAND);
-            set(center, x, 3, 6, x % 2 == 0 ? Material.WHEAT : Material.CARROTS);
-            set(center, x, 3, 7, x % 2 == 0 ? Material.POTATOES : Material.WHEAT);
-        }
-        set(center, 0, 2, 8, Material.WATER);
-        set(center, -8, 2, 5, Material.HAY_BLOCK);
-        set(center, -8, 3, 5, Material.HAY_BLOCK);
-        set(center, 8, 2, 5, Material.COMPOSTER);
+        // Hand-authored floating terrain with a lopsided rock underside.
+        paintLayer(center, -6, p,
+            "        sssss        ",
+            "     sssssssssss     ",
+            "   sssssssssssssss   ",
+            "  sssssssssssssssss  ",
+            "   sssssssssssssss   ",
+            "     sssssssssss     ",
+            "        sssss        ");
+        paintLayer(center, -5, p,
+            "      sssssssss      ",
+            "   sssssssssssssss   ",
+            " sssssssssssssssssss ",
+            "sssssssssssssssssssss",
+            "sssssssssssssssssssss",
+            " sssssssssssssssssss ",
+            "   sssssssssssssss   ",
+            "      sssssssss      ");
+        paintLayer(center, -4, p,
+            "    ddddddddddddd    ",
+            "  ddddddddddddddddd  ",
+            " ddddddddddddddddddd ",
+            "ddddddddddddddddddddd",
+            "ddddddddddddddddddddd",
+            "ddddddddddddddddddddd",
+            " ddddddddddddddddddd ",
+            "  ddddddddddddddddd  ",
+            "    ddddddddddddd    ");
+        paintLayer(center, -3, p,
+            "   ddddddddddddddd   ",
+            " ddddddddddddddddddd ",
+            "ddddddddddddddddddddd",
+            "ddddddddddddddddddddd",
+            "ddddddddddddddddddddd",
+            "ddddddddddddddddddddd",
+            "ddddddddddddddddddddd",
+            " ddddddddddddddddddd ",
+            "   ddddddddddddddd   ");
+        paintLayer(center, -2, p,
+            "    ggggggggggggg    ",
+            "  ggggggggggggggggg  ",
+            " ggggggggggggggggggg ",
+            "ggggggggggggggggggggg",
+            "ggggggggggggggggggggg",
+            "ggggggggggggggggggggg",
+            " ggggggggggggggggggg ",
+            "  ggggggggggggggggg  ",
+            "    ggggggggggggg    ");
 
-        for (int x = -11; x <= 11; x++) {
-            set(center, x, 2, -9, Material.OAK_FENCE);
-            set(center, x, 2, 9, Material.OAK_FENCE);
-        }
-        for (int z = -8; z <= 8; z++) {
-            set(center, -12, 2, z, Material.OAK_FENCE);
-            set(center, 12, 2, z, Material.OAK_FENCE);
+        // Real vanilla house templates. These are server resources, not bundled copies.
+        boolean houseA = placeVanillaStructure(center, -13, -1, -8,
+            "village/plains/houses/plains_small_house_4", StructureRotation.NONE);
+        boolean houseB = placeVanillaStructure(center, 5, -1, -8,
+            "village/plains/houses/plains_library_1", StructureRotation.CLOCKWISE_180);
+
+        if (!houseA) buildFallbackCottage(center.clone().add(-9, -1, -4), false);
+        if (!houseB) buildFallbackCottage(center.clone().add(8, -1, -4), true);
+
+        // Winding path and village green.
+        int[][] path = {
+            {0,-1,8},{0,-1,7},{-1,-1,6},{-1,-1,5},{0,-1,4},{0,-1,3},{0,-1,2},
+            {-1,-1,1},{-2,-1,0},{-3,-1,-1},{-4,-1,-2},{-5,-1,-3},
+            {1,-1,1},{2,-1,0},{3,-1,-1},{4,-1,-2},{5,-1,-3}
+        };
+        for (int[] q : path) {
+            set(center,q[0],q[1],q[2],Material.DIRT_PATH);
+            if ((q[0]+q[2]) % 3 == 0) {
+                set(center,q[0]+1,q[1],q[2],Material.COARSE_DIRT);
+            }
         }
 
-        long villagers = center.getWorld().getNearbyEntities(center, 20, 12, 20, entity -> entity instanceof Villager).size();
-        if (villagers < 2) {
-            Villager farmer = center.getWorld().spawn(center.clone().add(-3.5, 3, 1.5), Villager.class);
-            farmer.setProfession(Villager.Profession.FARMER);
-            farmer.setPersistent(true);
-            villagers++;
-        }
-        if (villagers < 2) {
-            Villager librarian = center.getWorld().spawn(center.clone().add(3.5, 3, 1.5), Villager.class);
-            librarian.setProfession(Villager.Profession.LIBRARIAN);
-            librarian.setPersistent(true);
-        }
+        // Bell square under a crooked oak.
+        set(center, 0, 0, 1, Material.COBBLESTONE_WALL);
+        set(center, 0, 1, 1, Material.BELL);
+        buildVillageOak(center.clone().add(-3, 0, 3));
 
-        villageChest(center.clone().add(0, 3, -7),
+        // Small irrigated farm, intentionally irregular.
+        for (int x=-7;x<=-2;x++) {
+            for (int z=4;z<=7;z++) {
+                set(center,x,-1,z,Material.FARMLAND);
+                Material crop = ((x+z)&1)==0 ? Material.WHEAT : Material.CARROTS;
+                set(center,x,0,z,crop);
+            }
+        }
+        set(center,-5,-1,5,Material.WATER);
+        set(center,-5,-1,6,Material.WATER);
+        set(center,-8,-1,5,Material.COMPOSTER);
+        set(center,-8,-1,7,Material.HAY_BLOCK);
+        set(center,-8,0,7,Material.HAY_BLOCK);
+
+        // Pond and flowers break up the open grass.
+        for (int[] q : new int[][]{{7,-1,5},{8,-1,5},{7,-1,6},{8,-1,6},{9,-1,6}}) {
+            set(center,q[0],q[1],q[2],Material.WATER);
+        }
+        set(center,6,0,6,Material.DANDELION);
+        set(center,9,0,5,Material.POPPY);
+        set(center,4,0,6,Material.OXEYE_DAISY);
+        set(center,-1,0,6,Material.CORNFLOWER);
+
+        // Only the village is allowed a structure loot chest; tuck it inside the green.
+        villageChest(center.clone().add(2, 0, 4),
             new ItemStack(Material.BREAD, 6),
             new ItemStack(Material.EMERALD, 4),
             new ItemStack(Material.POTATO, 4),
             new ItemStack(Material.CARROT, 4),
             new ItemStack(Material.BEETROOT_SEEDS, 4)
         );
+
+        // Remove raw template connector/debug blocks if a vanilla structure exposes them.
+        cleanTemplateMarkers(center, 22, 14, 18);
+
+        long villagers = center.getWorld().getNearbyEntities(center, 22, 14, 20, entity -> entity instanceof Villager).size();
+        if (villagers < 2) {
+            Villager farmer = center.getWorld().spawn(center.clone().add(-2.5, 0, 2.5), Villager.class);
+            farmer.setProfession(Villager.Profession.FARMER);
+            farmer.setPersistent(true);
+            villagers++;
+        }
+        if (villagers < 2) {
+            Villager librarian = center.getWorld().spawn(center.clone().add(2.5, 0, 2.5), Villager.class);
+            librarian.setProfession(Villager.Profession.LIBRARIAN);
+            librarian.setPersistent(true);
+        }
+    }
+
+    private void paintLayer(Location center, int dy, Map<Character, Material> palette, String... rows) {
+        int z0 = -(rows.length / 2);
+        for (int rz = 0; rz < rows.length; rz++) {
+            String row = rows[rz];
+            int x0 = -(row.length() / 2);
+            for (int rx = 0; rx < row.length(); rx++) {
+                char symbol = row.charAt(rx);
+                Material material = palette.get(symbol);
+                if (material != null) {
+                    set(center, x0 + rx, dy, z0 + rz, material);
+                }
+            }
+        }
+    }
+
+    private boolean placeVanillaStructure(
+        Location center, int dx, int dy, int dz, String path, StructureRotation rotation
+    ) {
+        try {
+            Structure structure = plugin.getServer().getStructureManager()
+                .loadStructure(NamespacedKey.minecraft(path));
+            if (structure == null) {
+                plugin.getLogger().warning("Vanilla structure not found: minecraft:" + path);
+                return false;
+            }
+            structure.place(
+                center.clone().add(dx, dy, dz),
+                false,
+                rotation,
+                Mirror.NONE,
+                0,
+                1.0f,
+                new Random(0x5A17B10CL)
+            );
+            return true;
+        } catch (RuntimeException ex) {
+            plugin.getLogger().warning("Could not place vanilla structure minecraft:" + path + ": " + ex.getMessage());
+            return false;
+        }
+    }
+
+    private void cleanTemplateMarkers(Location center, int rx, int ry, int rz) {
+        for (int x=-rx;x<=rx;x++) {
+            for (int y=-4;y<=ry;y++) {
+                for (int z=-rz;z<=rz;z++) {
+                    Block b=block(center,x,y,z);
+                    if (b.getType()==Material.JIGSAW || b.getType()==Material.STRUCTURE_BLOCK
+                        || b.getType()==Material.STRUCTURE_VOID) {
+                        b.setType(Material.AIR,false);
+                    }
+                }
+            }
+        }
+    }
+
+    private void buildBetterPalm(Location base) {
+        // Slightly bent trunk.
+        int[][] trunk={{0,0,0},{0,1,0},{0,2,0},{1,3,0},{1,4,0},{1,5,0}};
+        for (int[] q:trunk) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.JUNGLE_LOG,false);
+        int[][] leaves={
+            {1,6,0},{0,6,0},{2,6,0},{1,6,1},{1,6,-1},
+            {-1,6,0},{3,6,0},{1,6,2},{1,6,-2},
+            {-2,5,0},{4,5,0},{1,5,3},{1,5,-3},
+            {0,7,0},{2,7,0},{1,7,1},{1,7,-1}
+        };
+        for(int[] q:leaves) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.JUNGLE_LEAVES,false);
+    }
+
+    private void buildBrokenDesertArch(Location base) {
+        int[][] sandstone={
+            {-4,0,0},{-4,1,0},{-4,2,0},{-4,3,0},{-4,4,0},
+            {-3,4,0},{-2,5,0},{-1,5,0},{0,5,0},{1,5,0},
+            {2,4,0},{3,4,0},{3,3,0},{3,2,0},
+            {-3,0,1},{-2,0,1},{2,0,-1},{3,0,-1}
+        };
+        for(int[] q:sandstone) base.clone().add(q[0],q[1],q[2]).getBlock().setType(
+            (q[1]>=4 ? Material.CUT_SANDSTONE : Material.SANDSTONE),false);
+        base.clone().add(-4,5,0).getBlock().setType(Material.CHISELED_SANDSTONE,false);
+        base.clone().add(3,5,0).getBlock().setType(Material.CHISELED_SANDSTONE,false);
+    }
+
+    private void buildVillageOak(Location base) {
+        int[][] trunk={{0,0,0},{0,1,0},{0,2,0},{0,3,0},{1,4,0},{1,5,0}};
+        for(int[] q:trunk) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.OAK_LOG,false);
+        int[][] leaves={
+            {-1,4,0},{0,4,-1},{0,4,1},{1,4,-1},{1,4,1},{2,4,0},
+            {-2,5,0},{-1,5,-1},{-1,5,1},{0,5,-2},{0,5,2},{1,5,-2},{1,5,2},{2,5,-1},{2,5,1},{3,5,0},
+            {-1,6,0},{0,6,-1},{0,6,0},{0,6,1},{1,6,-1},{1,6,0},{1,6,1},{2,6,0}
+        };
+        for(int[] q:leaves) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.OAK_LEAVES,false);
+    }
+
+    private void buildFallbackCottage(Location base, boolean stone) {
+        Material wall=stone ? Material.STONE_BRICKS : Material.OAK_PLANKS;
+        Material frame=stone ? Material.COBBLESTONE : Material.STRIPPED_OAK_LOG;
+        int[][] floor={
+            {-3,0,-2},{-2,0,-2},{-1,0,-2},{0,0,-2},{1,0,-2},{2,0,-2},{3,0,-2},
+            {-3,0,-1},{-2,0,-1},{-1,0,-1},{0,0,-1},{1,0,-1},{2,0,-1},{3,0,-1},
+            {-3,0,0},{-2,0,0},{-1,0,0},{0,0,0},{1,0,0},{2,0,0},{3,0,0},
+            {-3,0,1},{-2,0,1},{-1,0,1},{0,0,1},{1,0,1},{2,0,1},{3,0,1},
+            {-3,0,2},{-2,0,2},{-1,0,2},{0,0,2},{1,0,2},{2,0,2},{3,0,2}
+        };
+        for(int[] q:floor) base.clone().add(q[0],q[1],q[2]).getBlock().setType(wall,false);
+        for(int y=1;y<=3;y++){
+            for(int x=-3;x<=3;x++){ base.clone().add(x,y,-2).getBlock().setType(wall,false); base.clone().add(x,y,2).getBlock().setType(wall,false); }
+            for(int z=-1;z<=1;z++){ base.clone().add(-3,y,z).getBlock().setType(wall,false); base.clone().add(3,y,z).getBlock().setType(wall,false); }
+        }
+        for(int[] q:new int[][]{{-3,1,-2},{3,1,-2},{-3,1,2},{3,1,2}}){
+            for(int y=0;y<=4;y++) base.clone().add(q[0],y,q[2]).getBlock().setType(frame,false);
+        }
+        base.clone().add(0,1,2).getBlock().setType(Material.AIR,false);
+        base.clone().add(0,2,2).getBlock().setType(Material.AIR,false);
+        for(int x=-4;x<=4;x++){
+            int h=4+Math.max(0,3-Math.abs(x));
+            base.clone().add(x,h,-3).getBlock().setType(Material.OAK_STAIRS,false);
+            base.clone().add(x,h,3).getBlock().setType(Material.OAK_STAIRS,false);
+        }
+        base.clone().add(-1,1,0).getBlock().setType(Material.RED_BED,false);
+        base.clone().add(1,1,0).getBlock().setType(Material.BARREL,false);
     }
 
     private void carveCrossEntrance(Location center, int radius, int halfWidth) {
