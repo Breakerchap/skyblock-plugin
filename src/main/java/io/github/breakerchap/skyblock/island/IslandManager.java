@@ -750,87 +750,279 @@ public final class IslandManager implements Listener {
     }
 
     private void buildMushroom(Location center) {
-        ellipsoid(center, 12, 4, 11, Material.DIRT);
-        cap(center, 11, 10, Material.MYCELIUM);
-        giantMushroom(center.clone().add(-5, 2, -2), true, 6);
-        giantMushroom(center.clone().add(5, 2, 2), false, 5);
-        giantMushroom(center.clone().add(0, 2, 6), true, 4);
-        set(center, -2, 2, 5, Material.RED_MUSHROOM);
-        set(center, 3, 2, -5, Material.BROWN_MUSHROOM);
+        Map<Character,Material> p=Map.of(
+            'd',Material.DIRT,
+            'm',Material.MYCELIUM,
+            's',Material.STONE,
+            'p',Material.PODZOL
+        );
 
-        spawnIfFewer(center, MushroomCow.class, 2, 15, 8, 14, center.clone().add(1.5, 3, 0.5));
-        spawnIfFewer(center, MushroomCow.class, 2, 15, 8, 14, center.clone().add(-1.5, 3, -0.5));
+        paintLayer(center,-6,p,
+            "       sssss       ",
+            "    sssssssssss    ",
+            "  sssssssssssssss  ",
+            " sssssssssssssssss ",
+            "sssssssssssssssssss",
+            " sssssssssssssssss ",
+            "   sssssssssssss   ",
+            "      sssssss      ");
+        paintLayer(center,-5,p,
+            "     ddddddddd     ",
+            "   ddddddddddddd   ",
+            " ddddddddddddddddd ",
+            "ddddddddddddddddddd",
+            "ddddddddddddddddddd",
+            " ddddddddddddddddd ",
+            "   ddddddddddddd   ");
+        paintLayer(center,-4,p,
+            "    mmmmmmmmmmm    ",
+            "  mmmmmmmmmmmmmmm  ",
+            " mmmmmmmmmmmmmmmmm ",
+            "mmmmmmmmmmmmmmmmmmm",
+            "mmmmmmmmmmmmmmmmmmm",
+            " mmmmmmmmmmmmmmmmm ",
+            "   mmmmmmmmmmmmm   ");
+
+        for(int[] q:new int[][]{
+            {-11,-4,-1},{-10,-4,-1},{-10,-3,-1},{10,-4,2},{11,-4,2},
+            {-7,-5,7},{-6,-5,7},{7,-5,-7},{8,-5,-7}
+        }) set(center,q[0],q[1],q[2], q[1]==-3 ? Material.MYCELIUM : Material.DIRT);
+
+        buildOrganicMushroom(center.clone().add(-6,-3,-2),true,7);
+        buildOrganicMushroom(center.clone().add(5,-3,3),false,6);
+        buildOrganicMushroom(center.clone().add(1,-3,-6),true,5);
+
+        for(int[] q:new int[][]{{-2,-3,5},{3,-3,-4},{7,-3,-2},{-8,-3,3},{0,-3,6}}) {
+            set(center,q[0],q[1],q[2], (q[0]&1)==0 ? Material.RED_MUSHROOM : Material.BROWN_MUSHROOM);
+        }
+        set(center,-3,-3,-5,Material.PODZOL);
+        set(center,-4,-3,-5,Material.PODZOL);
+        set(center,3,-3,6,Material.PODZOL);
+
+        spawnIfFewer(center,MushroomCow.class,2,17,10,16,center.clone().add(1.5,-2,0.5));
+        spawnIfFewer(center,MushroomCow.class,2,17,10,16,center.clone().add(-2.5,-2,2.5));
     }
 
     private void buildGeode(Location center) {
-        ellipsoid(center, 10, 8, 10, Material.SMOOTH_BASALT);
-        ellipsoid(center, 8, 6, 8, Material.CALCITE);
-        ellipsoid(center, 6, 5, 6, Material.AMETHYST_BLOCK);
-        ellipsoid(center, 4, 4, 4, Material.AIR);
-        for (int z = -10; z <= -4; z++) {
-            for (int x = -2; x <= 2; x++) {
-                for (int y = -1; y <= 3; y++) set(center, x, y, z, Material.AIR);
-            }
+        Map<Character,Material> p=Map.of(
+            'b',Material.SMOOTH_BASALT,
+            'c',Material.CALCITE,
+            'a',Material.AMETHYST_BLOCK,
+            'u',Material.BUDDING_AMETHYST
+        );
+
+        paintLayer(center,-8,p,
+            "       bbbbb       ",
+            "    bbbbbbbbbbb    ",
+            "  bbbbbbbbbbbbbbb  ",
+            " bbbbbbbbbbbbbbbbb ",
+            "bbbbbbbbbbbbbbbbbbb",
+            " bbbbbbbbbbbbbbbbb ",
+            "   bbbbbbbbbbbbb   ");
+        paintLayer(center,-7,p,
+            "     bbbbbbbbb     ",
+            "   bbbbccccbbbbb   ",
+            " bbbbccccccccbbbbb ",
+            "bbbccccccccccccbbbb",
+            "bbbccccccccccccbbbb",
+            " bbbbccccccccbbbb  ",
+            "   bbbbccccbbbb    ");
+        paintLayer(center,-6,p,
+            "    bbbccccccbbb    ",
+            "  bbbcccaaaacccbbb  ",
+            " bbcccaaaaaaaaacccbb",
+            "bbcccaaaaaaaaaacccbb",
+            " bbcccaaaaaaaaacccbb",
+            "   bbbcccaaaacccbbb ");
+        paintLayer(center,-5,p,
+            "     ccaaaaacc      ",
+            "   ccaaaaaaaaacc    ",
+            "  caaaaaaaaaaaaac   ",
+            " caaaaaaaaaaaaaaac  ",
+            "  caaaaaaaaaaaaac   ",
+            "    ccaaaaaaaacc    ");
+
+        int[][] shell={
+            {-8,-4,-4},{-8,-3,-4},{-8,-2,-4},{-7,-1,-4},{-7,0,-4},{-6,1,-4},{-5,2,-4},
+            {8,-4,-4},{8,-3,-4},{8,-2,-4},{7,-1,-4},{7,0,-4},{6,1,-4},{5,2,-4},
+            {-5,3,-4},{-3,4,-4},{0,5,-4},{3,4,-4},{5,3,-4},
+            {-7,-3,0},{-7,-2,0},{-6,-1,0},{-6,0,0},{6,-3,0},{6,-2,0},{6,-1,0},{6,0,0}
+        };
+        for(int[] q:shell) set(center,q[0],q[1],q[2], ((q[0]+q[1])&1)==0 ? Material.CALCITE : Material.SMOOTH_BASALT);
+
+        int[][] amethyst={
+            {-5,-4,-2},{-4,-4,-3},{-3,-4,-4},{3,-4,-4},{4,-4,-3},{5,-4,-2},
+            {-5,-1,-5},{5,0,-5},{-3,2,-5},{3,2,-5},{0,4,-5},
+            {-4,-2,1},{4,-2,1},{-2,1,0},{2,1,0}
+        };
+        for(int[] q:amethyst) set(center,q[0],q[1],q[2],Material.AMETHYST_BLOCK);
+
+        int[][] budding={{-4,-3,-2},{4,-3,-2},{-3,0,-5},{3,1,-5},{0,3,-5},{-2,-2,1}};
+        for(int[] q:budding) set(center,q[0],q[1],q[2],Material.BUDDING_AMETHYST);
+
+        setData(center,-4,-2,-2,"minecraft:amethyst_cluster[facing=up,waterlogged=false]");
+        setData(center,4,-2,-2,"minecraft:large_amethyst_bud[facing=up,waterlogged=false]");
+        setData(center,-3,1,-5,"minecraft:amethyst_cluster[facing=south,waterlogged=false]");
+        setData(center,3,2,-5,"minecraft:medium_amethyst_bud[facing=south,waterlogged=false]");
+        setData(center,0,4,-5,"minecraft:amethyst_cluster[facing=down,waterlogged=false]");
+
+        for(int[] q:new int[][]{{-2,-4,4},{-1,-4,5},{0,-4,5},{1,-4,5},{2,-4,4}}) {
+            set(center,q[0],q[1],q[2],Material.CALCITE);
         }
-        int[][] buds = {{0,-5,0},{4,0,0},{-4,1,1},{1,3,3},{-2,-2,3}};
-        for (int[] p : buds) set(center, p[0], p[1], p[2], Material.BUDDING_AMETHYST);
-        set(center, 0, 2, -4, Material.AMETHYST_CLUSTER);
-        set(center, 3, 0, -2, Material.LARGE_AMETHYST_BUD);
-        set(center, -3, 1, 1, Material.MEDIUM_AMETHYST_BUD);
+        for(int[] q:new int[][]{{-7,-5,3},{7,-5,2},{-5,-6,5},{5,-6,4}}) {
+            set(center,q[0],q[1],q[2],Material.SMOOTH_BASALT);
+        }
     }
 
     private void buildApiary(Location center) {
-        ellipsoid(center, 11, 4, 10, Material.DIRT);
-        cap(center, 10, 9, Material.GRASS_BLOCK);
-        buildOak(center.clone().add(0, 2, 0), 6);
-        set(center, 2, 5, 0, Material.BEE_NEST);
-        set(center, -2, 5, 1, Material.BEEHIVE);
-        set(center, 4, 2, 2, Material.HONEY_BLOCK);
-        set(center, 5, 2, 2, Material.HONEYCOMB_BLOCK);
+        Map<Character,Material> p=Map.of(
+            's',Material.STONE,
+            'd',Material.DIRT,
+            'g',Material.GRASS_BLOCK,
+            'm',Material.MOSS_BLOCK
+        );
 
-        Material[] flowers = {
-            Material.DANDELION, Material.POPPY, Material.OXEYE_DAISY,
-            Material.CORNFLOWER, Material.ALLIUM, Material.AZURE_BLUET
-        };
-        int i = 0;
-        for (int x = -8; x <= 8; x += 2) {
-            for (int z = -7; z <= 7; z += 2) {
-                if (x * x / 81.0 + z * z / 64.0 < 0.8 && Math.abs(x) + Math.abs(z) > 4) {
-                    set(center, x, 2, z, flowers[i++ % flowers.length]);
-                }
+        paintLayer(center,-6,p,
+            "      sssssss      ",
+            "   sssssssssssss   ",
+            " sssssssssssssssss ",
+            "sssssssssssssssssss",
+            "sssssssssssssssssss",
+            " sssssssssssssssss ",
+            "   sssssssssssss   ");
+        paintLayer(center,-5,p,
+            "    ddddddddddd    ",
+            "  ddddddddddddddd  ",
+            " ddddddddddddddddd ",
+            "ddddddddddddddddddd",
+            "ddddddddddddddddddd",
+            " ddddddddddddddddd ",
+            "   ddddddddddddd   ");
+        paintLayer(center,-4,p,
+            "    ggggggggggg    ",
+            "  ggggggggggggggg  ",
+            " ggggggggggggggggg ",
+            "ggggggggggggggggggg",
+            "ggggggggggggggggggg",
+            " ggggggggggggggggg ",
+            "   ggggggggggggg   ");
+
+        buildApiaryTree(center.clone().add(-5,-3,-1));
+
+        for(int[] q:new int[][]{{3,-3,-3},{7,-3,-3},{3,-3,3},{7,-3,3}}) {
+            for(int y=0;y<=4;y++) set(center,q[0],q[1]+y,q[2],Material.OAK_LOG);
+        }
+        for(int x=2;x<=8;x++){
+            set(center,x,2,-4,Material.OAK_STAIRS);
+            set(center,x,2,4,Material.OAK_STAIRS);
+            if(x>=3 && x<=7) {
+                set(center,x,3,-3,Material.OAK_SLAB);
+                set(center,x,3,3,Material.OAK_SLAB);
             }
         }
-        spawnIfFewer(center, Bee.class, 4, 14, 10, 13, center.clone().add(3.5, 4, 1.5));
-        spawnIfFewer(center, Bee.class, 4, 14, 10, 13, center.clone().add(-3.5, 4, -1.5));
+        for(int z=-2;z<=2;z+=2){
+            set(center,4,-1,z,Material.BEEHIVE);
+            set(center,6,-1,z,Material.BEE_NEST);
+        }
+        set(center,5,-2,0,Material.HONEY_BLOCK);
+        set(center,5,-2,1,Material.HONEYCOMB_BLOCK);
+        set(center,4,-2,1,Material.HONEYCOMB_BLOCK);
+
+        Material[] flowers={
+            Material.DANDELION,Material.POPPY,Material.OXEYE_DAISY,
+            Material.CORNFLOWER,Material.ALLIUM,Material.AZURE_BLUET
+        };
+        int[][] flowerSpots={
+            {-9,-3,-5},{-8,-3,-2},{-9,-3,3},{-7,-3,6},{-4,-3,6},
+            {-2,-3,5},{0,-3,6},{1,-3,3},{0,-3,-5},{2,-3,-6},
+            {9,-3,-5},{10,-3,-1},{9,-3,5},{6,-3,6},{3,-3,5},
+            {-2,-3,-6},{-6,-3,-6},{8,-3,2}
+        };
+        for(int i=0;i<flowerSpots.length;i++){
+            int[] q=flowerSpots[i];
+            set(center,q[0],q[1],q[2],flowers[i%flowers.length]);
+        }
+
+        set(center,-1,-3,0,Material.WATER);
+        set(center,-1,-3,1,Material.WATER);
+        set(center,-2,-3,0,Material.MOSS_BLOCK);
+        set(center,-2,-3,1,Material.MOSS_BLOCK);
+
+        spawnIfFewer(center,Bee.class,4,17,12,16,center.clone().add(1.5,0,0.5));
+        spawnIfFewer(center,Bee.class,4,17,12,16,center.clone().add(5.5,0,1.5));
     }
 
     private void buildEndShrine(Location center) {
-        ellipsoid(center, 12, 4, 11, Material.END_STONE);
-        cap(center, 11, 10, Material.END_STONE_BRICKS);
-        for (int x = -4; x <= 4; x++) {
-            set(center, x, 2, -4, Material.PURPUR_BLOCK);
-            set(center, x, 2, 4, Material.PURPUR_BLOCK);
-        }
-        for (int z = -3; z <= 3; z++) {
-            set(center, -4, 2, z, Material.PURPUR_BLOCK);
-            set(center, 4, 2, z, Material.PURPUR_BLOCK);
-        }
-        for (int y = 3; y <= 8; y++) {
-            set(center, -6, y, -6, Material.OBSIDIAN);
-            set(center, 6, y, -6, Material.OBSIDIAN);
-            set(center, -6, y, 6, Material.OBSIDIAN);
-            set(center, 6, y, 6, Material.OBSIDIAN);
-        }
-        set(center, -6, 9, -6, Material.END_ROD);
-        set(center, 6, 9, -6, Material.END_ROD);
-        set(center, -6, 9, 6, Material.END_ROD);
-        set(center, 6, 9, 6, Material.END_ROD);
+        Map<Character,Material> p=Map.of(
+            'e',Material.END_STONE,
+            'b',Material.END_STONE_BRICKS,
+            'p',Material.PURPUR_BLOCK,
+            'o',Material.OBSIDIAN
+        );
 
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) set(center, x, 2, z, Material.END_PORTAL);
+        paintLayer(center,-7,p,
+            "       eeeee       ",
+            "    eeeeeeeeeee    ",
+            "  eeeeeeeeeeeeeee  ",
+            " eeeeeeeeeeeeeeeee ",
+            "eeeeeeeeeeeeeeeeeee",
+            " eeeeeeeeeeeeeeeee ",
+            "   eeeeeeeeeeeee   ",
+            "      eeeeeee      ");
+        paintLayer(center,-6,p,
+            "     eeeeeeeee     ",
+            "   eeeeeeeeeeeee   ",
+            " eeeeeeeeeeeeeeeee ",
+            "eeeeeeeeeeeeeeeeeee",
+            "eeeeeeeeeeeeeeeeeee",
+            " eeeeeeeeeeeeeeeee ",
+            "   eeeeeeeeeeeee   ");
+        paintLayer(center,-5,p,
+            "    bbbbbbbbbbb    ",
+            "  bbbbbbbbbbbbbbb  ",
+            " bbbbbbbbbbbbbbbbb ",
+            "bbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbb",
+            " bbbbbbbbbbbbbbbbb ",
+            "   bbbbbbbbbbbbb   ");
+
+        for(int z=7;z<=13;z++){
+            set(center,0,-4,z,Material.END_STONE_BRICKS);
+            if(z%2==0) set(center,1,-4,z,Material.END_STONE);
+            if(z%3==0) set(center,-1,-4,z,Material.PURPUR_SLAB);
         }
-        set(center, -8, 2, 0, Material.CHORUS_FLOWER);
-        set(center, 8, 2, 0, Material.CHORUS_FLOWER);
+
+        buildEndPylon(center,-7,-4,-6,8);
+        buildEndPylon(center,7,-4,-6,6);
+        buildEndPylon(center,-7,-4,5,5);
+        buildEndPylon(center,7,-4,5,9);
+
+        for(int[] q:new int[][]{
+            {-6,4,-6},{-5,5,-6},{-4,6,-6},{-3,6,-6},
+            {6,2,-6},{5,3,-6},{4,4,-6},
+            {-6,1,5},{-5,2,5},{-4,3,5},
+            {6,5,5},{5,6,5},{4,7,5},{3,7,5}
+        }) set(center,q[0],q[1],q[2],Material.PURPUR_PILLAR);
+
+        for(int x=-3;x<=3;x++){
+            for(int z=-3;z<=3;z++){
+                if(Math.abs(x)==3 || Math.abs(z)==3) set(center,x,-4,z,Material.OBSIDIAN);
+                else if(Math.abs(x)==2 || Math.abs(z)==2) set(center,x,-4,z,Material.END_STONE_BRICKS);
+            }
+        }
+        for(int x=-1;x<=1;x++){
+            for(int z=-1;z<=1;z++) set(center,x,-3,z,Material.END_PORTAL);
+        }
+
+        set(center,-9,-4,0,Material.CHORUS_FLOWER);
+        set(center,9,-4,1,Material.CHORUS_FLOWER);
+        set(center,-7,5,-6,Material.END_ROD);
+        set(center,7,3,-6,Material.END_ROD);
+        set(center,-7,2,5,Material.END_ROD);
+        set(center,7,6,5,Material.END_ROD);
+        for(int[] q:new int[][]{{-10,-5,4},{10,-5,-3},{-5,-6,8},{6,-6,7}}) {
+            set(center,q[0],q[1],q[2],Material.END_STONE);
+        }
     }
 
     private void buildVillage(Location center) {
@@ -966,6 +1158,63 @@ public final class IslandManager implements Listener {
             Villager librarian = center.getWorld().spawn(center.clone().add(2.5, 0, 2.5), Villager.class);
             librarian.setProfession(Villager.Profession.LIBRARIAN);
             librarian.setPersistent(true);
+        }
+    }
+
+    private void setData(Location center, int dx, int dy, int dz, String blockData) {
+        block(center,dx,dy,dz).setBlockData(Bukkit.createBlockData(blockData),false);
+    }
+
+    private void buildOrganicMushroom(Location base, boolean red, int height) {
+        for(int y=0;y<height;y++) {
+            int x = y >= height-2 ? 1 : 0;
+            base.clone().add(x,y,0).getBlock().setType(Material.MUSHROOM_STEM,false);
+        }
+        Material cap=red?Material.RED_MUSHROOM_BLOCK:Material.BROWN_MUSHROOM_BLOCK;
+        int top=height;
+        int[][] capOffsets = red
+            ? new int[][]{
+                {-3,0,0},{-2,0,-2},{-2,0,-1},{-2,0,0},{-2,0,1},{-2,0,2},
+                {-1,0,-3},{-1,0,-2},{-1,0,-1},{-1,0,0},{-1,0,1},{-1,0,2},{-1,0,3},
+                {0,0,-3},{0,0,-2},{0,0,-1},{0,0,0},{0,0,1},{0,0,2},{0,0,3},
+                {1,0,-3},{1,0,-2},{1,0,-1},{1,0,0},{1,0,1},{1,0,2},{1,0,3},
+                {2,0,-2},{2,0,-1},{2,0,0},{2,0,1},{2,0,2},{3,0,0},
+                {-2,1,-1},{-1,1,-2},{-1,1,-1},{-1,1,0},{-1,1,1},{0,1,-2},{0,1,-1},
+                {0,1,0},{0,1,1},{0,1,2},{1,1,-1},{1,1,0},{1,1,1},{2,1,0}
+            }
+            : new int[][]{
+                {-2,0,-1},{-2,0,0},{-2,0,1},
+                {-1,0,-2},{-1,0,-1},{-1,0,0},{-1,0,1},{-1,0,2},
+                {0,0,-2},{0,0,-1},{0,0,0},{0,0,1},{0,0,2},
+                {1,0,-2},{1,0,-1},{1,0,0},{1,0,1},{1,0,2},
+                {2,0,-1},{2,0,0},{2,0,1},
+                {-1,1,0},{0,1,-1},{0,1,0},{0,1,1},{1,1,0}
+            };
+        for(int[] q:capOffsets) base.clone().add(q[0]+1,top+q[1],q[2]).getBlock().setType(cap,false);
+    }
+
+    private void buildApiaryTree(Location base) {
+        int[][] trunk={{0,0,0},{0,1,0},{0,2,0},{0,3,0},{1,4,0},{1,5,0},{1,6,-1}};
+        for(int[] q:trunk) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.OAK_LOG,false);
+        int[][] leaves={
+            {-2,4,0},{-1,4,-2},{-1,4,-1},{-1,4,0},{-1,4,1},{0,4,-2},{0,4,-1},{0,4,0},{0,4,1},{0,4,2},
+            {1,4,-2},{1,4,-1},{1,4,0},{1,4,1},{1,4,2},{2,4,-1},{2,4,0},{2,4,1},{3,4,0},
+            {-1,5,-1},{-1,5,0},{0,5,-2},{0,5,-1},{0,5,0},{0,5,1},{1,5,-2},{1,5,-1},{1,5,0},{1,5,1},
+            {2,5,-1},{2,5,0},{2,5,1},{3,5,0},
+            {0,6,-1},{0,6,0},{1,6,-2},{1,6,-1},{1,6,0},{1,6,1},{2,6,-1},{2,6,0}
+        };
+        for(int[] q:leaves) base.clone().add(q[0],q[1],q[2]).getBlock().setType(Material.OAK_LEAVES,false);
+        base.clone().add(2,3,0).getBlock().setType(Material.BEE_NEST,false);
+        base.clone().add(-1,3,1).getBlock().setType(Material.BEEHIVE,false);
+    }
+
+    private void buildEndPylon(Location center, int x, int y, int z, int height) {
+        for(int i=0;i<height;i++) {
+            Material material = (i%3==0) ? Material.PURPUR_PILLAR : Material.OBSIDIAN;
+            set(center,x,y+i,z,material);
+            if(i==1 || i==height-2) {
+                set(center,x+(x<0?1:-1),y+i,z,Material.END_STONE_BRICKS);
+            }
         }
     }
 
