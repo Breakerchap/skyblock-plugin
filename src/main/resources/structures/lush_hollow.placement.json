@@ -1,0 +1,12 @@
+{
+  "format": "skystruct-placement/1",
+  "name": "Lush Hollow",
+  "nbt_data_version": 4903,
+  "source_origin": [0, 0, 0],
+  "source_bounds": {"min": [-12, -10, -8], "max": [11, 6, 11]},
+  "nbt_size": [24, 17, 20],
+  "placement_offset": [-12, -10, -8],
+  "markers": [{"kind": "discovery", "pos": [0, 1, 0], "data": {"radius": 22}}],
+  "entities": [],
+  "explanation": "To place the blueprint origin at world anchor A, place the NBT structure at A + placement_offset."
+}

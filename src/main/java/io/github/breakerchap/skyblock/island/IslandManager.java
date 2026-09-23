@@ -32,6 +32,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.structure.Structure;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -185,11 +187,13 @@ public final class IslandManager implements Listener {
     }
 
     private void buildLush(Location center) {
-        placeBundledStructure(center, "structures/lush_hollow.nbt", -14, -11, -16);
+        if (!placeBundledStructure(center, "structures/lush_hollow.nbt", -12, -10, -8)) {
+            throw new IllegalStateException("Could not load bundled Lush Hollow structure");
+        }
 
         setBiomeCube(center, 14, 10, 12, Biome.LUSH_CAVES);
-        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(-1.5, -1.4, -3.0));
-        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(1.5, -1.4, -2.0));
+        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(-1.5, -2.6, 0.5));
+        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(1.5, -2.6, -0.5));
     }
 
     private void buildDripstone(Location center) {
@@ -1052,6 +1056,32 @@ public final class IslandManager implements Listener {
             );
         } catch (java.io.IOException ex) {
             throw new IllegalStateException("Could not load bundled structure " + resourcePath, ex);
+        }
+    }
+
+    private boolean placeBundledStructure(
+        Location center, String resourcePath, int dx, int dy, int dz
+    ) {
+        try (InputStream input = plugin.getResource(resourcePath)) {
+            if (input == null) {
+                plugin.getLogger().severe("Bundled structure resource not found: " + resourcePath);
+                return false;
+            }
+
+            Structure structure = plugin.getServer().getStructureManager().loadStructure(input);
+            structure.place(
+                center.clone().add(dx, dy, dz),
+                false,
+                StructureRotation.NONE,
+                Mirror.NONE,
+                0,
+                1.0f,
+                new Random(0x5A17B10CL)
+            );
+            return true;
+        } catch (IOException | RuntimeException ex) {
+            plugin.getLogger().severe("Could not place bundled structure " + resourcePath + ": " + ex.getMessage());
+            return false;
         }
     }
 
