@@ -197,58 +197,10 @@ public final class IslandManager implements Listener {
     }
 
     private void buildMoor(Location center) {
-        Map<Character, Material> p=Map.of(
-            'm',Material.MUD,
-            'r',Material.MUDDY_MANGROVE_ROOTS,
-            'd',Material.DIRT,
-            'w',Material.WATER,
-            'c',Material.CLAY
-        );
+        placeBundledStructure(center, "structures/witchs_moor.nbt", -14, -9, -13);
 
-        paintLayer(center,-5,p,
-            "      rrrrrrr      ",
-            "   rrrrrrrrrrrrr   ",
-            " rrrrrrrrrrrrrrrrr ",
-            "rrrrrrrrrrrrrrrrrrr",
-            "rrrrrrrrrrrrrrrrrrr",
-            " rrrrrrrrrrrrrrrrr ",
-            "   rrrrrrrrrrrrr   ",
-            "      rrrrrrr      ");
-        paintLayer(center,-4,p,
-            "    mmmmmmmmmmm    ",
-            "  mmmmmmmmmmmmmmm  ",
-            " mmmmmmmmmmmmmmmmm ",
-            "mmmmmmmmmmmmmmmmmmm",
-            "mmmmmmmmmmmmmmmmmmm",
-            " mmmmmmmmmmmmmmmmm ",
-            "   mmmmmmmmmmmmm   ");
-        paintLayer(center,-3,p,
-            "   mmmmmmmmmmmmm   ",
-            " mmmmmmmrrmmmmmmmm ",
-            "mmmmmmrrrrrrmmmmmmm",
-            "mmmmmrrrwwrrrmmmmmm",
-            "mmmmrrwwwwwwrrmmmmm",
-            "mmmmmrrwwwwrrmmmmmm",
-            " mmmmmmrrrrmmmmmmm ",
-            "   mmmmmmmmmmmmm   ");
-
-        // Marsh pools, roots and mushrooms.
-        for(int[] q:new int[][]{{-4,-2,0},{-3,-2,0},{-4,-2,1},{3,-2,-2},{4,-2,-2},{3,-2,-1}}) {
-            set(center,q[0],q[1],q[2],Material.WATER);
-        }
-        for(int[] q:new int[][]{{-7,-2,3},{-6,-2,4},{6,-2,3},{7,-2,-3},{0,-2,6}}) {
-            set(center,q[0],q[1],q[2],Material.MANGROVE_ROOTS);
-        }
-        set(center,-3,-1,0,Material.LILY_PAD);
-        set(center,4,-1,-2,Material.LILY_PAD);
-        set(center,-7,-1,-2,Material.RED_MUSHROOM);
-        set(center,7,-1,2,Material.BROWN_MUSHROOM);
-
-        buildTwistedMangrove(center.clone().add(-7,-2,-5));
-        buildBetterWitchHut(center.clone().add(5,-2,4));
-
-        spawnIfFewer(center,Frog.class,2,15,10,14,center.clone().add(-2.5,-1,1.5));
-        spawnIfFewer(center,Witch.class,1,15,10,14,center.clone().add(5.5,2,4.5));
+        spawnIfFewer(center, Frog.class, 2, 15, 10, 14, center.clone().add(-3.0, 1.0, 1.0));
+        spawnIfFewer(center, Witch.class, 1, 15, 12, 14, center.clone().add(7.0, 5.0, 6.0));
     }
 
     private void buildPortal(Location center) {
