@@ -203,7 +203,9 @@ public final class IslandManager implements Listener {
     }
 
     private void buildMoor(Location center) {
-        placeBundledStructure(center, "structures/witchs_moor.nbt", -14, -9, -13);
+        if (!placeBundledStructure(center, "structures/witchs_moor.nbt", -11, -9, -11)) {
+            throw new IllegalStateException("Could not load bundled Witch's Moor structure");
+        }
 
         spawnIfFewer(center, Frog.class, 2, 15, 10, 14, center.clone().add(-3.0, 1.0, 1.0));
         spawnIfFewer(center, Witch.class, 1, 15, 12, 14, center.clone().add(7.0, 5.0, 6.0));

@@ -1,0 +1,12 @@
+{
+  "format": "skystruct-placement/1",
+  "name": "Witch's Moor",
+  "nbt_data_version": 4903,
+  "source_origin": [0,0,0],
+  "source_bounds": {"min": [-11,-9,-11], "max": [13,11,12]},
+  "nbt_size": [25,21,24],
+  "placement_offset": [-11,-9,-11],
+  "markers": [{"kind":"discovery","pos":[0,1,0],"data":{"radius":22}}],
+  "entities": [],
+  "explanation": "To place the blueprint origin at world anchor A, place the NBT structure at A + placement_offset."
+}
