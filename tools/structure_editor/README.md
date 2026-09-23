@@ -46,6 +46,25 @@ preview/tiny/view_2.png
 preview/tiny/view_3.png
 ```
 
+## Optional visual editor
+
+Open `tools/structure_editor/web/index.html` directly in a modern browser. It is a single offline HTML file with no CDN or install.
+
+It can:
+
+- drag/drop or load any `.skystruct.json`;
+- paint and erase individual blocks by Y layer;
+- show the previous layer as a ghost;
+- edit the palette;
+- use variable brush sizes;
+- pan/zoom the layer grid;
+- rotate/zoom an isometric preview;
+- show block count, bounds and disconnected-component count live;
+- undo/redo;
+- save the exact same JSON format used by the CLI.
+
+The browser editor intentionally does **not** have a separate save format. NBT compilation still goes through the tested Python compiler.
+
 ## Blueprint format
 
 A `.skystruct.json` file has:

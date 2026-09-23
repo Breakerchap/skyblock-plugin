@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SkyStruct Visual Editor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{font-family:Inter,Segoe UI,system-ui,sans-serif;color:#e9edf2;background:#171a1f}
+*{box-sizing:border-box} body{margin:0;overflow:hidden} button,input{font:inherit}
+header{height:52px;display:flex;align-items:center;gap:8px;padding:8px 12px;background:#22262d;border-bottom:1px solid #343a44}
+button,.btn{background:#303741;color:#eef;border:1px solid #48515f;border-radius:5px;padding:6px 10px;cursor:pointer}
+button:hover,.btn:hover{background:#3a4350}.danger{color:#ffb1b1}
+#layout{height:calc(100vh - 52px);display:grid;grid-template-columns:245px minmax(420px,1fr) minmax(420px,1fr)}
+aside{background:#20242a;border-right:1px solid #343a44;padding:12px;overflow:auto}
+.panel{display:flex;flex-direction:column;min-width:0;background:#15181d}
+.panel h2{font-size:13px;font-weight:600;margin:0;padding:8px 12px;background:#20242a;border-bottom:1px solid #343a44}
+canvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+.canvasWrap{position:relative;flex:1;min-height:0}
+#layerCanvas{background:#12151a}#isoCanvas{background:#cbd7e6}
+.row{display:flex;gap:6px;align-items:center;margin:7px 0}.row>*{min-width:0}
+input[type=number],input[type=text],input[type=color]{background:#111419;color:#e9edf2;border:1px solid #424a56;border-radius:4px;padding:5px}
+input[type=number]{width:70px} input[type=text]{width:100%}
+label{font-size:12px;color:#aeb7c3}.muted{font-size:11px;color:#8f99a6;line-height:1.35}
+#palette{display:grid;grid-template-columns:1fr;gap:5px;margin-top:8px}.swatch{display:grid;grid-template-columns:24px 24px 1fr;gap:6px;align-items:center;text-align:left;padding:4px 6px}
+.swatch.selected{outline:2px solid #79b8ff}.chip{width:18px;height:18px;border-radius:3px;border:1px solid #888}
+.symbol{font-family:Consolas,monospace;text-align:center}.divider{height:1px;background:#343a44;margin:12px 0}
+#status{white-space:pre-wrap;font:11px/1.4 Consolas,monospace;color:#b8c2ce}
+.bad{color:#ff9393}.good{color:#92d5a4}
+#drop{position:absolute;inset:20px;border:2px dashed #718096;border-radius:12px;display:none;align-items:center;justify-content:center;background:#151a22dd;font-size:20px;z-index:4}
+kbd{background:#0f1115;border:1px solid #454d59;border-radius:3px;padding:1px 4px}
+</style>
+</head>
+<body>
+<header>
+  <label class="btn">Load blueprint<input id="fileInput" type="file" accept=".json,.skystruct.json" hidden></label>
+  <button id="saveBtn">Save JSON</button>
+  <button id="newBtn">New</button>
+  <span style="flex:1"></span>
+  <button id="undoBtn">Undo</button><button id="redoBtn">Redo</button>
+</header>
+<div id="layout">
+<aside>
+  <label>Name</label><input id="nameInput" type="text">
+  <div class="row"><label>Layer Y</label><button id="downY">−</button><input id="yInput" type="number" value="0"><button id="upY">+</button></div>
+  <div class="row"><label>Brush</label><input id="brushSize" type="number" value="1" min="1" max="9"></div>
+  <div class="row"><label><input id="ghostBelow" type="checkbox" checked> show layer below</label></div>
+  <div class="divider"></div>
+  <label>Palette</label>
+  <div id="palette"></div>
+  <div class="row"><input id="palSymbol" type="text" maxlength="1" placeholder="symbol"><input id="palColor" type="color" value="#888888"></div>
+  <input id="palBlock" type="text" placeholder="minecraft:block_id">
+  <button id="addPalette" style="margin-top:6px;width:100%">Add / update palette</button>
+  <div class="divider"></div>
+  <div class="muted">
+    Paint: left drag<br>
+    Erase: right drag or <kbd>X</kbd> then paint<br>
+    Eyedropper: Alt+click<br>
+    Layer: <kbd>[</kbd> / <kbd>]</kbd><br>
+    Undo: <kbd>Ctrl+Z</kbd><br>
+    Pan layer: middle-drag empty area<br>
+    Zoom: wheel
+  </div>
+  <div class="divider"></div>
+  <div id="status"></div>
+</aside>
+<div class="panel">
+  <h2>Layer editor</h2>
+  <div class="canvasWrap"><canvas id="layerCanvas"></canvas><div id="drop">Drop .skystruct.json</div></div>
+</div>
+<div class="panel">
+  <h2>Isometric preview — drag to rotate, wheel to zoom</h2>
+  <div class="canvasWrap"><canvas id="isoCanvas"></canvas></div>
+</div>
+</div>
+<script>
+"use strict";
+const AIR=".";
+let doc=newDoc(), blocks=new Map(), selected="g", y=0;
+let undo=[],redo=[],dragging=false,erase=false,brush=1,layerScale=22,panX=0,panZ=0,panDrag=false,panLastX=0,panLastY=0;
+let isoRot=0,isoZoom=1;
+const $=id=>document.getElementById(id);
+const key=(x,y,z)=>`${x},${y},${z}`;
+const unkey=k=>k.split(",").map(Number);
+
+function newDoc(){
+ return {format:"skystruct/1",name:"New Structure",origin:[0,0,0],palette:{
+  g:{block:"minecraft:grass_block",color:"#6f9f45"},
+  d:{block:"minecraft:dirt",color:"#8a6545"},
+  s:{block:"minecraft:stone",color:"#818181"}
+ },layers:[],entities:[],markers:[],meta:{}};
+}
+function parseDoc(data){
+ if(data.format!=="skystruct/1")throw new Error("Not a skystruct/1 file");
+ blocks=new Map();
+ for(const layer of data.layers||[]){
+  const x0=Number(layer.x||0),z0=Number(layer.z||0),ly=Number(layer.y);
+  (layer.rows||[]).forEach((row,rz)=>[...row].forEach((sym,rx)=>{
+   if(sym!==AIR&&sym!==" "){ if(!data.palette[sym])throw new Error(`Unknown symbol ${sym}`); blocks.set(key(x0+rx,ly,z0+rz),sym); }
+  }));
+ }
+ doc=data; doc.entities??=[];doc.markers??=[];doc.meta??={};doc.origin??=[0,0,0];
+ $("nameInput").value=doc.name||"";
+ selected=Object.keys(doc.palette)[0]||AIR;
+ refreshAll();
+}
+function serialise(){
+ const data=structuredClone(doc);data.name=$("nameInput").value||"Unnamed";
+ const ys=[...new Set([...blocks.keys()].map(k=>unkey(k)[1]))].sort((a,b)=>a-b);
+ data.layers=ys.map(ly=>{
+  const pts=[...blocks].filter(([k])=>unkey(k)[1]===ly).map(([k,s])=>[...unkey(k),s]);
+  const xs=pts.map(p=>p[0]),zs=pts.map(p=>p[2]),minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
+  let rows=[];
+  for(let z=minZ;z<=maxZ;z++){
+   let row="";for(let x=minX;x<=maxX;x++)row+=blocks.get(key(x,ly,z))||AIR;
+   rows.push(row.replace(/\.+$/,""));
+  }
+  while(rows.length&&!rows.at(-1))rows.pop();
+  return {y:ly,x:minX,z:minZ,rows};
+ });
+ return data;
+}
+function snapshot(){
+ undo.push(JSON.stringify(serialise()));if(undo.length>100)undo.shift();redo=[];updateUndo();
+}
+function restore(text){parseDoc(JSON.parse(text));}
+function doUndo(){if(!undo.length)return;redo.push(JSON.stringify(serialise()));restore(undo.pop());updateUndo()}
+function doRedo(){if(!redo.length)return;undo.push(JSON.stringify(serialise()));restore(redo.pop());updateUndo()}
+function updateUndo(){$("undoBtn").disabled=!undo.length;$("redoBtn").disabled=!redo.length}
+
+function refreshPalette(){
+ const root=$("palette");root.innerHTML="";
+ for(const [sym,p] of Object.entries(doc.palette)){
+  const b=document.createElement("button");b.className="swatch"+(selected===sym?" selected":"");
+  const c=p.color||hashColor(p.block);
+  b.innerHTML=`<span class="chip" style="background:${esc(c)}"></span><span class="symbol">${esc(sym)}</span><span>${esc(p.block)}</span>`;
+  b.onclick=()=>{selected=sym;refreshPalette()};root.appendChild(b);
+ }
+}
+function hashColor(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return "#"+[0,8,16].map(sh=>(75+((h>>>sh)%115)).toString(16).padStart(2,"0")).join("")}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function color(sym,alpha=1){if(!sym||sym===AIR)return `rgba(0,0,0,0)`;const p=doc.palette[sym];let h=p?.color||hashColor(p?.block||sym);if(alpha===1)return h;const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${alpha})`}
+
+function fitCanvas(c){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;const w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));if(c.width!==w||c.height!==h){c.width=w;c.height=h}return [w,h,d]}
+function layerCoord(ev){
+ const c=$("layerCanvas"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;
+ const px=(ev.clientX-r.left)*d,py=(ev.clientY-r.top)*d;
+ return [Math.floor((px-c.width/2-panX)/layerScale),Math.floor((py-c.height/2-panZ)/layerScale)];
+}
+function paintAt(x,z,doErase){
+ for(let dx=-Math.floor((brush-1)/2);dx<=Math.floor(brush/2);dx++)for(let dz=-Math.floor((brush-1)/2);dz<=Math.floor(brush/2);dz++){
+  const k=key(x+dx,y,z+dz);if(doErase||selected===AIR)blocks.delete(k);else blocks.set(k,selected);
+ }
+ drawLayer();drawIso();updateStatus();
+}
+function drawLayer(){
+ const c=$("layerCanvas"),[w,h]=fitCanvas(c),ctx=c.getContext("2d");ctx.clearRect(0,0,w,h);
+ ctx.fillStyle="#12151a";ctx.fillRect(0,0,w,h);
+ const below=$("ghostBelow").checked;
+ for(const [k,s] of blocks){const [x,ly,z]=unkey(k);if(ly!==y-(below?1:999))continue;ctx.fillStyle=color(s,.18);ctx.fillRect(w/2+panX+x*layerScale,h/2+panZ+z*layerScale,layerScale,layerScale)}
+ for(const [k,s] of blocks){const [x,ly,z]=unkey(k);if(ly!==y)continue;ctx.fillStyle=color(s);ctx.fillRect(w/2+panX+x*layerScale,h/2+panZ+z*layerScale,layerScale,layerScale)}
+ ctx.strokeStyle="#ffffff16";ctx.lineWidth=1;
+ const minX=Math.floor((-w/2-panX)/layerScale)-1,maxX=Math.ceil((w/2-panX)/layerScale)+1,minZ=Math.floor((-h/2-panZ)/layerScale)-1,maxZ=Math.ceil((h/2-panZ)/layerScale)+1;
+ for(let x=minX;x<=maxX;x++){const px=w/2+panX+x*layerScale;ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke()}
+ for(let z=minZ;z<=maxZ;z++){const pz=h/2+panZ+z*layerScale;ctx.beginPath();ctx.moveTo(0,pz);ctx.lineTo(w,pz);ctx.stroke()}
+ ctx.strokeStyle="#ff5555";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(w/2+panX-8,h/2+panZ);ctx.lineTo(w/2+panX+8,h/2+panZ);ctx.moveTo(w/2+panX,h/2+panZ-8);ctx.lineTo(w/2+panX,h/2+panZ+8);ctx.stroke();
+}
+function rot(x,z){const r=((isoRot%4)+4)%4;return r===0?[x,z]:r===1?[-z,x]:r===2?[-x,-z]:[z,-x]}
+function drawIso(){
+ const c=$("isoCanvas"),[w,h]=fitCanvas(c),ctx=c.getContext("2d");ctx.clearRect(0,0,w,h);ctx.fillStyle="#cbd7e6";ctx.fillRect(0,0,w,h);
+ if(!blocks.size)return;
+ const tile=14*isoZoom*(devicePixelRatio||1),half=tile/2,vh=tile;
+ const b=new Map();for(const [k,s] of blocks){const [x,yy,z]=unkey(k),[rx,rz]=rot(x,z);b.set(key(rx,yy,rz),s)}
+ const proj=(x,yy,z)=>[(x-z)*tile,(x+z)*half-yy*vh];
+ let faces=[];
+ for(const [k,s] of b){const [x,yy,z]=unkey(k),base=color(s),depth=x+z-yy*.03;
+  if(!b.has(key(x,yy+1,z)))faces.push([depth-.2,[proj(x,yy+1,z),proj(x+1,yy+1,z),proj(x+1,yy+1,z+1),proj(x,yy+1,z+1)],shade(base,1.08)]);
+  if(!b.has(key(x+1,yy,z)))faces.push([depth,[proj(x+1,yy,z),proj(x+1,yy+1,z),proj(x+1,yy+1,z+1),proj(x+1,yy,z+1)],shade(base,.84)]);
+  if(!b.has(key(x,yy,z+1)))faces.push([depth+.1,[proj(x,yy,z+1),proj(x+1,yy,z+1),proj(x+1,yy+1,z+1),proj(x,yy+1,z+1)],shade(base,.68)]);
+ }
+ const pts=faces.flatMap(f=>f[1]),xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),cx=(Math.min(...xs)+Math.max(...xs))/2,cy=(Math.min(...ys)+Math.max(...ys))/2;
+ const ox=w/2-cx,oy=h/2-cy;
+ faces.sort((a,b)=>a[0]-b[0]);for(const f of faces){ctx.beginPath();f[1].forEach((p,i)=>i?ctx.lineTo(p[0]+ox,p[1]+oy):ctx.moveTo(p[0]+ox,p[1]+oy));ctx.closePath();ctx.fillStyle=f[2];ctx.fill();ctx.strokeStyle="#00000018";ctx.stroke()}
+}
+function shade(hex,m){const n=parseInt(hex.slice(1),16);let a=[n>>16,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v*m))));return "#"+a.map(v=>v.toString(16).padStart(2,"0")).join("")}
+function components(){
+ const rem=new Set(blocks.keys()),sizes=[];const dirs=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+ while(rem.size){const first=rem.values().next().value,q=[first];rem.delete(first);let n=0;while(q.length){const k=q.pop(),[x,yy,z]=unkey(k);n++;for(const [dx,dy,dz] of dirs){const nk=key(x+dx,yy+dy,z+dz);if(rem.delete(nk))q.push(nk)}}sizes.push(n)}return sizes.sort((a,b)=>b-a)
+}
+function updateStatus(){
+ const cs=components(),det=cs.slice(1).reduce((a,b)=>a+b,0),arr=[...blocks.keys()].map(unkey);
+ let bounds="empty";if(arr.length){let axes=[0,1,2].map(i=>[Math.min(...arr.map(p=>p[i])),Math.max(...arr.map(p=>p[i]))]);bounds=axes.map(a=>`${a[0]}..${a[1]}`).join(" / ")}
+ $("status").innerHTML=`Blocks: ${blocks.size}\nBounds: ${bounds}\nComponents: ${cs.length}\nDetached blocks: <span class="${det?"bad":"good"}">${det}</span>`;
+}
+function refreshAll(){y=Number($("yInput").value)||0;$("nameInput").value=doc.name||"";refreshPalette();drawLayer();drawIso();updateStatus();updateUndo()}
+
+$("layerCanvas").addEventListener("contextmenu",e=>e.preventDefault());
+$("layerCanvas").addEventListener("mousedown",e=>{if(e.button===1){panDrag=true;panLastX=e.clientX;panLastY=e.clientY;return}const [x,z]=layerCoord(e);if(e.altKey){const s=blocks.get(key(x,y,z));if(s){selected=s;refreshPalette()}return}snapshot();dragging=true;erase=e.button===2;paintAt(x,z,erase)});
+$("layerCanvas").addEventListener("mousemove",e=>{if(panDrag){const d=devicePixelRatio||1;panX+=(e.clientX-panLastX)*d;panZ+=(e.clientY-panLastY)*d;panLastX=e.clientX;panLastY=e.clientY;drawLayer();return}if(!dragging)return;const [x,z]=layerCoord(e);paintAt(x,z,erase)});
+window.addEventListener("mouseup",()=>{dragging=false;panDrag=false});
+$("layerCanvas").addEventListener("wheel",e=>{e.preventDefault();layerScale=Math.max(6,Math.min(64,layerScale*(e.deltaY<0?1.12:.89)));drawLayer()},{passive:false});
+
+let isoDrag=false,lastX=0;
+$("isoCanvas").addEventListener("mousedown",e=>{isoDrag=true;lastX=e.clientX});
+window.addEventListener("mousemove",e=>{if(!isoDrag)return;if(Math.abs(e.clientX-lastX)>45){isoRot+=e.clientX>lastX?1:-1;lastX=e.clientX;drawIso()}});
+window.addEventListener("mouseup",()=>isoDrag=false);
+$("isoCanvas").addEventListener("wheel",e=>{e.preventDefault();isoZoom=Math.max(.25,Math.min(3,isoZoom*(e.deltaY<0?1.12:.89)));drawIso()},{passive:false});
+
+$("fileInput").onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{try{parseDoc(JSON.parse(t));undo=[];redo=[]}catch(err){alert(err.message)}})};
+$("saveBtn").onclick=()=>{const data=serialise(),blob=new Blob([JSON.stringify(data,null,2)+"\n"],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(data.name||"structure").toLowerCase().replace(/[^a-z0-9]+/g,"_")+".skystruct.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+$("newBtn").onclick=()=>{if(!confirm("Discard current structure?"))return;doc=newDoc();blocks=new Map();undo=[];redo=[];selected="g";refreshAll()};
+$("undoBtn").onclick=doUndo;$("redoBtn").onclick=doRedo;
+$("downY").onclick=()=>{$("yInput").value=--y;drawLayer()};$("upY").onclick=()=>{$("yInput").value=++y;drawLayer()};
+$("yInput").onchange=()=>{y=Number($("yInput").value)||0;drawLayer()};
+$("brushSize").onchange=()=>brush=Math.max(1,Math.min(9,Number($("brushSize").value)||1));
+$("ghostBelow").onchange=drawLayer;
+$("nameInput").onchange=()=>doc.name=$("nameInput").value;
+$("addPalette").onclick=()=>{const s=$("palSymbol").value,b=$("palBlock").value;if(s.length!==1||s===AIR||s===" ")return alert("Symbol must be one non-air character");if(!b)return alert("Enter a block id");snapshot();doc.palette[s]={block:b.includes(":")?b:"minecraft:"+b,color:$("palColor").value};selected=s;refreshPalette();drawIso()};
+document.addEventListener("keydown",e=>{if(e.target.matches("input"))return;if(e.ctrlKey&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?doRedo():doUndo()}else if(e.ctrlKey&&e.key.toLowerCase()==="y"){e.preventDefault();doRedo()}else if(e.key==="["){$("yInput").value=--y;drawLayer()}else if(e.key==="]"){$("yInput").value=++y;drawLayer()}else if(e.key.toLowerCase()==="x"){selected=AIR;refreshPalette()}});
+window.addEventListener("resize",()=>{drawLayer();drawIso()});
+const drop=$("drop");window.addEventListener("dragover",e=>{e.preventDefault();drop.style.display="flex"});window.addEventListener("dragleave",e=>{if(e.clientX===0&&e.clientY===0)drop.style.display="none"});window.addEventListener("drop",e=>{e.preventDefault();drop.style.display="none";const f=e.dataTransfer.files[0];if(f)f.text().then(t=>{try{parseDoc(JSON.parse(t));undo=[];redo=[]}catch(err){alert(err.message)}})});
+refreshAll();
+</script>
+</body>
+</html>

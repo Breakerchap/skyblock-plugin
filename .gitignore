@@ -4,3 +4,6 @@ target/
 .classpath
 .project
 .settings/
+tools/structure_editor/preview/
+tools/structure_editor/build/
+tools/structure_editor/**/__pycache__/
