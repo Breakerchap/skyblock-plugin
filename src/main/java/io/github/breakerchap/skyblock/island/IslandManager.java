@@ -212,7 +212,9 @@ public final class IslandManager implements Listener {
     }
 
     private void buildPortal(Location center) {
-        placeBundledStructure(center, "structures/ruined_portal.nbt", -14, -9, -14);
+        if (!placeBundledStructure(center, "structures/ruined_portal.nbt", -11, -10, -12)) {
+            throw new IllegalStateException("Could not load bundled Ruined Portal structure");
+        }
         removeNonVillageContainers(center, 20, 14, 18);
     }
 
