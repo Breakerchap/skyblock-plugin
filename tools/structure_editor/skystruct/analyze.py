@@ -104,16 +104,13 @@ def analyze(structure: Structure) -> Analysis:
             f"Footprint fills {fill_ratio:.0%} of its bounding rectangle; silhouette may be boxy."
         )
 
-    columns: dict[tuple[int, int], tuple[tuple[int, str], ...]] = {}
-    for x, _, z in structure.blocks:
-        if (x, z) in columns:
-            continue
-        stack = tuple(sorted(
-            (y, symbol)
-            for (bx, y, bz), symbol in structure.blocks.items()
-            if bx == x and bz == z
-        ))
-        columns[(x, z)] = stack
+    column_parts: dict[tuple[int, int], list[tuple[int, str]]] = {}
+    for (x, y, z), symbol in structure.blocks.items():
+        column_parts.setdefault((x, z), []).append((y, symbol))
+    columns = {
+        pos: tuple(sorted(stack))
+        for pos, stack in column_parts.items()
+    }
     if len(columns) >= 50:
         repeated = Counter(columns.values()).most_common(1)[0][1]
         if repeated / len(columns) > 0.35:

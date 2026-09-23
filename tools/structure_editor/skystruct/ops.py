@@ -5,7 +5,7 @@ import math
 import random
 
 from .analyze import connected_components
-from .model import NEIGHBORS_6, Pos, Structure
+from .model import NEIGHBORS_6, PaletteEntry, Pos, Structure
 
 
 CARDINAL_2 = ((1, 0), (-1, 0), (0, 1), (0, -1))
@@ -249,3 +249,88 @@ def scatter_on_top(
             structure.set(pos, symbol)
             placed += 1
     return placed
+
+
+_CARDINAL_ROTATION = {
+    "north": "east",
+    "east": "south",
+    "south": "west",
+    "west": "north",
+}
+
+_RAIL_ROTATION = {
+    "north_south": "east_west",
+    "east_west": "north_south",
+    "ascending_north": "ascending_east",
+    "ascending_east": "ascending_south",
+    "ascending_south": "ascending_west",
+    "ascending_west": "ascending_north",
+    "south_east": "south_west",
+    "south_west": "north_west",
+    "north_west": "north_east",
+    "north_east": "south_east",
+}
+
+
+def _turn_direction(value: str, turns: int) -> str:
+    result = value
+    for _ in range(turns % 4):
+        result = _CARDINAL_ROTATION.get(result, result)
+    return result
+
+
+def _turn_rail_shape(value: str, turns: int) -> str:
+    result = value
+    for _ in range(turns % 4):
+        result = _RAIL_ROTATION.get(result, result)
+    return result
+
+
+def _rotated_entry(entry: PaletteEntry, turns: int) -> PaletteEntry:
+    turns %= 4
+    if not turns or not entry.state:
+        return entry
+
+    state = dict(entry.state)
+    if "facing" in state:
+        state["facing"] = _turn_direction(state["facing"], turns)
+    if "axis" in state and turns % 2 and state["axis"] in {"x", "z"}:
+        state["axis"] = "z" if state["axis"] == "x" else "x"
+    if "rotation" in state:
+        try:
+            state["rotation"] = str((int(state["rotation"]) + 4 * turns) % 16)
+        except ValueError:
+            pass
+    if "shape" in state:
+        state["shape"] = _turn_rail_shape(state["shape"], turns)
+
+    return PaletteEntry(entry.block, entry.color, state)
+
+
+def rotate_y(structure: Structure, turns: int = 1) -> None:
+    """Rotate the full authored structure clockwise around its logical origin."""
+    turns %= 4
+    if turns == 0:
+        return
+
+    ox, oy, oz = structure.origin
+
+    def turn_point(pos: Pos) -> Pos:
+        x, y, z = pos
+        dx, dz = x - ox, z - oz
+        for _ in range(turns):
+            dx, dz = -dz, dx
+        return ox + dx, y, oz + dz
+
+    structure.blocks = {turn_point(pos): symbol for pos, symbol in structure.blocks.items()}
+    structure.palette = {
+        symbol: _rotated_entry(entry, turns)
+        for symbol, entry in structure.palette.items()
+    }
+
+    for collection in (structure.entities, structure.markers):
+        for item in collection:
+            raw = item.get("pos")
+            if isinstance(raw, list) and len(raw) == 3:
+                turned = turn_point((int(raw[0]), int(raw[1]), int(raw[2])))
+                item["pos"] = list(turned)

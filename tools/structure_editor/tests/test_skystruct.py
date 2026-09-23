@@ -9,7 +9,7 @@ import unittest
 from skystruct.analyze import analyze
 from skystruct.model import PaletteEntry, Structure
 from skystruct.nbt import export_structure
-from skystruct.ops import organic_island
+from skystruct.ops import organic_island, rotate_y
 from skystruct.render import render_turntable
 
 
@@ -71,6 +71,29 @@ class SkyStructTests(unittest.TestCase):
         self.assertEqual(1, report.component_count)
         self.assertGreater(report.top_height_stddev, 0.4)
         self.assertLess(report.footprint_fill_ratio, 0.9)
+
+    def test_rotation_moves_geometry_and_common_block_states(self) -> None:
+        structure = Structure(
+            "Rotate",
+            {
+                "f": PaletteEntry("minecraft:oak_stairs", "#997044", {"facing": "north", "half": "bottom"}),
+                "l": PaletteEntry("minecraft:oak_log", "#73532f", {"axis": "x"}),
+            },
+        )
+        structure.origin = (0, 0, 0)
+        structure.set((0, 0, -2), "f")
+        structure.set((2, 0, 0), "l")
+        structure.entities.append({"id": "minecraft:goat", "pos": [1, 0, 0]})
+        structure.markers.append({"kind": "spawn", "pos": [0, 0, -1]})
+
+        rotate_y(structure, 1)
+
+        self.assertEqual("f", structure.get((2, 0, 0)))
+        self.assertEqual("l", structure.get((0, 0, 2)))
+        self.assertEqual("east", structure.palette["f"].state["facing"])
+        self.assertEqual("z", structure.palette["l"].state["axis"])
+        self.assertEqual([0, 0, 1], structure.entities[0]["pos"])
+        self.assertEqual([1, 0, 0], structure.markers[0]["pos"])
 
     def test_nbt_export_is_gzip_structure_and_tracks_anchor_offset(self) -> None:
         structure = self.basic()

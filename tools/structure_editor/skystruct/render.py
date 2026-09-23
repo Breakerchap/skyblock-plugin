@@ -6,6 +6,7 @@ from pathlib import Path
 import struct
 import zlib
 
+from .analyze import connected_components
 from .model import PaletteEntry, Pos, Structure
 
 RGB = tuple[int, int, int]
@@ -135,12 +136,22 @@ def render_isometric(
     rotation: int = 0,
     tile: int = 18,
     margin: int = 30,
+    highlight_detached: bool = True,
 ) -> None:
     if not structure.blocks:
         Raster(320, 200).save_png(path)
         return
 
     blocks = {_rotate(pos, rotation): symbol for pos, symbol in structure.blocks.items()}
+    detached: set[Pos] = set()
+    if highlight_detached:
+        components = connected_components(structure)
+        if len(components) > 1:
+            detached = {
+                _rotate(pos, rotation)
+                for component in components[1:]
+                for pos in component
+            }
     half = tile / 2
     height = tile
 
@@ -150,7 +161,7 @@ def render_isometric(
 
     raw_faces: list[tuple[float, list[tuple[float, float]], RGB]] = []
     for (x, y, z), symbol in blocks.items():
-        base = _color(structure.palette[symbol])
+        base = (232, 63, 74) if (x, y, z) in detached else _color(structure.palette[symbol])
         depth = x + z - y * 0.03
         if (x, y + 1, z) not in blocks:
             raw_faces.append((depth - 0.2, [
@@ -192,12 +203,24 @@ def render_isometric(
     raster.save_png(path)
 
 
-def render_turntable(structure: Structure, directory: str | Path, *, tile: int = 18) -> list[Path]:
+def render_turntable(
+    structure: Structure,
+    directory: str | Path,
+    *,
+    tile: int = 18,
+    highlight_detached: bool = True,
+) -> list[Path]:
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     outputs: list[Path] = []
     for rotation in range(4):
         target = directory / f"view_{rotation}.png"
-        render_isometric(structure, target, rotation=rotation, tile=tile)
+        render_isometric(
+            structure,
+            target,
+            rotation=rotation,
+            tile=tile,
+            highlight_detached=highlight_detached,
+        )
         outputs.append(target)
     return outputs

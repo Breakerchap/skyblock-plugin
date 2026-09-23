@@ -8,7 +8,7 @@ import sys
 from .analyze import analyze, format_report
 from .model import PaletteEntry, Structure
 from .nbt import DEFAULT_DATA_VERSION, export_structure
-from .ops import organic_island, prune_small_components, replace_random, scatter_on_top
+from .ops import organic_island, prune_small_components, replace_random, rotate_y, scatter_on_top
 from .render import render_turntable
 
 
@@ -48,7 +48,12 @@ def cmd_analyze(args: argparse.Namespace) -> None:
 
 
 def cmd_render(args: argparse.Namespace) -> None:
-    outputs = render_turntable(_load(args.file), args.output, tile=args.tile)
+    outputs = render_turntable(
+        _load(args.file),
+        args.output,
+        tile=args.tile,
+        highlight_detached=not args.no_highlight_detached,
+    )
     for output in outputs:
         print(output)
 
@@ -62,6 +67,57 @@ def cmd_export(args: argparse.Namespace) -> None:
     print(f"Wrote vanilla structure: {args.output}")
     print(f"Wrote placement metadata: {Path(args.output).with_suffix('.placement.json')}")
     print(f"Placement offset from anchor: {sidecar['placement_offset']}")
+
+
+def cmd_origin(args: argparse.Namespace) -> None:
+    structure = _load(args.file)
+    structure.origin = (args.x, args.y, args.z)
+    _save(structure, args.file)
+    print(f"Origin set to {structure.origin}")
+
+
+def cmd_translate(args: argparse.Namespace) -> None:
+    structure = _load(args.file)
+    structure.translate(args.dx, args.dy, args.dz)
+    _save(structure, args.file)
+    print(f"Translated structure and anchor by {(args.dx, args.dy, args.dz)}")
+
+
+def cmd_rotate(args: argparse.Namespace) -> None:
+    structure = _load(args.file)
+    rotate_y(structure, args.turns)
+    _save(structure, args.file)
+    print(f"Rotated {args.turns % 4} quarter-turn(s) clockwise around {structure.origin}")
+
+
+def cmd_entity(args: argparse.Namespace) -> None:
+    structure = _load(args.file)
+    entity: dict[str, object] = {
+        "id": args.entity_id if ":" in args.entity_id else "minecraft:" + args.entity_id,
+        "pos": [args.x, args.y, args.z],
+    }
+    if args.data:
+        extra = json.loads(args.data)
+        if not isinstance(extra, dict):
+            raise ValueError("--data must be a JSON object")
+        entity["data"] = extra
+    structure.entities.append(entity)
+    _save(structure, args.file)
+
+
+def cmd_marker(args: argparse.Namespace) -> None:
+    structure = _load(args.file)
+    marker: dict[str, object] = {
+        "kind": args.kind,
+        "pos": [args.x, args.y, args.z],
+    }
+    if args.data:
+        extra = json.loads(args.data)
+        if not isinstance(extra, dict):
+            raise ValueError("--data must be a JSON object")
+        marker["data"] = extra
+    structure.markers.append(marker)
+    _save(structure, args.file)
 
 
 def cmd_set(args: argparse.Namespace) -> None:
@@ -186,6 +242,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("file")
     p.add_argument("-o", "--output", default="preview")
     p.add_argument("--tile", type=int, default=18)
+    p.add_argument("--no-highlight-detached", action="store_true")
     p.set_defaults(func=cmd_render)
 
     p = sub.add_parser("export-nbt", help="compile blueprint to a real vanilla .nbt structure")
@@ -193,6 +250,33 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("-o", "--output", required=True)
     p.add_argument("--data-version", type=int)
     p.set_defaults(func=cmd_export)
+
+    p = sub.add_parser("origin", help="set the logical placement anchor without moving blocks")
+    p.add_argument("file")
+    p.add_argument("x", type=int); p.add_argument("y", type=int); p.add_argument("z", type=int)
+    p.set_defaults(func=cmd_origin)
+
+    p = sub.add_parser("translate", help="move blocks, entities, markers and anchor together")
+    p.add_argument("file")
+    p.add_argument("dx", type=int); p.add_argument("dy", type=int); p.add_argument("dz", type=int)
+    p.set_defaults(func=cmd_translate)
+
+    p = sub.add_parser("rotate", help="rotate geometry and common block states around the logical origin")
+    p.add_argument("file")
+    p.add_argument("--turns", type=int, default=1, help="clockwise 90-degree quarter turns")
+    p.set_defaults(func=cmd_rotate)
+
+    p = sub.add_parser("entity", help="add an entity spawn to the blueprint/NBT")
+    p.add_argument("file"); p.add_argument("entity_id")
+    p.add_argument("x", type=int); p.add_argument("y", type=int); p.add_argument("z", type=int)
+    p.add_argument("--data", help="optional JSON object retained as editor/plugin metadata")
+    p.set_defaults(func=cmd_entity)
+
+    p = sub.add_parser("marker", help="add plugin-only placement metadata")
+    p.add_argument("file"); p.add_argument("kind")
+    p.add_argument("x", type=int); p.add_argument("y", type=int); p.add_argument("z", type=int)
+    p.add_argument("--data", help="optional JSON object")
+    p.set_defaults(func=cmd_marker)
 
     p = sub.add_parser("set", help="set one block")
     p.add_argument("file")

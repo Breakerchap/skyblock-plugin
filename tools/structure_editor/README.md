@@ -129,7 +129,45 @@ python -m skystruct analyze build.skystruct.json --fail-on-detached
 python -m skystruct render build.skystruct.json -o preview/build
 ```
 
-Four isometric views are produced without Minecraft, Pillow, Blender or a browser. A red cross marks the blueprint origin.
+Four isometric views are produced without Minecraft, Pillow, Blender or a browser. A red cross marks the blueprint origin. Blocks in components detached from the largest connected build are rendered bright red by default, making accidental floaters obvious from the preview itself. Use `--no-highlight-detached` only when intentionally reviewing satellite chunks.
+
+### Anchor and transforms
+
+The logical origin is where the plugin should consider the landmark's anchor. Change it without moving blocks:
+
+```powershell
+python -m skystruct origin build.skystruct.json 0 0 0
+```
+
+Move the entire authored coordinate system, including origin/entities/markers:
+
+```powershell
+python -m skystruct translate build.skystruct.json 4 -2 7
+```
+
+Rotate clockwise in 90-degree steps around the origin:
+
+```powershell
+python -m skystruct rotate build.skystruct.json --turns 1
+```
+
+Rotation updates geometry plus common Minecraft block-state orientation such as `facing`, horizontal log `axis`, rotatable `rotation`, and rail `shape`, instead of merely moving block coordinates.
+
+### Entities and plugin markers
+
+Entities can be part of the exported vanilla structure:
+
+```powershell
+python -m skystruct entity build.skystruct.json minecraft:axolotl 2 1 -3
+```
+
+Plugin-only semantic locations stay in the placement sidecar:
+
+```powershell
+python -m skystruct marker build.skystruct.json discovery 0 2 0 --data "{\"radius\":22}"
+```
+
+This lets the final visual build stay independent from hard-coded Java coordinates for things such as discovery points, trader/map targets, special spawn points or scripted interactions.
 
 ### Explicit editing
 
