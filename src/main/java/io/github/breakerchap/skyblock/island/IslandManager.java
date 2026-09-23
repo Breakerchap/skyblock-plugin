@@ -185,116 +185,11 @@ public final class IslandManager implements Listener {
     }
 
     private void buildLush(Location center) {
-        Map<Character, Material> rock = Map.of(
-            '#', Material.STONE,
-            'd', Material.DEEPSLATE,
-            'm', Material.MOSS_BLOCK,
-            'r', Material.ROOTED_DIRT,
-            'c', Material.CLAY,
-            'w', Material.WATER
-        );
+        placeBundledStructure(center, "structures/lush_hollow.nbt", -14, -11, -16);
 
-        // Hand-authored cliff/cave slices. The south face is deliberately torn open so
-        // the cave reads clearly from the bridge instead of looking like a floating ball.
-        paintLayer(center, -7, rock,
-            "       d####d       ",
-            "    dd########d    ",
-            "  dd############d  ",
-            " d###############d ",
-            "d#################d",
-            "d#################d",
-            " d###############d ",
-            "  d#############d  ",
-            "    d#########d    ",
-            "       d###d        ");
-        paintLayer(center, -6, rock,
-            "     d########d     ",
-            "   d############d   ",
-            " d################d ",
-            "d##################d",
-            "d##################d",
-            "d##################d",
-            " d################d ",
-            "  d##############d  ",
-            "    d##########d    ",
-            "       d####d       ");
-        paintLayer(center, -5, rock,
-            "    ############    ",
-            "  ################  ",
-            " ################## ",
-            "####mmmmmmmmmmmm####",
-            "###mmmmmmmmmmmmmm###",
-            "###mmmmccccmmmmmm###",
-            "####mmmmmmmmmmmm####",
-            " ####mmmmmmmmmm#### ",
-            "   ##############   ",
-            "      ########       ");
-        paintLayer(center, -4, rock,
-            "    ############    ",
-            "  ###mmmmmmmmmm###  ",
-            " ##mmmmmmmmmmmmmm## ",
-            "##mmmmccccccmmmmmm##",
-            "##mmmccwwwwccmmmm###",
-            "##mmmccwwwwccmmmm###",
-            "##mmmmccccccmmmmmm##",
-            " ##mmmmmmmmmmmmmm## ",
-            "   ####mmmmmm#####  ",
-            "      ########       ");
-        paintLayer(center, -3, rock,
-            "       #####         ",
-            "   mmmmmmmmmmmmm     ",
-            "  mmmmmmmmmmmmmmmm   ",
-            " mmmmmccwwwwccmmmmm  ",
-            " mmmmccwwwwwwccmmmm  ",
-            " mmmmccwwwwwwccmmmm  ",
-            " mmmmmccwwwwccmmmmm  ",
-            "  mmmmmmmmmmmmmmmm   ",
-            "    mmmmmmmmmmmm     ",
-            "       mmmmm         ");
-
-        // Cave walls/roof, built as authored ribs rather than a generated shell.
-        int[][] ribs = {
-            {-9,-2,-3},{-9,-1,-3},{-9,0,-2},{-8,1,-2},{-8,2,-1},{-7,3,-1},
-            {9,-2,-3},{9,-1,-3},{9,0,-2},{8,1,-2},{8,2,-1},{7,3,-1},
-            {-7,4,0},{-6,5,0},{-4,6,0},{-2,6,0},{0,7,0},{2,6,0},{4,6,0},{6,5,0},{7,4,0}
-        };
-        for (int[] p : ribs) {
-            set(center, p[0], p[1], p[2], p[1] >= 4 ? Material.MOSS_BLOCK : Material.STONE);
-        }
-        // Broken roof shelves extend backwards into the cave.
-        for (int z = -7; z <= 0; z++) {
-            set(center, -7, 3, z, Material.STONE);
-            set(center, -6, 4, z, Material.MOSS_BLOCK);
-            set(center, 7, 3, z, Material.STONE);
-            set(center, 6, 4, z, Material.MOSS_BLOCK);
-        }
-        for (int z = -6; z <= -1; z++) {
-            set(center, -3, 6, z, Material.STONE);
-            set(center, 0, 7, z, Material.MOSS_BLOCK);
-            set(center, 3, 6, z, Material.STONE);
-        }
-
-        // Pond detail.
-        set(center, -3, -2, 0, Material.SMALL_DRIPLEAF);
-        set(center, 3, -2, 1, Material.BIG_DRIPLEAF);
-        set(center, 5, -2, -4, Material.AZALEA);
-        set(center, -5, -2, -5, Material.FLOWERING_AZALEA);
-        set(center, -6, -2, 2, Material.MOSS_CARPET);
-        set(center, 6, -2, 2, Material.MOSS_CARPET);
-        set(center, -2, 5, -3, Material.SPORE_BLOSSOM);
-        set(center, 3, 5, -5, Material.SPORE_BLOSSOM);
-        placeGlowVine(center, -5, 5, -5, 4);
-        placeGlowVine(center, 1, 6, -6, 5);
-        placeGlowVine(center, 5, 4, -3, 3);
-
-        // Hanging roots and little stone teeth make the silhouette less clean/geometric.
-        for (int[] p : new int[][]{{-8,-4,5},{-6,-5,6},{6,-5,5},{8,-4,4},{-3,-6,7},{4,-6,7}}) {
-            set(center, p[0], p[1], p[2], Material.POINTED_DRIPSTONE);
-        }
         setBiomeCube(center, 14, 10, 12, Biome.LUSH_CAVES);
-
-        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(-1.5, -2.6, 0.5));
-        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(1.5, -2.6, -0.5));
+        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(-1.5, -1.4, -3.0));
+        spawnIfFewer(center, Axolotl.class, 2, 14, 10, 12, center.clone().add(1.5, -1.4, -2.0));
     }
 
     private void buildDripstone(Location center) {
@@ -1331,6 +1226,29 @@ public final class IslandManager implements Listener {
                     set(center, x0 + rx, dy, z0 + rz, material);
                 }
             }
+        }
+    }
+
+    private void placeBundledStructure(
+        Location center, String resourcePath, int dx, int dy, int dz
+    ) {
+        try (java.io.InputStream stream = plugin.getResource(resourcePath)) {
+            if (stream == null) {
+                throw new IllegalStateException("Bundled structure resource not found: " + resourcePath);
+            }
+
+            Structure structure = plugin.getServer().getStructureManager().loadStructure(stream);
+            structure.place(
+                center.clone().add(dx, dy, dz),
+                false,
+                StructureRotation.NONE,
+                Mirror.NONE,
+                0,
+                1.0f,
+                new Random(0x5A17B10CL)
+            );
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException("Could not load bundled structure " + resourcePath, ex);
         }
     }
 

@@ -1,0 +1,506 @@
+{
+  "format": "skystruct/1",
+  "name": "Lush Hollow",
+  "origin": [
+    0,
+    0,
+    5
+  ],
+  "palette": {
+    "V": {
+      "block": "minecraft:cave_vines",
+      "color": "#71953d",
+      "state": {
+        "berries": "true"
+      }
+    },
+    "a": {
+      "block": "minecraft:azalea",
+      "color": "#629245"
+    },
+    "b": {
+      "block": "minecraft:big_dripleaf",
+      "color": "#4d8a47"
+    },
+    "c": {
+      "block": "minecraft:clay",
+      "color": "#9ca6b5"
+    },
+    "d": {
+      "block": "minecraft:deepslate",
+      "color": "#53545a"
+    },
+    "f": {
+      "block": "minecraft:flowering_azalea",
+      "color": "#7c9b58"
+    },
+    "l": {
+      "block": "minecraft:glow_lichen",
+      "color": "#b7d3a0"
+    },
+    "m": {
+      "block": "minecraft:moss_block",
+      "color": "#5b8f3d"
+    },
+    "p": {
+      "block": "minecraft:spore_blossom",
+      "color": "#c06ac5"
+    },
+    "q": {
+      "block": "minecraft:small_dripleaf",
+      "color": "#4d8a47"
+    },
+    "r": {
+      "block": "minecraft:rooted_dirt",
+      "color": "#8b6a4b"
+    },
+    "s": {
+      "block": "minecraft:stone",
+      "color": "#818181"
+    },
+    "t": {
+      "block": "minecraft:pointed_dripstone",
+      "color": "#806f62",
+      "state": {
+        "vertical_direction": "down",
+        "thickness": "tip",
+        "waterlogged": "false"
+      }
+    },
+    "v": {
+      "block": "minecraft:cave_vines_plant",
+      "color": "#71953d"
+    },
+    "w": {
+      "block": "minecraft:water",
+      "color": "#3f75c5"
+    }
+  },
+  "layers": [
+    {
+      "y": -11,
+      "x": 8,
+      "z": 6,
+      "rows": [
+        "t"
+      ]
+    },
+    {
+      "y": -10,
+      "x": -7,
+      "z": -3,
+      "rows": [
+        "........s",
+        ".......s",
+        "",
+        "....d",
+        "...s",
+        "",
+        "",
+        "",
+        "",
+        "...............s",
+        "s"
+      ]
+    },
+    {
+      "y": -9,
+      "x": -11,
+      "z": -3,
+      "rows": [
+        ".........s.ss..s",
+        "...........ds...s",
+        "s.......s.s.sdd",
+        ".......ss.s.s",
+        ".......s.s.s",
+        "........s",
+        "",
+        "",
+        "",
+        "...................s",
+        "....s",
+        "....s",
+        ".........d"
+      ]
+    },
+    {
+      "y": -8,
+      "x": -11,
+      "z": -8,
+      "rows": [
+        "......t",
+        "",
+        "",
+        ".......s.s",
+        ".........s.s.....s",
+        "......s..ssss..ss",
+        "..........sss.s.s",
+        "s.......dddsdss...d",
+        ".......ssdssd...s.s",
+        ".......ssdss.........t",
+        "......sss.s.s",
+        "t......ds",
+        "........s",
+        "",
+        "...................s",
+        "....s",
+        "...ts",
+        ".........s"
+      ]
+    },
+    {
+      "y": -7,
+      "x": -11,
+      "z": -8,
+      "rows": [
+        "......s............s",
+        "",
+        ".....................s",
+        "......ssss.s.s....s...ss",
+        ".....ssssdsds.ss.ss",
+        "......d.ssssssdds.s...s",
+        "........sssddsdss...d.ss",
+        "d......ssdssssdsdss",
+        ".....s.ssssssss.s.s",
+        ".......dssss.ss......s",
+        "...s.sssddsdd",
+        "s.....sdss.....s",
+        ".......dsss",
+        "......ss...d.s",
+        ".........s.d.......s",
+        "....s",
+        "...ss",
+        ".........d"
+      ]
+    },
+    {
+      "y": -6,
+      "x": -12,
+      "z": -11,
+      "rows": [
+        "...................s",
+        "",
+        "",
+        ".......s............s",
+        "............s",
+        ".......ss.s..d........s",
+        "...sssssssssssdsssss...ss",
+        "......ssssssssdssdsdssss.s",
+        "...s.s.ssssssssssdds.s.ss",
+        "......ssssssssssssss.s.ss",
+        ".s...ddssssssssdsssss..sss",
+        "......sssssdsddsssdd.s..ss",
+        ".s...dsdsssdssdsd.dss.ss",
+        "s...s.ssssssdss.s.s",
+        ".s...d.sssdds.d.s.s..s",
+        "......s.ssss...s.......ss",
+        "....s..sds..sdd",
+        "....ss..s.dds.......s",
+        ".....s...ss..d",
+        "....ss...ssss",
+        "........s.s",
+        ".....ss"
+      ]
+    },
+    {
+      "y": -5,
+      "x": -14,
+      "z": -11,
+      "rows": [
+        "...................s.s",
+        ".........s",
+        "...................t",
+        ".........s............ds",
+        ".....sd...s...d...s",
+        "......sssss.s..d..ssd.s.s",
+        "..ss.ssssssssssssssssss.sss",
+        ".....sssssssssssssssssssssss",
+        ".s...sssssssssssssssssssssss",
+        "s.....ssssssssssssssssssssss",
+        "ss.s.sssssssssssssssssssssss",
+        "...s..ssssssssssssssssssssss",
+        "..sssssssssssssssssssdssss.ss",
+        "..s...ssssssssssssdss....s",
+        "...s.s.sssssssssdsd.d..s.ss",
+        "..sss.sssssssssd.s.......ss",
+        ".....ss.ssssssssss",
+        "......sss.ssssssss...ss",
+        ".......s.s.sssssss.sss",
+        "....s.sss.sssss........s",
+        "..........s.ssss.s",
+        ".......ssss.s"
+      ]
+    },
+    {
+      "y": -4,
+      "x": -14,
+      "z": -11,
+      "rows": [
+        "...................s.s",
+        ".........s..s",
+        ".......ss...s...d..s",
+        ".........ss........sdsss",
+        "...s.sss.ssssss..sss",
+        "...ss.sssssssssssssss.ssss",
+        "..ss.sssssssssssssssssssssr",
+        ".sssssssssssssssssssssssssrr",
+        ".s...sssssssssssssssssssssrr",
+        "s....ssssssssssssssssssssrrr",
+        "ssss.sssssssssssssssssssssss",
+        ".sss.sssssssssssssssssssssss",
+        "..sssssssssssssssssssssssss",
+        "..s...sssssssssssssssssss...ss",
+        "...s.ssssssssssssssss..s.ss",
+        "..ssssssssssssssssss.s...ss",
+        "....sssssssssssssss.s",
+        "....s.ssssssssssss.ssss",
+        "....ssssssssssssss.sss",
+        "....s.ssssssssss.ss.s..s",
+        ".....ss..sssssssss..s",
+        ".......sssssss"
+      ]
+    },
+    {
+      "y": -3,
+      "x": -14,
+      "z": -11,
+      "rows": [
+        "...........ss..ss..s.s",
+        ".........s..ssss...s.ss",
+        ".......ss.ssss..s.sss",
+        "...s.ssssssssssss.ssssss",
+        "...s.ssssssssssssssss.s",
+        "..ssssssssssssssssssssssss",
+        "..srssrrsrrcccccssssssssssr",
+        ".rsrsrrssssccccccsssssssrrrr",
+        ".r...rsrrrrcccccccsssssrrrrr",
+        "r....srrrsscccccccssssssrrsr",
+        "ssrrsssssrrcccccccsssssssrsr",
+        ".rrrsssssssrcccccssssssssrrr",
+        "..rrssssssssssssssssssssssr",
+        "..sssssssssssssssssssssssrs",
+        "...ssssssssssssssssssssssrs",
+        "..ssssssssssssssssssss.ssss",
+        "...ssssssssssssssssssss",
+        "....sssrsssssssssssssss",
+        "....ssrsrssrsrsssssssss",
+        "....r.rrrssssrrsssssssss",
+        ".....rs..srrrrrsssssss",
+        ".......rsssrsrss"
+      ]
+    },
+    {
+      "y": -2,
+      "x": -14,
+      "z": -11,
+      "rows": [
+        "..........ssssssssss.s",
+        "........sssssssss.sssss",
+        "....sssssssssssssssss",
+        "...s.sssssssssssssssssss",
+        "...s.ssssssssssssssssssss",
+        "..srssssssrssssssssssssssr",
+        "..rrsssrrsrwwwwwrsrsrsrrsmm",
+        ".rsrrrrsrsrwwwwwwrrrsrrssmrm",
+        ".r...ssrrsrwwwwwwwrrrsrrrmmm",
+        "r....rssrsrwwwwwwwssssssrmmm",
+        "rrrsssssrsswwwwwwwsrrsrrrrrr",
+        ".rrsrssrsssrwwwwwssrsrsrrrsr",
+        "..rsrsrsrsrssrssssssrsrssrr",
+        "..ssssssrsrsrsssssssssssssr",
+        "...rssrsssrrrsssssssssssssr",
+        "..rrssrrssrrrrssssssssssrss",
+        "...rrrrrrrsrsrrsrssssss",
+        "....rrrsssrrsrsssrssssr",
+        "....rrsrrrrsrsrrrrsssrr",
+        "....r.rrsrrssssrrrsrrrsr",
+        ".....sr..srsrsrrrrrsrs",
+        ".......rrrrrssrr"
+      ]
+    },
+    {
+      "y": -1,
+      "x": -14,
+      "z": -11,
+      "rows": [
+        "..........ssrrrrssssss",
+        "........rrrrsrrsssssssr",
+        "....rrrsrrsrrrsssssssss",
+        "...rsrrssrrssrssssssssss",
+        "...rsrrsrrrrsrrsssrrssssr",
+        "..rsssssr...m......m..ssrr",
+        "..ssrrmmm.m......m....rsr",
+        ".mmrrmmss.............rsm",
+        ".r...ssmm.q.........msrsm",
+        "m....mmmr.........m.s.ssm",
+        "mmmmsrssss.......b...ssrrmmm",
+        ".mmmrrrss.............rrsmsm",
+        "..rmrssss...m......m..srrrm",
+        "..rsssrrrrsrrsrrrrrrrrrssmr",
+        "...rrsrrrsrrrsrsssrssrsssms",
+        "..srsrrrsssssrrsssrrrrrrsmm",
+        "...sssrrsrrrrrssssrrsrs",
+        "....sssmrrrrsrrrssrrrrs",
+        "....rmrmmrsmmmsssrsrsrr",
+        "....m.msmmrmsmsrsrrrrssr",
+        ".....mm..smmsmrsrsssrs",
+        ".......mmmmmmrrs"
+      ]
+    },
+    {
+      "y": 0,
+      "x": -12,
+      "z": -11,
+      "rows": [
+        "........rssrsrrrsrsr",
+        "......sssrrrrrrrrsrrr",
+        "..srrrrrsrrsrrsssrrsr",
+        ".rsrsss.............rr",
+        ".ssrrrr.............sss",
+        "mmsrrmm.............rsrm",
+        "..srsss.............mrr",
+        "..msssd.............mm",
+        "...m................m",
+        "..................q.rm",
+        "..rmrmms...........ssrr",
+        "..mmmss.............rmm",
+        "..mmssm.............mrm",
+        "mmrsmmmmmmmmssssrassssr",
+        ".mrrrmmsmmmrsrrrrssssrs",
+        "mmsrrmmmmmmmsrrsrsrrrsm",
+        ".mmmsmmmmmmmmmmrrssrs",
+        "..smm.mmmmmmmmmmrrsrm",
+        "..m....mm...mrmmsrmmm",
+        ".............mmmmmmmmm",
+        ".............mmmsmmm",
+        "............mm"
+      ]
+    },
+    {
+      "y": 1,
+      "x": -11,
+      "z": -11,
+      "rows": [
+        ".......mmmmmmrssrrr",
+        "...sdmmmmmrsrsrrrrsmm",
+        ".mmmmsrmrrmrrssrsrrrd",
+        "mssmrs.............ss",
+        "mrmmrm.............ssr",
+        ".mmmss.............mmm",
+        "..sssm.............ss",
+        "..ssss.............ss",
+        "",
+        "",
+        "......s............m",
+        "....ss",
+        "...m",
+        ".ms.f......mmmmmsmmrmm",
+        ".mm.......rsmrsmmmmmmm",
+        ".m.........mssmsmmmmm",
+        "..............rmmsrr",
+        "...............mmmm",
+        "...............mr"
+      ]
+    },
+    {
+      "y": 2,
+      "x": -10,
+      "z": -11,
+      "rows": [
+        "............rmrmmm",
+        "..sssdsssdsmmmmmmm.m",
+        "..ssssssssmsmmmsmmrm",
+        "mssss.............mm",
+        "mssss.............mm",
+        ".ssss.............sd",
+        ".dsdm..........V..ss",
+        ".sdssV............ss",
+        "",
+        "",
+        "",
+        "...m"
+      ]
+    },
+    {
+      "y": 3,
+      "x": -9,
+      "z": -10,
+      "rows": [
+        ".ssssmmssssssssm",
+        ".sddssmsssssssss",
+        "ssss",
+        "ssss............mmm",
+        "ssss............sms",
+        "ssss..........v.sss",
+        "ssssv...........ssd"
+      ]
+    },
+    {
+      "y": 4,
+      "x": -9,
+      "z": -10,
+      "rows": [
+        ".mmmmmmmmdsssssm",
+        ".ssssmmsmsssssmm",
+        "mmsms..........m",
+        "ssmsmp.........mmss",
+        "mmmdm........p.ddms",
+        "msmss.........vmmsm",
+        "ssssm..........smsm"
+      ]
+    },
+    {
+      "y": 5,
+      "x": -9,
+      "z": -10,
+      "rows": [
+        "...ss..mmsmsmss",
+        ".m.mmm.mmmmsmdm",
+        "mmmssmmm.....mm",
+        "mmmsmm.......mss",
+        "smmmmd.......dmmm.s",
+        "msdmm........mmsmss",
+        "smmmm........ssmss"
+      ]
+    },
+    {
+      "y": 6,
+      "x": -9,
+      "z": -10,
+      "rows": [
+        ".........mssss",
+        "..........mss",
+        "...........mm",
+        "...m........m",
+        "...s........m",
+        ".s.s........mm",
+        "ms.m.......sdsm"
+      ]
+    }
+  ],
+  "entities": [],
+  "markers": [
+    {
+      "kind": "discovery",
+      "pos": [
+        0,
+        1,
+        5
+      ],
+      "data": {
+        "radius": 22
+      }
+    },
+    {
+      "kind": "axolotl_spawn",
+      "pos": [
+        -1,
+        -1,
+        -3
+      ]
+    }
+  ],
+  "meta": {
+    "design": "torn cliff cave with irregular pond; authored 2026-09-23"
+  }
+}

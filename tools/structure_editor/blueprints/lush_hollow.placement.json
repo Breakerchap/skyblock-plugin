@@ -1,0 +1,33 @@
+{
+  "format": "skystruct-placement/1",
+  "name": "Lush Hollow",
+  "nbt_data_version": 4903,
+  "source_origin": [0, 0, 5],
+  "source_bounds": {
+    "min": [-14, -11, -11],
+    "max": [13, 6, 10]
+  },
+  "nbt_size": [28, 18, 22],
+  "placement_offset": [-14, -11, -16],
+  "markers": [
+    {
+      "kind": "discovery",
+      "pos": [0, 1, 5],
+      "data": {"radius": 22}
+    },
+    {
+      "kind": "axolotl_spawn",
+      "pos": [-1, -1, -3]
+    }
+  ],
+  "entities": [],
+  "analysis": {
+    "block_count": 3044,
+    "component_count": 1,
+    "detached_blocks": 0,
+    "singleton_components": 0,
+    "top_height_stddev": 2.451,
+    "footprint_fill_ratio": 0.7662,
+    "max_identical_column_fraction": 0.0212
+  }
+}
