@@ -219,74 +219,12 @@ public final class IslandManager implements Listener {
     }
 
     private void buildMonument(Location center) {
-        Map<Character,Material> p=Map.of(
-            'p',Material.PRISMARINE,
-            'b',Material.PRISMARINE_BRICKS,
-            'd',Material.DARK_PRISMARINE,
-            'w',Material.WATER
-        );
-
-        paintLayer(center,-6,p,
-            "      ppppppp      ",
-            "   ppppppppppppp   ",
-            " ppppppppppppppppp ",
-            "ppppppppppppppppppp",
-            "ppppppppppppppppppp",
-            " ppppppppppppppppp ",
-            "   ppppppppppppp   ",
-            "      ppppppp      ");
-        paintLayer(center,-5,p,
-            "    pppbbbbbbppp    ",
-            "  ppbbbbbbbbbbbbpp  ",
-            " pbbbbbbbbbbbbbbbbp ",
-            "pbbbbbbbbbbbbbbbbbbp",
-            "pbbbbbbbbbbbbbbbbbbp",
-            " pbbbbbbbbbbbbbbbbp ",
-            "   ppbbbbbbbbbbpp   ");
-        paintLayer(center,-4,p,
-            "    bbbbbbbbbbbb    ",
-            "  bbbbwwwwwwbbbbb  ",
-            " bbbwwwwwwwwwwbbbb ",
-            "bbbwwwwwwwwwwwwbbbb",
-            "bbbwwwwwwwwwwwwbbbb",
-            " bbbbwwwwwwwwbbbb  ",
-            "   bbbbbbbbbbbbbb  ");
-
-        // Broken gate: two unequal towers with a snapped lintel.
-        for(int y=-3;y<=5;y++){
-            set(center,-7,y,-2,(y%3==0)?Material.DARK_PRISMARINE:Material.PRISMARINE_BRICKS);
-            set(center,-6,y,-2,Material.PRISMARINE);
-        }
-        for(int y=-3;y<=3;y++){
-            set(center,7,y,-2,(y%2==0)?Material.DARK_PRISMARINE:Material.PRISMARINE_BRICKS);
-            set(center,6,y,-2,Material.PRISMARINE);
-        }
-        for(int x=-5;x<=2;x++) set(center,x,5,-2,Material.PRISMARINE_BRICKS);
-        set(center,-4,4,-2,Material.SEA_LANTERN);
-        set(center,4,2,-2,Material.SEA_LANTERN);
-
-        // Water court and ruined stepping stones.
-        for(int x=-4;x<=4;x++){
-            for(int z=0;z<=5;z++){
-                if(Math.abs(x)+Math.abs(z-2)<=6) set(center,x,-3,z,Material.WATER);
-            }
-        }
-        for(int[] q:new int[][]{{-3,-2,1},{0,-2,1},{3,-2,2},{-2,-2,4},{2,-2,5}}) {
-            set(center,q[0],q[1],q[2],Material.DARK_PRISMARINE);
-        }
-        set(center,-5,-2,5,Material.WET_SPONGE);
-        set(center,5,-2,4,Material.SPONGE);
-        set(center,0,-2,6,Material.SEA_LANTERN);
-
-        // Side buttresses / broken columns.
-        int[][] cols={{-10,-3,2,4},{10,-3,1,3},{-9,-3,-5,3},{9,-3,-5,5}};
-        for(int[] q:cols){
-            for(int y=q[1];y<=q[3];y++) set(center,q[0],y,q[2],Material.PRISMARINE);
-            set(center,q[0],q[3]+1,q[2],Material.PRISMARINE_BRICK_STAIRS);
+        if (!placeBundledStructure(center, "structures/drowned_monument.nbt", -14, -9, -10)) {
+            throw new IllegalStateException("Could not load bundled Drowned Monument structure");
         }
 
-        spawnIfFewer(center,Guardian.class,2,17,12,16,center.clone().add(-2.5,-2,2.5));
-        spawnIfFewer(center,Guardian.class,2,17,12,16,center.clone().add(2.5,-2,3.5));
+        spawnIfFewer(center, Guardian.class, 2, 17, 12, 16, center.clone().add(-2.5, -2, 2.5));
+        spawnIfFewer(center, Guardian.class, 2, 17, 12, 16, center.clone().add(2.5, -2, 3.5));
     }
 
     private void buildDesert(Location center) {

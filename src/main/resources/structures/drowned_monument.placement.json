@@ -1,0 +1,12 @@
+{
+  "format": "skystruct-placement/1",
+  "name": "Drowned Monument",
+  "nbt_data_version": 4903,
+  "source_origin": [0,0,0],
+  "source_bounds": {"min":[-14,-9,-10],"max":[14,6,14]},
+  "nbt_size": [29,16,25],
+  "placement_offset": [-14,-9,-10],
+  "markers": [{"kind":"discovery","pos":[0,0,2],"data":{"radius":24}}],
+  "entities": [],
+  "explanation": "To place the blueprint origin at world anchor A, place the NBT structure at A + placement_offset."
+}
