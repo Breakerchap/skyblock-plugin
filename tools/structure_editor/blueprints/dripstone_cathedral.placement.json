@@ -1,0 +1,29 @@
+{
+  "format": "skystruct-placement/1",
+  "name": "Dripstone Cathedral",
+  "nbt_data_version": 4903,
+  "source_origin": [0, 0, 5],
+  "source_bounds": {
+    "min": [-11, -9, -14],
+    "max": [12, 9, 11]
+  },
+  "nbt_size": [24, 19, 26],
+  "placement_offset": [-11, -9, -19],
+  "markers": [
+    {
+      "kind": "discovery",
+      "pos": [0, 1, 5],
+      "data": {"radius": 22}
+    }
+  ],
+  "entities": [],
+  "analysis": {
+    "block_count": 4346,
+    "component_count": 1,
+    "detached_blocks": 0,
+    "singleton_components": 0,
+    "top_height_stddev": 2.945,
+    "footprint_fill_ratio": 0.8077,
+    "max_identical_column_fraction": 0.0218
+  }
+}
