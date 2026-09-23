@@ -197,7 +197,9 @@ public final class IslandManager implements Listener {
     }
 
     private void buildDripstone(Location center) {
-        placeBundledStructure(center, "structures/dripstone_cathedral.nbt", -11, -9, -19);
+        if (!placeBundledStructure(center, "structures/dripstone_cathedral.nbt", -10, -17, -13)) {
+            throw new IllegalStateException("Could not load bundled Dripstone Cathedral structure");
+        }
     }
 
     private void buildMoor(Location center) {

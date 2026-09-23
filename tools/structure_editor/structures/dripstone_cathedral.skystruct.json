@@ -1,0 +1,717 @@
+{
+  "format": "skystruct/1",
+  "name": "Dripstone Cathedral",
+  "origin": [
+    0,
+    0,
+    0
+  ],
+  "palette": {
+    "C": {
+      "block": "minecraft:raw_copper_block",
+      "color": "#a36b48"
+    },
+    "c": {
+      "block": "minecraft:copper_ore",
+      "color": "#8a7764"
+    },
+    "d": {
+      "block": "minecraft:deepslate",
+      "color": "#53545a"
+    },
+    "l": {
+      "block": "minecraft:lava",
+      "color": "#e56a1c"
+    },
+    "n": {
+      "block": "minecraft:pointed_dripstone",
+      "color": "#9b8871",
+      "state": {
+        "thickness": "tip",
+        "vertical_direction": "down",
+        "waterlogged": "false"
+      }
+    },
+    "r": {
+      "block": "minecraft:dripstone_block",
+      "color": "#8a7764"
+    },
+    "t": {
+      "block": "minecraft:tuff",
+      "color": "#6f7772"
+    },
+    "u": {
+      "block": "minecraft:pointed_dripstone",
+      "color": "#9b8871",
+      "state": {
+        "thickness": "tip",
+        "vertical_direction": "up",
+        "waterlogged": "false"
+      }
+    },
+    "w": {
+      "block": "minecraft:water",
+      "color": "#3f75c5"
+    }
+  },
+  "layers": [
+    {
+      "y": -17,
+      "x": -1,
+      "z": -2,
+      "rows": [
+        "..ddd",
+        "..t",
+        "t.d",
+        ".d"
+      ]
+    },
+    {
+      "y": -16,
+      "x": -1,
+      "z": -3,
+      "rows": [
+        "....dd",
+        "..tddd",
+        "t.tttd",
+        "ddd..........d",
+        ".d",
+        ".d"
+      ]
+    },
+    {
+      "y": -15,
+      "x": -3,
+      "z": -5,
+      "rows": [
+        "........d",
+        "...d.t",
+        "....d.ddd...t",
+        "....ddddd",
+        ".ttddddd",
+        "d.ddddd.d......d",
+        "d..d",
+        ".d.dd....t",
+        "..t",
+        "...t"
+      ]
+    },
+    {
+      "y": -14,
+      "x": -3,
+      "z": -7,
+      "rows": [
+        "..d",
+        ".d..d..dd",
+        "..d..ddtd",
+        ".t.ddddt",
+        "..tddtddtd..d",
+        "...dddddd",
+        "ddddddddd",
+        "d.tdddttd..d...d",
+        "d.dddd.dddd",
+        ".tddd....dd",
+        "d.d.dd..d..d",
+        "...t"
+      ]
+    },
+    {
+      "y": -13,
+      "x": -6,
+      "z": -8,
+      "rows": [
+        "..........t",
+        "....ddd....d",
+        "....d..d..dd",
+        ".....ddtdddt",
+        "...dt.dddddd.dt.d",
+        ".....tddddddd..d",
+        "....ttdddddt.d.d",
+        "...tddddddddddd",
+        "...tddddddddddd...d",
+        "...ttdddd.dddd",
+        ".t.ddddddd.dddd",
+        "..ddtdtdtd.ddtd.d",
+        "d...tdd...d..d",
+        "",
+        "...d..d",
+        "...dd",
+        ".....d"
+      ]
+    },
+    {
+      "y": -12,
+      "x": -6,
+      "z": -10,
+      "rows": [
+        "............d..d",
+        "......d..tt",
+        "....dd..d.d..dd",
+        "....ddd.d.ddt",
+        "...ddt.t.tddd",
+        "....ddtdddddtdd",
+        "..tdddddddddtdddd",
+        ".d..dddddddddd.d",
+        "....tddddddddddddt",
+        ".d.ddddddddddddd.d",
+        "..ddddddddddddd...d",
+        "..dddddddddddd..dd",
+        ".ddddddddd.dddt",
+        ".ddddddddd.tddd.t",
+        "d..dddddd.d.dd..d",
+        "....dddd..ddd..d",
+        "..ddddd.....dddd",
+        "...ddd..d",
+        "....dd......t",
+        "......d"
+      ]
+    },
+    {
+      "y": -11,
+      "x": -8,
+      "z": -10,
+      "rows": [
+        "...........td.d..t",
+        "........dd.dddd.d.d",
+        "......ddtdd.dttddd",
+        "......ddddddddd.d",
+        ".....dddddddddd.d",
+        "..dttdddddddddddd",
+        "....ddddddddddddddd",
+        "...ddddddddddddd.d",
+        "...dtddddddddddddddd",
+        "..ddtddddddddddddddd",
+        ".d..dddddddddddddtddd",
+        ".d.dddddddddddddd.dd",
+        "..tdddddddddddddd.d",
+        "d.dddddddddd.ddddddtd",
+        "..d.ddddddddtddddddd",
+        "....dddddddddddddd",
+        "..dttdddddtt..tddd",
+        ".....ddddtdd..d",
+        ".....dtdd.....t",
+        "........d",
+        ".......d"
+      ]
+    },
+    {
+      "y": -10,
+      "x": -8,
+      "z": -12,
+      "rows": [
+        "......d",
+        ".......d...dd...t",
+        "....d.d..d.dd.t.ddd",
+        "......dddd.dddd.ddd",
+        ".d....tddddddddtdtd",
+        ".....dddddddddd.d",
+        ".....dddddddddddd",
+        "..dtdddddddddddddd",
+        "...dddddddddddddddd",
+        "..dddddddddddddddd.d",
+        "...ddddddddddddddddd",
+        "..dddddddddddddddddd",
+        "ddddddddddddddddddddd",
+        ".d.dddddddddddddddddd",
+        "dddddddddddddddddddd",
+        "ddddddddddddddddddddd",
+        "dddddddddddddddddddd",
+        ".ddddddddddddddddd",
+        "..dddddddddddddtdd",
+        "..d.dddddttd.dd..dd",
+        ".....dddd.....dt",
+        ".......dd",
+        ".......d"
+      ]
+    },
+    {
+      "y": -9,
+      "x": -9,
+      "z": -13,
+      "rows": [
+        "........t",
+        ".......d.....d",
+        "......ddd...ddd..d",
+        ".....d.dddd.dddd.ddt",
+        ".....ddddddddddddddd",
+        "..tddd.ddddddddddddt",
+        "..dddtddddddddddddd.d",
+        "..d.tdddddddddddddd",
+        "...tddddddddddddddd",
+        "...tdddddddddddddddd",
+        "..ddddddddddddddddddd",
+        "....tdddddddddddddddd",
+        ".d.tdddddddddddddddddd",
+        "dddddddddddddddddddddd",
+        "..dddddddddddddddddddd",
+        ".dddddddddddddddddddt",
+        ".ddddddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        ".ddddddddddddddddddd",
+        "..ddddddddtddtdddddd",
+        "...ddddddd.dddddd",
+        "...dddddddddddt",
+        "....tddddddtdtd"
+      ]
+    },
+    {
+      "y": -8,
+      "x": -9,
+      "z": -13,
+      "rows": [
+        "........d",
+        ".....d.d.....t",
+        "......ddd.d.dddd.d",
+        ".....d.ddddddddd.tdd",
+        "..d..ddddddddddddddt",
+        "..dddddddddddddddddd",
+        "..ddddddddddddddddddd",
+        "..d.ddddddddddddddt",
+        "..ttddddddddddddddd",
+        "...ddddddddddddddddd",
+        "..tdddddddddddddddddd",
+        "..ddddddddddddddddddd",
+        ".dtddddddddddddddddddd",
+        "dddddddddddddddddddddd",
+        "..tddddddddddddddddddd",
+        ".tddddddddddddddddddd",
+        ".ddddddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        ".tdddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        "...ddddddddddddtdd",
+        "...tddddddddddd",
+        "....ddddddddddd"
+      ]
+    },
+    {
+      "y": -7,
+      "x": -9,
+      "z": -13,
+      "rows": [
+        ".......dd",
+        ".....dddt....d",
+        ".....tddd.d.ddtt.d",
+        ".....ttddddtdddddddd",
+        "..d..tdddddddddddddt",
+        "..ddddddddddddddddddt",
+        "..ddddddddddddddddddt",
+        "..dddddddddddddddddd",
+        "..dddddddddddddddddd",
+        "...tdddddddddddddddt",
+        "..ddddddddddddddddddd",
+        "..ddddddddddddddddddd",
+        ".ddddddddddddddddddddt",
+        "dddddddddddddddddddddd",
+        "..dddddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        ".ddddddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        ".dddddddddddddddddddd",
+        ".ddddddddddddddddddd",
+        ".ddddddddddddddddddtt",
+        "..tddddddddddddddd",
+        "...dddddddddddd",
+        "....ddddddtdddd",
+        "",
+        "...........t"
+      ]
+    },
+    {
+      "y": -6,
+      "x": -9,
+      "z": -13,
+      "rows": [
+        ".......dd",
+        ".....tddd....d",
+        ".....tddd.d.tdtd.d",
+        ".....ddtddddddddtddd",
+        "..t.dddddttddddddddd",
+        "..ddddtddtddddddddddd",
+        "d.ddtddtdtdddddddddtd",
+        "..dtdddddddtttdtdddt",
+        "..dddddtdttdddtddddd",
+        "..tdddtdtddtddddddtt",
+        "..ddtddtdddddddttdddt",
+        "..ddtttddddtttddddddt",
+        ".dtddddtddddddddddddtd",
+        "dtdddddtddtddtdddddddt",
+        "..tdtdtddtdddddddddddd",
+        ".tdttdtddddddddddtddd",
+        ".ddddtddtddddtddddttdt",
+        ".dtddddddtdtdddtddddt",
+        ".dddddtdddddtddtddddd",
+        ".ddtdtdddddddttdtdtdd",
+        ".dddtdtddtdtdddddddtd",
+        "..dddddddttddddtdt",
+        "...dddddttddddd",
+        "....ttddtdddddd",
+        "",
+        "...........d"
+      ]
+    },
+    {
+      "y": -5,
+      "x": -9,
+      "z": -13,
+      "rows": [
+        ".......tt",
+        ".....dtdt....t",
+        ".....tddttt.tttt.t",
+        ".....dddtddddddtdttt",
+        "..d.ddtdttddtdttddtt",
+        ".tdddddddddtddtdtdddt",
+        "dtddddddddddtttddtddt",
+        "..ddddddtdddttdttddd",
+        "..ddddddddddtdtttttt",
+        "..dddddtdtdttdtttt.t",
+        "..ddtdtddtdtdttttddd",
+        "..tddddddttttttdtttt",
+        ".tddtdtttttttttttttt.t",
+        "ddddddtdttttttttttttd",
+        ".dtdttttdttddttttdtttt",
+        ".ddtttdtdtttttttttdttt",
+        ".tttttdttttttdttttttdt",
+        ".dttdttttttttttttttt",
+        ".ttddtttddtttttdttdtd",
+        ".tdttdtttttttdttdtttt",
+        ".dttdtdttttttdttddddd",
+        "..dddddtttdtddddtd",
+        "...ddddtddddddd",
+        "....dddtddddddt",
+        "",
+        "...........d"
+      ]
+    },
+    {
+      "y": -4,
+      "x": -9,
+      "z": -13,
+      "rows": [
+        ".......td",
+        ".....dtdd....t",
+        ".....ttdddt...t",
+        ".....ddddddtttd.t.d",
+        "..t.dtdddtdtttttdtt",
+        ".dtddtdtttttttttttdtt",
+        "tttddtdtttttttttdtddt",
+        "..ddtdttddttttt.ttdd",
+        "..dtttddttdt.t.....t",
+        "..ttdtttdtt..t",
+        "..ttttttttttdt...ttt",
+        "...dtttttttdtttt",
+        "..ttttdtttdtttdd.....t",
+        "tttttdtttdtttdtdt...t",
+        ".tttdtttttttdtttdtt",
+        ".ttdtttdtttdtttdtdtt.d",
+        ".tdtttdtttdtttdttdddt",
+        ".ttttdtttdtttdtttddd",
+        ".ddtdtttttttdtttddttt",
+        ".ddrrrtdtttdtttdtddtt",
+        ".tdrrrdtttdtttrrttttt",
+        "..ttrdtttttttdrrrt",
+        "...tdtttdtttdtt",
+        "....tttdtttdttt",
+        "",
+        "...........d"
+      ]
+    },
+    {
+      "y": -3,
+      "x": -10,
+      "z": -13,
+      "rows": [
+        ".........t",
+        "......dttt",
+        "......t.tttt",
+        "......tdtdtt..tt.t.t",
+        "...t.t.dtd.t.....t.t",
+        "..tttttdt..........t",
+        "..dtttttt........t.tt",
+        "...tdtt..tt......t.tt",
+        "...t...tt.tt",
+        ".....t...t",
+        "",
+        "....t",
+        "...t............t",
+        "..tdd.........r.tt",
+        "..tdtr..........dd.d",
+        "..dddd.........tddddd.t",
+        ".dddddd.....rdddddddd",
+        "ddddddt....rrrddddddd",
+        "ddttdddr.....tddddddd",
+        "tdttwwwrr.....ddddddt",
+        "ddtdwwwdd.....dllddd.t",
+        ".d.ddwddd.....tlll",
+        "....ddddtr....dtdt",
+        "....ddddddd..dddd",
+        "....dd.dddddttdd",
+        ".....dd..ddddt"
+      ]
+    },
+    {
+      "y": -2,
+      "x": -10,
+      "z": -12,
+      "rows": [
+        "......t..t",
+        "",
+        "......tt.t",
+        ".......t.t",
+        ".......t",
+        "..t",
+        "....t.t",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "..dd..........r",
+        "...d.r..........dd.d",
+        "..ddd..........dddddd",
+        ".ddddd........ddddddd",
+        "dddddd......r.ddddddd",
+        "dddddd.........dddtdd",
+        "dddddddr.......dddddd",
+        "ddddddd.........dddd",
+        ".d.tdddd.......rdd",
+        "....dddd.r......dd",
+        "....ddddd......dd",
+        "....dd.ddddddddd",
+        ".....dd..ddddd"
+      ]
+    },
+    {
+      "y": -1,
+      "x": -10,
+      "z": 0,
+      "rows": [
+        "..dd..........r",
+        "...d.r..........dt.d",
+        "..dd...........dddddd",
+        ".dddd..........dddddd",
+        "ddtdd.......r..dddddd",
+        "dddddd..........ddddd",
+        "dddddd.r........ddddd",
+        "ddddddd..........ddd",
+        ".d.dddd........r.d",
+        "....ddd..u......dd",
+        "....dddd........d",
+        "....dd.dddd..ddd",
+        ".....dd..ddddd"
+      ]
+    },
+    {
+      "y": 0,
+      "x": -10,
+      "z": 0,
+      "rows": [
+        "..td..........u",
+        "...t.r..........dd.t",
+        "..dt...........dddddt",
+        ".tddd..........dddddd",
+        "tdddd.......r...ddddd",
+        "ddddd...........ddddd",
+        "tddcdd.r.........dddt",
+        "dttddd...........dtt",
+        ".t.ddd.........r.t",
+        "....ddd.........dt",
+        "....tdd",
+        "....dt.td......t",
+        ".....td..ddddd"
+      ]
+    },
+    {
+      "y": 1,
+      "x": -9,
+      "z": 0,
+      "rows": [
+        ".dd",
+        "....u..........dd",
+        "..............tdddd",
+        ".tdd..........dddddd",
+        "tddd.......r...dddtt",
+        "ttdd............dtd",
+        "tdcd..r.........ddt",
+        "..tdd",
+        "..tdt.........u",
+        "...dd..........dd",
+        "....td",
+        ".......d",
+        "........td..t"
+      ]
+    },
+    {
+      "y": 2,
+      "x": -8,
+      "z": 0,
+      "rows": [
+        "d",
+        "...............t",
+        "..d...........tddt",
+        ".dd..........tdddd",
+        "tdd.......u...ddd",
+        ".dd............ddt",
+        ".tdd.r.........dd",
+        "..cd",
+        ".dt",
+        "...t...........d",
+        "",
+        "",
+        "........d"
+      ]
+    },
+    {
+      "y": 3,
+      "x": -8,
+      "z": 0,
+      "rows": [
+        "t",
+        "..............dd",
+        "..t............td",
+        ".td...........dddt",
+        "dtd...........ddd",
+        ".tdd..........ddd",
+        "..dd.u.........t",
+        "..dd",
+        ".d",
+        "..............dt"
+      ]
+    },
+    {
+      "y": 4,
+      "x": -8,
+      "z": 0,
+      "rows": [
+        "dd",
+        "...............d",
+        "",
+        "..d...........ddt",
+        "dddt..........ddd",
+        "...d..........ddt",
+        "..td..........t",
+        "...tt",
+        ".td",
+        "...............d"
+      ]
+    },
+    {
+      "y": 5,
+      "x": -8,
+      "z": 0,
+      "rows": [
+        "d",
+        ".............ddt",
+        "",
+        "...............t",
+        "t.t...........tt",
+        "...t..........dtd",
+        "...t",
+        "",
+        ".d",
+        "...............d"
+      ]
+    },
+    {
+      "y": 6,
+      "x": -8,
+      "z": 0,
+      "rows": [
+        "tdd",
+        ".............ddd",
+        "",
+        "",
+        "d...n",
+        "................d",
+        "",
+        "...t",
+        ".d",
+        "......n......dtt"
+      ]
+    },
+    {
+      "y": 7,
+      "x": -8,
+      "z": 0,
+      "rows": [
+        "ddd",
+        "",
+        "",
+        "",
+        "d...r",
+        "...............dt",
+        "",
+        "...d",
+        ".tdd",
+        "....t.r......ddd"
+      ]
+    },
+    {
+      "y": 8,
+      "x": -8,
+      "z": 4,
+      "rows": [
+        "tdd.r",
+        "................d",
+        "",
+        "....dt",
+        ".dddd",
+        "....d.r.....td"
+      ]
+    },
+    {
+      "y": 9,
+      "x": -8,
+      "z": 4,
+      "rows": [
+        "ddddr",
+        "..............ddd",
+        "",
+        ".....dd",
+        "....td",
+        ".....dt....dd"
+      ]
+    },
+    {
+      "y": 10,
+      "x": -5,
+      "z": 4,
+      "rows": [
+        "td",
+        ".........ddddt",
+        "",
+        "",
+        "",
+        "...dd"
+      ]
+    },
+    {
+      "y": 11,
+      "x": 3,
+      "z": 5,
+      "rows": [
+        "ddt"
+      ]
+    }
+  ],
+  "entities": [],
+  "markers": [
+    {
+      "kind": "discovery",
+      "pos": [
+        0,
+        1,
+        0
+      ],
+      "data": {
+        "radius": 22
+      }
+    }
+  ],
+  "meta": {
+    "data_version": 4903,
+    "design": "open deepslate cathedral cavern with broken ribs"
+  }
+}
