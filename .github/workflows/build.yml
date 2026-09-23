@@ -15,5 +15,8 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-      - name: Verify
+      - name: Verify plugin
         run: mvn -B verify
+      - name: Verify structure editor
+        working-directory: tools/structure_editor
+        run: python -m unittest discover -s tests -v

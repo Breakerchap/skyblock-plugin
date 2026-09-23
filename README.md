@@ -123,3 +123,8 @@ The jar is produced under `target/`.
 - `/skyblock islands generate [force]` — regenerate structures; op only.
 - `/skyblock trader` — summon a trader immediately; op only.
 - `/skyblock grant <player> <advancement-id>` — admin/debug grant.
+
+
+## Structure authoring
+
+Exploration structures are being migrated to the repo's purpose-built **SkyStruct** authoring tool under `tools/structure_editor`. It provides explicit voxel blueprints, structural diagnostics, headless four-angle PNG renders and compilation to real vanilla Minecraft `.nbt` structure templates. See `tools/structure_editor/README.md`.
