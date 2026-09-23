@@ -204,70 +204,8 @@ public final class IslandManager implements Listener {
     }
 
     private void buildPortal(Location center) {
-        Map<Character,Material> p=Map.of(
-            'n',Material.NETHERRACK,
-            'b',Material.BLACKSTONE,
-            'm',Material.MAGMA_BLOCK,
-            's',Material.SOUL_SOIL,
-            'o',Material.OBSIDIAN
-        );
-
-        paintLayer(center,-5,p,
-            "      bbbbbbb      ",
-            "   bbbbbbbbbbbbb   ",
-            " bbbbbbbbbbbbbbbbb ",
-            "bbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbb",
-            " bbbbbbbbbbbbbbbbb ",
-            "   bbbbbbbbbbbbb   ",
-            "      bbbbbbb      ");
-        paintLayer(center,-4,p,
-            "    bbbbnnnbbbb    ",
-            "  bbbnnnnnnnnnbbb  ",
-            " bbnnnnnnnnnnnnnbb ",
-            "bbnnnnnnnnnnnnnnnbb",
-            "bbnnnnnnnnnnnnnnnbb",
-            " bbnnnnnnnnnnnnnbb ",
-            "   bbbnnnnnnnbbb   ");
-        paintLayer(center,-3,p,
-            "    nnnnnnnnnnn    ",
-            "  nnnnnnnnnnnnnnn  ",
-            " nnnnnnmmnnnnnnnnn ",
-            "nnnnnnnnnnnnnnnnnnn",
-            "nnnnnnnnnnnnnnnnnnn",
-            " nnnnnnnnnmmnnnnnn ",
-            "   nnnnnnnnnnnnn   ");
-
-        // Borrow a real vanilla ruined-portal template for the broken masonry.
-        boolean placed = placeVanillaStructure(
-            center,-6,-2,-5,"ruined_portal/portal_7",StructureRotation.CLOCKWISE_90
-        );
-        if (!placed) {
-            buildFallbackRuinedPortal(center.clone().add(-3,-2,-2));
-        }
-
-        // A smaller repaired portal gives the island a reliable progression function.
-        for(int x=4;x<=7;x++){
-            set(center,x,-2,3,Material.OBSIDIAN);
-            set(center,x,3,3,Material.OBSIDIAN);
-        }
-        for(int y=-1;y<=2;y++){
-            set(center,4,y,3,Material.OBSIDIAN);
-            set(center,7,y,3,Material.OBSIDIAN);
-            set(center,5,y,3,Material.NETHER_PORTAL);
-            set(center,6,y,3,Material.NETHER_PORTAL);
-        }
-
-        // Scattered corruption.
-        for(int[] q:new int[][]{{-9,-2,4},{-8,-2,5},{8,-2,-4},{9,-2,-3},{0,-2,7}}) {
-            set(center,q[0],q[1],q[2],Material.MAGMA_BLOCK);
-        }
-        set(center,-8,-1,-4,Material.CRYING_OBSIDIAN);
-        set(center,8,-1,-5,Material.GILDED_BLACKSTONE);
-        set(center,0,-2,-7,Material.SOUL_SAND);
-
-        cleanTemplateMarkers(center,20,14,18);
-        removeNonVillageContainers(center,20,14,18);
+        placeBundledStructure(center, "structures/ruined_portal.nbt", -14, -9, -14);
+        removeNonVillageContainers(center, 20, 14, 18);
     }
 
     private void buildMonument(Location center) {
