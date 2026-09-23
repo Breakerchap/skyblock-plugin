@@ -228,85 +228,10 @@ public final class IslandManager implements Listener {
     }
 
     private void buildDesert(Location center) {
-        Map<Character, Material> p = Map.of(
-            's', Material.SAND,
-            'S', Material.SANDSTONE,
-            'r', Material.RED_SAND,
-            'c', Material.CLAY,
-            'w', Material.WATER
-        );
-
-        // Explicit stepped underside and dune plan; no ellipsoid/cap generation.
-        paintLayer(center, -5, p,
-            "       SSSSS       ",
-            "    SSSSSSSSSS     ",
-            "  SSSSSSSSSSSSSS   ",
-            " SSSSSSSSSSSSSSSS  ",
-            "SSSSSSSSSSSSSSSSSS ",
-            " SSSSSSSSSSSSSSSS  ",
-            "  SSSSSSSSSSSSSS   ",
-            "    SSSSSSSSSS     ",
-            "       SSSSS       ");
-        paintLayer(center, -4, p,
-            "    SSSSSSSSSSS    ",
-            "  SSSSSSSSSSSSSSS  ",
-            " SSSSSSSSSSSSSSSSS ",
-            "SSSSSSSSSSSSSSSSSSS",
-            "SSSSSSSSSSSSSSSSSSS",
-            " SSSSSSSSSSSSSSSSS ",
-            "  SSSSSSSSSSSSSSS  ",
-            "    SSSSSSSSSSS    ");
-        paintLayer(center, -3, p,
-            "   SSSSSSSSSSSSS   ",
-            " SSSSSSSSSSSSSSSSS ",
-            "SSSSSSSSSSSSSSSSSSS",
-            "SSSSSSSSSSSSSSSSSSS",
-            "SSSSSSSSSSSSSSSSSSS",
-            "SSSSSSSSSSSSSSSSSSS",
-            " SSSSSSSSSSSSSSSSS ",
-            "   SSSSSSSSSSSSS   ");
-        paintLayer(center, -2, p,
-            "   sssssssssssssss  ",
-            " sssssssssssssssssss",
-            "sssssssssssssssssssss",
-            "sssssssssssssssssssss",
-            "sssssssssssssssssssss",
-            "sssssssssssssssssssss",
-            " sssssssssssssssssss ",
-            "   sssssssssssssss   ");
-        paintLayer(center, -1, p,
-            "    sssssssssssss    ",
-            "  sssssssssssssssss  ",
-            " ssssssscccccsssssss ",
-            "ssssssccwwwwwccssssss",
-            "sssssscwwwwwwwcssssss",
-            "ssssssccwwwwwccssssss",
-            " ssssssscccccsssssss ",
-            "   sssssssssssssss   ");
-
-        // Uneven dunes/ledges.
-        for (int[] q : new int[][]{
-            {-11,0,-3},{-10,0,-3},{-9,0,-3},{-10,1,-3},
-            {9,0,4},{10,0,4},{11,0,4},{10,1,4},
-            {-7,0,7},{-6,0,7},{-5,0,7},{-6,1,7},
-            {5,0,-7},{6,0,-7},{7,0,-7}
-        }) set(center,q[0],q[1],q[2],Material.SAND);
-
-        buildBetterPalm(center.clone().add(-7, 0, -4));
-        buildBetterPalm(center.clone().add(7, 0, 4));
-
-        // Reeds around the oasis and small desert details.
-        for (int[] q : new int[][]{{-4,0,0},{-4,1,0},{-3,0,1},{4,0,-1},{4,1,-1},{3,0,-2}}) {
-            set(center,q[0],q[1],q[2],Material.SUGAR_CANE);
+        if (!placeBundledStructure(center, "structures/desert_oasis.nbt", -11, -10, -13)) {
+            throw new IllegalStateException("Could not load bundled Desert Oasis structure");
         }
-        for (int y = 0; y <= 2; y++) set(center, -11, y, 3, Material.CACTUS);
-        for (int y = 0; y <= 1; y++) set(center, 11, y, -3, Material.CACTUS);
-        set(center, -8, 0, 6, Material.DEAD_BUSH);
-        set(center, 8, 0, -6, Material.DEAD_BUSH);
-        set(center, 3, 0, 7, Material.RED_SAND);
-        set(center, 4, 0, 7, Material.RED_SAND);
 
-        buildBrokenDesertArch(center.clone().add(0, 0, 8));
         spawnIfFewer(center, Camel.class, 1, 18, 10, 16, center.clone().add(8.5, 1, 0.5));
     }
 
