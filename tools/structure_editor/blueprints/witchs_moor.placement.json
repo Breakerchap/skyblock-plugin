@@ -2,23 +2,11 @@
   "format": "skystruct-placement/1",
   "name": "Witch's Moor",
   "nbt_data_version": 4903,
-  "source_origin": [0, 0, 4],
-  "source_bounds": {"min": [-14, -9, -9], "max": [12, 10, 11]},
-  "nbt_size": [27, 20, 21],
-  "placement_offset": [-14, -9, -13],
-  "markers": [
-    {"kind": "discovery", "pos": [0, 1, 4], "data": {"radius": 22}},
-    {"kind": "frog_spawn", "pos": [-3, 1, 1]},
-    {"kind": "witch_spawn", "pos": [7, 5, 6]}
-  ],
+  "source_origin": [0,0,0],
+  "source_bounds": {"min": [-11,-9,-11], "max": [13,11,12]},
+  "nbt_size": [25,21,24],
+  "placement_offset": [-11,-9,-11],
+  "markers": [{"kind":"discovery","pos":[0,1,0],"data":{"radius":22}}],
   "entities": [],
-  "analysis": {
-    "block_count": 2861,
-    "component_count": 1,
-    "detached_blocks": 0,
-    "singleton_components": 0,
-    "top_height_stddev": 3.751,
-    "footprint_fill_ratio": 0.7443,
-    "max_identical_column_fraction": 0.045
-  }
+  "explanation": "To place the blueprint origin at world anchor A, place the NBT structure at A + placement_offset."
 }
