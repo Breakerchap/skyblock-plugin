@@ -236,88 +236,12 @@ public final class IslandManager implements Listener {
     }
 
     private void buildFrozen(Location center) {
-        Map<Character,Material> p=Map.of(
-            's',Material.STONE,
-            'i',Material.PACKED_ICE,
-            'n',Material.SNOW_BLOCK,
-            'b',Material.BLUE_ICE,
-            'c',Material.CALCITE
-        );
-
-        paintLayer(center,-7,p,
-            "       sssss       ",
-            "    sssssssssss    ",
-            "  sssssssssssssss  ",
-            " sssssssssssssssss ",
-            "sssssssssssssssssss",
-            " sssssssssssssssss ",
-            "   sssssssssssss   ",
-            "      sssssss      ");
-        paintLayer(center,-6,p,
-            "     sssiiisss     ",
-            "   ssiiiiiiiiiss   ",
-            " ssiiiiiiiiiiiiiss ",
-            "ssiiiiiiiiiiiiiiiss",
-            "ssiiiiiiiiiiiiiiiss",
-            " ssiiiiiiiiiiiiiss ",
-            "   ssiiiiiiiiiss   ");
-        paintLayer(center,-5,p,
-            "    iiiiiiiiiii    ",
-            "  iiiiiiiiiiiiiii  ",
-            " iiiiiiiiiiiiiiiii ",
-            "iiiiiiiiiiiiiiiiiii",
-            "iiiiiiiiiiiiiiiiiii",
-            " iiiiiiiiiiiiiiiii ",
-            "   iiiiiiiiiiiii   ");
-        paintLayer(center,-4,p,
-            "    nnnnnnnnnnn    ",
-            "  nnnnnnnnnnnnnnn  ",
-            " nnnnnnnnnnnnnnnnn ",
-            "nnnnnnnnnnnnnnnnnnn",
-            "nnnnnnnnnnnnnnnnnnn",
-            " nnnnnnnnnnnnnnnnn ",
-            "   nnnnnnnnnnnnn   ");
-
-        // Cliff shards and blue-ice seams.
-        for(int[] q:new int[][]{{-10,-3,2},{-10,-2,2},{10,-3,-1},{10,-2,-1},{-7,-3,-6},{7,-3,6}}) {
-            set(center,q[0],q[1],q[2],Material.BLUE_ICE);
+        if (!placeBundledStructure(center, "structures/frozen_observatory.nbt", -11, -11, -12)) {
+            throw new IllegalStateException("Could not load bundled Frozen Observatory structure");
         }
 
-        // Hand-built observatory: an asymmetrical stone/calacite tower with a copper telescope.
-        int[][] base={
-            {-3,-3,-3},{-2,-3,-3},{-1,-3,-3},{0,-3,-3},{1,-3,-3},{2,-3,-3},{3,-3,-3},
-            {-4,-3,-2},{4,-3,-2},{-4,-3,-1},{4,-3,-1},{-4,-3,0},{4,-3,0},{-4,-3,1},{4,-3,1},
-            {-3,-3,2},{-2,-3,2},{-1,-3,2},{0,-3,2},{1,-3,2},{2,-3,2},{3,-3,2}
-        };
-        for(int[] q:base) set(center,q[0],q[1],q[2],Material.STONE_BRICKS);
-        for(int y=-2;y<=2;y++){
-            for(int[] q:new int[][]{{-4,y,-2},{-4,y,1},{4,y,-2},{4,y,1},{-3,y,-3},{3,y,-3},{-3,y,2},{3,y,2}}) {
-                set(center,q[0],q[1],q[2],Material.CALCITE);
-            }
-        }
-        // Curved-ish roof rim with slabs.
-        for(int[] q:new int[][]{
-            {-4,3,-2},{-4,3,-1},{-4,3,0},{-4,3,1},
-            {4,3,-2},{4,3,-1},{4,3,0},{4,3,1},
-            {-3,3,-3},{-2,3,-3},{-1,3,-3},{0,3,-3},{1,3,-3},{2,3,-3},{3,3,-3},
-            {-3,3,2},{-2,3,2},{-1,3,2},{0,3,2},{1,3,2},{2,3,2},{3,3,2}
-        }) set(center,q[0],q[1],q[2],Material.STONE_BRICK_SLAB);
-
-        // Telescope points out over the void.
-        set(center,0,1,-1,Material.COPPER_BLOCK);
-        set(center,0,2,-1,Material.COPPER_BLOCK);
-        set(center,0,3,-2,Material.EXPOSED_COPPER);
-        set(center,0,4,-3,Material.WEATHERED_COPPER);
-        set(center,0,5,-4,Material.LIGHTNING_ROD);
-        set(center,1,0,-1,Material.LECTERN);
-        set(center,-1,0,0,Material.CANDLE);
-
-        buildBetterSpruce(center.clone().add(-8,-3,4));
-        set(center,7,-3,5,Material.POWDER_SNOW);
-        set(center,8,-3,4,Material.BLUE_ICE);
-
-        spawnIfFewer(center,Goat.class,2,16,12,15,center.clone().add(6.5,-2,-1.5));
-        spawnIfFewer(center,Goat.class,2,16,12,15,center.clone().add(-6.5,-2,1.5));
+        spawnIfFewer(center, Goat.class, 2, 16, 12, 15, center.clone().add(6.5, -2, -1.5));
+        spawnIfFewer(center, Goat.class, 2, 16, 12, 15, center.clone().add(-6.5, -2, 1.5));
     }
 
     private void buildMushroom(Location center) {
@@ -902,29 +826,6 @@ public final class IslandManager implements Listener {
                     set(center, x0 + rx, dy, z0 + rz, material);
                 }
             }
-        }
-    }
-
-    private void placeBundledStructure(
-        Location center, String resourcePath, int dx, int dy, int dz
-    ) {
-        try (java.io.InputStream stream = plugin.getResource(resourcePath)) {
-            if (stream == null) {
-                throw new IllegalStateException("Bundled structure resource not found: " + resourcePath);
-            }
-
-            Structure structure = plugin.getServer().getStructureManager().loadStructure(stream);
-            structure.place(
-                center.clone().add(dx, dy, dz),
-                false,
-                StructureRotation.NONE,
-                Mirror.NONE,
-                0,
-                1.0f,
-                new Random(0x5A17B10CL)
-            );
-        } catch (java.io.IOException ex) {
-            throw new IllegalStateException("Could not load bundled structure " + resourcePath, ex);
         }
     }
 
